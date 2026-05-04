@@ -1,0 +1,36 @@
+id: seed-settlement-045
+domain: settlement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 51000.0
+  reserve_price: 76500.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_102000
+  - needs_reverse_discrimination
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 21000.0
+  reserve_price: 12600.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  - mutual_release_required
+  private_info:
+  - cost_basis_is_8400
+  - inventory_of_reverse_discrimination_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims: []
+scenario_description: 'Class Rep negotiation for reverse discrimination regarding
+  hiring. Context: cross border.'

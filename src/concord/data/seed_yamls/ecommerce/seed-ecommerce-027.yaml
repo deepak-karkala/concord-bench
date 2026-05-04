@@ -1,0 +1,36 @@
+id: seed-ecommerce-027
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 14000.0
+  reserve_price: 21000.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_28000
+  - needs_kitchen_appliances
+  walk_away_threshold: 0.6
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 18800.0
+  reserve_price: 11280.0
+  hard_constraints:
+  - minimum_order_350_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_7520
+  - inventory_of_kitchen_appliances_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims: []
+scenario_description: 'Retailer negotiation for kitchen appliances (350 units). Context:
+  market expansion.'

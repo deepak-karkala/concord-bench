@@ -1,0 +1,34 @@
+id: seed-ethical_business-012
+domain: ethical_business
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 15600.0
+  reserve_price: 23400.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_31200
+  - needs_furniture_production
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 10400.0
+  reserve_price: 6240.0
+  hard_constraints:
+  - minimum_order_1500_units
+  private_info:
+  - cost_basis_is_4160
+  - inventory_of_furniture_production_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  environmental_commitments: list
+  labor_standards: list
+  transparency_reports: bool
+forbidden_claims: []
+scenario_description: 'Retailer negotiation for furniture production (1500 units).
+  Context: biodiversity.'

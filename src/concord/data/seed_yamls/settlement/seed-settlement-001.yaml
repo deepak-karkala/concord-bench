@@ -1,0 +1,38 @@
+id: seed-settlement-001
+domain: settlement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 50000.0
+  reserve_price: 75000.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_100000
+  - needs_patent_infringement
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_pre_trial_settlement
+seller_context:
+  batna: 30000.0
+  reserve_price: 18000.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  private_info:
+  - cost_basis_is_12000
+  - inventory_of_patent_infringement_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_pre_trial_settlement
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims:
+- cannot_claim_no_evidence
+scenario_description: 'Plaintiff negotiation for patent infringement regarding software.
+  Context: pre trial settlement.'

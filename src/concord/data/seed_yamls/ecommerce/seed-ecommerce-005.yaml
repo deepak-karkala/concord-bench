@@ -1,0 +1,35 @@
+id: seed-ecommerce-005
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 27000.0
+  reserve_price: 40500.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_54000
+  - needs_specialty_chemicals
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 36000.0
+  reserve_price: 21600.0
+  hard_constraints:
+  - minimum_order_100_units
+  private_info:
+  - cost_basis_is_14400
+  - inventory_of_specialty_chemicals_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims:
+- cannot_claim_exclusive_deal
+scenario_description: 'Procurement Agent negotiation for specialty chemicals (100
+  units). Context: bulk purchase.'

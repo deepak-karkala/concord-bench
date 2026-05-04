@@ -1,0 +1,35 @@
+id: seed-ethical_business-005
+domain: ethical_business
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 53000.0
+  reserve_price: 79500.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_106000
+  - needs_chemical_supply
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 35000.0
+  reserve_price: 21000.0
+  hard_constraints:
+  - minimum_order_500_units
+  private_info:
+  - cost_basis_is_14000
+  - inventory_of_chemical_supply_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  environmental_commitments: list
+  labor_standards: list
+  transparency_reports: bool
+forbidden_claims:
+- cannot_claim_fair_trade_without_cert
+scenario_description: 'Certified Importer negotiation for chemical supply (500 units).
+  Context: esg reporting.'

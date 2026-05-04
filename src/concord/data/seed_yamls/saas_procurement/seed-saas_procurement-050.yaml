@@ -1,0 +1,36 @@
+id: seed-saas_procurement-050
+domain: saas_procurement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 176.0
+  reserve_price: 264.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_352
+  - needs_lab_info_system
+  walk_away_threshold: 0.4
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 220.0
+  reserve_price: 132.0
+  hard_constraints:
+  - minimum_order_30_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_88
+  - inventory_of_lab_info_system_is_strong
+  walk_away_threshold: 0.7
+  reputation: null
+  relationship_history: []
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims: []
+scenario_description: 'Procurement Agent negotiation for lab info system (30 units).
+  Context: first adoption.'

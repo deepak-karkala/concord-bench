@@ -1,0 +1,38 @@
+id: seed-ecommerce-001
+domain: ecommerce
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 2000.0
+  reserve_price: 3000.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_4000
+  - needs_electronic_components
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_routine_replenishment
+seller_context:
+  batna: 4000.0
+  reserve_price: 2400.0
+  hard_constraints:
+  - minimum_order_250_units
+  private_info:
+  - cost_basis_is_1600
+  - inventory_of_electronic_components_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_routine_replenishment
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims:
+- cannot_claim_exclusive_deal
+scenario_description: 'Manufacturer negotiation for electronic components (500 units).
+  Context: routine replenishment.'

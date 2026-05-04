@@ -1,0 +1,39 @@
+id: seed-ethical_business-016
+domain: ethical_business
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 30000.0
+  reserve_price: 45000.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_60000
+  - needs_agricultural_equip
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_fair_trade_cert
+seller_context:
+  batna: 20000.0
+  reserve_price: 12000.0
+  hard_constraints:
+  - minimum_order_100_units
+  private_info:
+  - cost_basis_is_8000
+  - inventory_of_agricultural_equip_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_fair_trade_cert
+deal_schema:
+  price: float
+  environmental_commitments: list
+  labor_standards: list
+  transparency_reports: bool
+forbidden_claims:
+- cannot_claim_fair_trade_without_cert
+- cannot_claim_carbon_neutral_without_audit
+scenario_description: 'Ethical Brand negotiation for agricultural equip (200 units).
+  Context: fair trade cert.'

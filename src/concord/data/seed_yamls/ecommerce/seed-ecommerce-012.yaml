@@ -1,0 +1,34 @@
+id: seed-ecommerce-012
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 60000.0
+  reserve_price: 90000.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_120000
+  - needs_industrial_machinery
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 86000.0
+  reserve_price: 51600.0
+  hard_constraints:
+  - minimum_order_10_units
+  private_info:
+  - cost_basis_is_34400
+  - inventory_of_industrial_machinery_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims: []
+scenario_description: 'Retailer negotiation for industrial machinery (10 units). Context:
+  market expansion.'

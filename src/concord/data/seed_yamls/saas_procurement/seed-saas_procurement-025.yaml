@@ -1,0 +1,39 @@
+id: seed-saas_procurement-025
+domain: saas_procurement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 106.0
+  reserve_price: 159.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  - warranty_coverage_required
+  private_info:
+  - budget_is_212
+  - needs_bi_suite
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_remote_work
+seller_context:
+  batna: 158.0
+  reserve_price: 94.8
+  hard_constraints:
+  - minimum_order_100_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_63
+  - inventory_of_bi_suite_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_remote_work
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims: []
+scenario_description: 'Procurement Agent negotiation for bi suite (200 units). Context:
+  remote work.'

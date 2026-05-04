@@ -1,0 +1,36 @@
+id: seed-ecommerce-032
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 9600.0
+  reserve_price: 14400.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_19200
+  - needs_industrial_lubricants
+  walk_away_threshold: 0.4
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 12000.0
+  reserve_price: 7200.0
+  hard_constraints:
+  - minimum_order_250_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_4800
+  - inventory_of_industrial_lubricants_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims: []
+scenario_description: 'Retailer negotiation for industrial lubricants (250 units).
+  Context: urgent order.'

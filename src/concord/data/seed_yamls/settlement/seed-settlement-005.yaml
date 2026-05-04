@@ -1,0 +1,35 @@
+id: seed-settlement-005
+domain: settlement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 820000.0
+  reserve_price: 1230000.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_1640000
+  - needs_trade_secret
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 170000.0
+  reserve_price: 102000.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  private_info:
+  - cost_basis_is_68000
+  - inventory_of_trade_secret_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims:
+- cannot_claim_no_evidence
+scenario_description: 'Class Rep negotiation for trade secret regarding technology.
+  Context: avoid trial.'

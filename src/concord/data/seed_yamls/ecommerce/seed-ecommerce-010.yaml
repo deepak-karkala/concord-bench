@@ -1,0 +1,37 @@
+id: seed-ecommerce-010
+domain: ecommerce
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 7200.0
+  reserve_price: 10800.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_14400
+  - needs_food_ingredients
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_supplier_diversification
+seller_context:
+  batna: 10800.0
+  reserve_price: 6480.0
+  hard_constraints:
+  - minimum_order_1500_units
+  private_info:
+  - cost_basis_is_4320
+  - inventory_of_food_ingredients_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_supplier_diversification
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims: []
+scenario_description: 'Procurement Agent negotiation for food ingredients (3000 units).
+  Context: supplier diversification.'

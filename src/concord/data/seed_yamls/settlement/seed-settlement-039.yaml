@@ -1,0 +1,36 @@
+id: seed-settlement-039
+domain: settlement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 132000.0
+  reserve_price: 198000.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_264000
+  - needs_creditor_dispute
+  walk_away_threshold: 0.6
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 54000.0
+  reserve_price: 32400.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  - mutual_release_required
+  private_info:
+  - cost_basis_is_21600
+  - inventory_of_creditor_dispute_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims: []
+scenario_description: 'Injured Party negotiation for creditor dispute regarding bankruptcy.
+  Context: restructuring.'

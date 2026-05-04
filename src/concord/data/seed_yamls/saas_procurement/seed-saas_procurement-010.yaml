@@ -1,0 +1,37 @@
+id: seed-saas_procurement-010
+domain: saas_procurement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 39.0
+  reserve_price: 58.5
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_78
+  - needs_document_mgmt_system
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_remote_work
+seller_context:
+  batna: 48.0
+  reserve_price: 28.8
+  hard_constraints:
+  - minimum_order_175_units
+  private_info:
+  - cost_basis_is_19
+  - inventory_of_document_mgmt_system_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_remote_work
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims: []
+scenario_description: 'Procurement Agent negotiation for document mgmt system (350
+  units). Context: remote work.'

@@ -1,0 +1,35 @@
+id: seed-saas_procurement-003
+domain: saas_procurement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 36.0
+  reserve_price: 54.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_72
+  - needs_hr_management_suite
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 50.0
+  reserve_price: 30.0
+  hard_constraints:
+  - minimum_order_300_units
+  private_info:
+  - cost_basis_is_20
+  - inventory_of_hr_management_suite_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims:
+- cannot_claim_soc2_without_audit
+scenario_description: 'Distributor negotiation for hr management suite (300 units).
+  Context: dept expansion.'

@@ -1,0 +1,41 @@
+id: seed-saas_procurement-046
+domain: saas_procurement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 10.0
+  reserve_price: 15.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  - warranty_coverage_required
+  private_info:
+  - budget_is_20
+  - needs_scheduling_platform
+  walk_away_threshold: 0.7
+  reputation: null
+  relationship_history:
+  - prior_deal_vendor_evaluation
+seller_context:
+  batna: 15.0
+  reserve_price: 9.0
+  hard_constraints:
+  - minimum_order_200_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_6
+  - inventory_of_scheduling_platform_is_strong
+  walk_away_threshold: 0.8
+  reputation: null
+  relationship_history:
+  - prior_deal_vendor_evaluation
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims:
+- cannot_claim_soc2_without_audit
+- cannot_claim_gdpr_compliance
+scenario_description: 'Manufacturer negotiation for scheduling platform (400 units).
+  Context: vendor evaluation.'

@@ -1,0 +1,34 @@
+id: seed-ecommerce-020
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 22000.0
+  reserve_price: 33000.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_44000
+  - needs_musical_instruments
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 31000.0
+  reserve_price: 18600.0
+  hard_constraints:
+  - minimum_order_50_units
+  private_info:
+  - cost_basis_is_12400
+  - inventory_of_musical_instruments_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims: []
+scenario_description: 'Procurement Agent negotiation for musical instruments (50 units).
+  Context: bulk purchase.'

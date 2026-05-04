@@ -1,0 +1,36 @@
+id: seed-ecommerce-002
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 6000.0
+  reserve_price: 9000.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_12000
+  - needs_office_furniture
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 9400.0
+  reserve_price: 5640.0
+  hard_constraints:
+  - minimum_order_200_units
+  private_info:
+  - cost_basis_is_3760
+  - inventory_of_office_furniture_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims:
+- cannot_claim_exclusive_deal
+- cannot_claim_product_recalled
+scenario_description: 'Retailer negotiation for office furniture (200 units). Context:
+  urgent order.'

@@ -1,0 +1,35 @@
+id: seed-ecommerce-003
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 14000.0
+  reserve_price: 21000.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_28000
+  - needs_raw_materials
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 21000.0
+  reserve_price: 12600.0
+  hard_constraints:
+  - minimum_order_1000_units
+  private_info:
+  - cost_basis_is_8400
+  - inventory_of_raw_materials_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims:
+- cannot_claim_exclusive_deal
+scenario_description: 'Distributor negotiation for raw materials (1000 units). Context:
+  new supplier.'

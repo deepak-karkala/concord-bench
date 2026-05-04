@@ -1,0 +1,39 @@
+id: seed-saas_procurement-028
+domain: saas_procurement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 12.8
+  reserve_price: 19.2
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  - warranty_coverage_required
+  private_info:
+  - budget_is_25
+  - needs_expense_management
+  walk_away_threshold: 0.7
+  reputation: null
+  relationship_history:
+  - prior_deal_pilot_expansion
+seller_context:
+  batna: 16.0
+  reserve_price: 9.6
+  hard_constraints:
+  - minimum_order_150_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_6
+  - inventory_of_expense_management_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_pilot_expansion
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims: []
+scenario_description: 'Distributor negotiation for expense management (300 units).
+  Context: pilot expansion.'

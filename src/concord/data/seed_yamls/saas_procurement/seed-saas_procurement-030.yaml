@@ -1,0 +1,36 @@
+id: seed-saas_procurement-030
+domain: saas_procurement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 132.0
+  reserve_price: 198.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_264
+  - needs_risk_management
+  walk_away_threshold: 0.8
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 176.0
+  reserve_price: 105.6
+  hard_constraints:
+  - minimum_order_80_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_70
+  - inventory_of_risk_management_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims: []
+scenario_description: 'Procurement Agent negotiation for risk management (80 units).
+  Context: custom integration.'

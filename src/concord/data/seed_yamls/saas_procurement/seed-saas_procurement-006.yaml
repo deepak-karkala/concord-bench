@@ -1,0 +1,36 @@
+id: seed-saas_procurement-006
+domain: saas_procurement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 50.0
+  reserve_price: 75.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_100
+  - needs_erp_system
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 80.0
+  reserve_price: 48.0
+  hard_constraints:
+  - minimum_order_400_units
+  private_info:
+  - cost_basis_is_32
+  - inventory_of_erp_system_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims:
+- cannot_claim_soc2_without_audit
+- cannot_claim_gdpr_compliance
+scenario_description: 'Manufacturer negotiation for erp system (400 units). Context:
+  merger integration.'

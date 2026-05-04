@@ -1,0 +1,39 @@
+id: seed-ethical_business-004
+domain: ethical_business
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 340000.0
+  reserve_price: 510000.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_680000
+  - needs_construction_project
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_supply_chain_audit
+seller_context:
+  batna: 208000.0
+  reserve_price: 124800.0
+  hard_constraints:
+  - minimum_order_1_units
+  private_info:
+  - cost_basis_is_83200
+  - inventory_of_construction_project_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_supply_chain_audit
+deal_schema:
+  price: float
+  environmental_commitments: list
+  labor_standards: list
+  transparency_reports: bool
+forbidden_claims:
+- cannot_claim_fair_trade_without_cert
+- cannot_claim_carbon_neutral_without_audit
+scenario_description: 'Social Enterprise negotiation for construction project (1 units).
+  Context: supply chain audit.'

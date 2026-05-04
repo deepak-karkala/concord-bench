@@ -1,0 +1,37 @@
+id: seed-settlement-010
+domain: settlement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 415000.0
+  reserve_price: 622500.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_830000
+  - needs_data_breach
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_bankruptcy_negotiation
+seller_context:
+  batna: 166000.0
+  reserve_price: 99600.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  private_info:
+  - cost_basis_is_66400
+  - inventory_of_data_breach_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_bankruptcy_negotiation
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims: []
+scenario_description: 'Class Rep negotiation for data breach regarding privacy_violation.
+  Context: bankruptcy negotiation.'

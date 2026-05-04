@@ -1,0 +1,37 @@
+id: seed-settlement-007
+domain: settlement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 72000.0
+  reserve_price: 108000.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_144000
+  - needs_insurance_claim
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_regulatory_negotiation
+seller_context:
+  batna: 32000.0
+  reserve_price: 19200.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  private_info:
+  - cost_basis_is_12800
+  - inventory_of_insurance_claim_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_regulatory_negotiation
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims: []
+scenario_description: 'Claimant negotiation for insurance claim regarding business_interruption.
+  Context: regulatory negotiation.'

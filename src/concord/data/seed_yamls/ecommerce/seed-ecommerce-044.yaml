@@ -1,0 +1,36 @@
+id: seed-ecommerce-044
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 28200.0
+  reserve_price: 42300.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_56400
+  - needs_stainless_steel_pipes
+  walk_away_threshold: 0.4
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 35800.0
+  reserve_price: 21480.0
+  hard_constraints:
+  - minimum_order_150_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_14320
+  - inventory_of_stainless_steel_pipes_is_strong
+  walk_away_threshold: 0.7
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims: []
+scenario_description: 'Wholesaler negotiation for stainless steel pipes (150 units).
+  Context: sustainability switch.'

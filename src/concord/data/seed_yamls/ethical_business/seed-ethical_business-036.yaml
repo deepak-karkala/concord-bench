@@ -1,0 +1,38 @@
+id: seed-ethical_business-036
+domain: ethical_business
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 7000.0
+  reserve_price: 10500.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_14000
+  - needs_upcycled_materials
+  walk_away_threshold: 0.8
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 4000.0
+  reserve_price: 2400.0
+  hard_constraints:
+  - minimum_order_1500_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_1600
+  - inventory_of_upcycled_materials_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  environmental_commitments: list
+  labor_standards: list
+  transparency_reports: bool
+forbidden_claims:
+- cannot_claim_fair_trade_without_cert
+- cannot_claim_carbon_neutral_without_audit
+scenario_description: 'Ethical Brand negotiation for upcycled materials (1500 units).
+  Context: sustainable sourcing.'

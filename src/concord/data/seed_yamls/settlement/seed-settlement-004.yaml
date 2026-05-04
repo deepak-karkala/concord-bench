@@ -1,0 +1,39 @@
+id: seed-settlement-004
+domain: settlement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 320000.0
+  reserve_price: 480000.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_640000
+  - needs_product_liability
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_early_resolution
+seller_context:
+  batna: 68000.0
+  reserve_price: 40800.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  private_info:
+  - cost_basis_is_27200
+  - inventory_of_product_liability_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_early_resolution
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims:
+- cannot_claim_no_evidence
+- cannot_threaten_criminal
+scenario_description: 'Injured Party negotiation for product liability regarding consumer_goods.
+  Context: early resolution.'

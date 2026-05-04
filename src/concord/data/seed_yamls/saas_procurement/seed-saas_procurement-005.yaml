@@ -1,0 +1,35 @@
+id: seed-saas_procurement-005
+domain: saas_procurement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 21.6
+  reserve_price: 32.4
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_43
+  - needs_collaboration_tools
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 30.0
+  reserve_price: 18.0
+  hard_constraints:
+  - minimum_order_1000_units
+  private_info:
+  - cost_basis_is_12
+  - inventory_of_collaboration_tools_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims:
+- cannot_claim_soc2_without_audit
+scenario_description: 'Procurement Agent negotiation for collaboration tools (1000
+  units). Context: first adoption.'

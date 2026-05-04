@@ -1,0 +1,34 @@
+id: seed-settlement-008
+domain: settlement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 245000.0
+  reserve_price: 367500.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_490000
+  - needs_construction_defect
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 78000.0
+  reserve_price: 46800.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  private_info:
+  - cost_basis_is_31200
+  - inventory_of_construction_defect_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims: []
+scenario_description: 'Regulator negotiation for construction defect regarding commercial_building.
+  Context: collective bargaining.'

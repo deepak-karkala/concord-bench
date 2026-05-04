@@ -1,0 +1,36 @@
+id: seed-saas_procurement-029
+domain: saas_procurement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 60.0
+  reserve_price: 90.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_120
+  - needs_contract_lifecycle
+  walk_away_threshold: 0.8
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 76.0
+  reserve_price: 45.6
+  hard_constraints:
+  - minimum_order_100_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_30
+  - inventory_of_contract_lifecycle_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims: []
+scenario_description: 'Wholesaler negotiation for contract lifecycle (100 units).
+  Context: global rollout.'

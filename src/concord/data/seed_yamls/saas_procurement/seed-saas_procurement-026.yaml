@@ -1,0 +1,38 @@
+id: seed-saas_procurement-026
+domain: saas_procurement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 12.0
+  reserve_price: 18.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_24
+  - needs_payroll_system
+  walk_away_threshold: 0.4
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 18.0
+  reserve_price: 10.8
+  hard_constraints:
+  - minimum_order_400_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_7
+  - inventory_of_payroll_system_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims:
+- cannot_claim_soc2_without_audit
+- cannot_claim_gdpr_compliance
+scenario_description: 'Manufacturer negotiation for payroll system (400 units). Context:
+  security upgrade.'

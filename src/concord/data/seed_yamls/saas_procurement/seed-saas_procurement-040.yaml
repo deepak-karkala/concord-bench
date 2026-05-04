@@ -1,0 +1,39 @@
+id: seed-saas_procurement-040
+domain: saas_procurement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 26.0
+  reserve_price: 39.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  - warranty_coverage_required
+  private_info:
+  - budget_is_52
+  - needs_backup_solution
+  walk_away_threshold: 0.7
+  reputation: null
+  relationship_history:
+  - prior_deal_remote_work
+seller_context:
+  batna: 35.0
+  reserve_price: 21.0
+  hard_constraints:
+  - minimum_order_250_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_14
+  - inventory_of_backup_solution_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_remote_work
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims: []
+scenario_description: 'Procurement Agent negotiation for backup solution (500 units).
+  Context: remote work.'

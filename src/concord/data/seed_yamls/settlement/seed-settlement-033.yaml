@@ -1,0 +1,36 @@
+id: seed-settlement-033
+domain: settlement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 39000.0
+  reserve_price: 58500.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_78000
+  - needs_adverse_possession
+  walk_away_threshold: 0.6
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 15000.0
+  reserve_price: 9000.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  - mutual_release_required
+  private_info:
+  - cost_basis_is_6000
+  - inventory_of_adverse_possession_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims: []
+scenario_description: 'Regulator negotiation for adverse possession regarding real_property.
+  Context: arbitration.'

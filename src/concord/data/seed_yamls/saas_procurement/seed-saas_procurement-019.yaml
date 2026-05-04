@@ -1,0 +1,37 @@
+id: seed-saas_procurement-019
+domain: saas_procurement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 11.0
+  reserve_price: 16.5
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_22
+  - needs_communication_platform
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_replacing_incumbent
+seller_context:
+  batna: 15.2
+  reserve_price: 9.12
+  hard_constraints:
+  - minimum_order_1000_units
+  private_info:
+  - cost_basis_is_6
+  - inventory_of_communication_platform_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_replacing_incumbent
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims: []
+scenario_description: 'Wholesaler negotiation for communication platform (2000 units).
+  Context: replacing incumbent.'

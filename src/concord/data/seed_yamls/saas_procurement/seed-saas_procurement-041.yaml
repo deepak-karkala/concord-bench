@@ -1,0 +1,37 @@
+id: seed-saas_procurement-041
+domain: saas_procurement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 25.0
+  reserve_price: 37.5
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_50
+  - needs_virtual_desktop
+  walk_away_threshold: 0.8
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 35.0
+  reserve_price: 21.0
+  hard_constraints:
+  - minimum_order_150_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_14
+  - inventory_of_virtual_desktop_is_strong
+  walk_away_threshold: 0.3
+  reputation: null
+  relationship_history: []
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims:
+- cannot_claim_soc2_without_audit
+scenario_description: 'Manufacturer negotiation for virtual desktop (150 units). Context:
+  security upgrade.'

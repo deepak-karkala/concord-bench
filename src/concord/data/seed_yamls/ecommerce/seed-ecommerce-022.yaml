@@ -1,0 +1,39 @@
+id: seed-ecommerce-022
+domain: ecommerce
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 6800.0
+  reserve_price: 10200.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  - warranty_coverage_required
+  private_info:
+  - budget_is_13600
+  - needs_battery_cells
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_seasonal_build
+seller_context:
+  batna: 9400.0
+  reserve_price: 5640.0
+  hard_constraints:
+  - minimum_order_1000_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_3760
+  - inventory_of_battery_cells_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_seasonal_build
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims: []
+scenario_description: 'Retailer negotiation for battery cells (2000 units). Context:
+  seasonal build.'

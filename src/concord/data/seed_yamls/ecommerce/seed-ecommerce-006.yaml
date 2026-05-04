@@ -1,0 +1,36 @@
+id: seed-ecommerce-006
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 8000.0
+  reserve_price: 12000.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_16000
+  - needs_textile_fabric
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 10000.0
+  reserve_price: 6000.0
+  hard_constraints:
+  - minimum_order_2000_units
+  private_info:
+  - cost_basis_is_4000
+  - inventory_of_textile_fabric_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims:
+- cannot_claim_exclusive_deal
+- cannot_claim_product_recalled
+scenario_description: 'Manufacturer negotiation for textile fabric (2000 units). Context:
+  jit delivery.'

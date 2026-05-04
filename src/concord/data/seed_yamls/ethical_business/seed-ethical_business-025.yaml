@@ -1,0 +1,39 @@
+id: seed-ethical_business-025
+domain: ethical_business
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 8800.0
+  reserve_price: 13200.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  - warranty_coverage_required
+  private_info:
+  - budget_is_17600
+  - needs_organic_produce
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_child_labor_free
+seller_context:
+  batna: 5200.0
+  reserve_price: 3120.0
+  hard_constraints:
+  - minimum_order_1000_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_2080
+  - inventory_of_organic_produce_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_child_labor_free
+deal_schema:
+  price: float
+  environmental_commitments: list
+  labor_standards: list
+  transparency_reports: bool
+forbidden_claims: []
+scenario_description: 'Certified Importer negotiation for organic produce (2000 units).
+  Context: child labor free.'

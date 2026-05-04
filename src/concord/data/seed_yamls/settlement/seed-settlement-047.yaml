@@ -1,0 +1,36 @@
+id: seed-settlement-047
+domain: settlement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 54000.0
+  reserve_price: 81000.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_108000
+  - needs_professional_negligence
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 24000.0
+  reserve_price: 14400.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  - mutual_release_required
+  private_info:
+  - cost_basis_is_9600
+  - inventory_of_professional_negligence_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims: []
+scenario_description: 'Claimant negotiation for professional negligence regarding
+  accounting. Context: mediation.'

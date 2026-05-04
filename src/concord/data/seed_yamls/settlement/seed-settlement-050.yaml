@@ -1,0 +1,36 @@
+id: seed-settlement-050
+domain: settlement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 335000.0
+  reserve_price: 502500.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_670000
+  - needs_product_recall
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 126000.0
+  reserve_price: 75600.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  - mutual_release_required
+  private_info:
+  - cost_basis_is_50400
+  - inventory_of_product_recall_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims: []
+scenario_description: 'Class Rep negotiation for product recall regarding consumer_safety.
+  Context: avoid trial.'

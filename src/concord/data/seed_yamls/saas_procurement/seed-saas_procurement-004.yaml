@@ -1,0 +1,39 @@
+id: seed-saas_procurement-004
+domain: saas_procurement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 88.0
+  reserve_price: 132.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_176
+  - needs_analytics_dashboard
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_replacing_incumbent
+seller_context:
+  batna: 132.0
+  reserve_price: 79.2
+  hard_constraints:
+  - minimum_order_75_units
+  private_info:
+  - cost_basis_is_52
+  - inventory_of_analytics_dashboard_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_replacing_incumbent
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims:
+- cannot_claim_soc2_without_audit
+- cannot_claim_gdpr_compliance
+scenario_description: 'Wholesaler negotiation for analytics dashboard (150 units).
+  Context: replacing incumbent.'

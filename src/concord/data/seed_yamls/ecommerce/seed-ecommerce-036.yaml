@@ -1,0 +1,38 @@
+id: seed-ecommerce-036
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 22000.0
+  reserve_price: 33000.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_44000
+  - needs_optical_lenses
+  walk_away_threshold: 0.8
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 28000.0
+  reserve_price: 16800.0
+  hard_constraints:
+  - minimum_order_100_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_11200
+  - inventory_of_optical_lenses_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims:
+- cannot_claim_exclusive_deal
+- cannot_claim_product_recalled
+scenario_description: 'Manufacturer negotiation for optical lenses (100 units). Context:
+  jit delivery.'

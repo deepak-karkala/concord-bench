@@ -1,0 +1,39 @@
+id: seed-ethical_business-049
+domain: ethical_business
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 11400.0
+  reserve_price: 17100.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  - warranty_coverage_required
+  private_info:
+  - budget_is_22800
+  - needs_mycelium_products
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_supply_chain_audit
+seller_context:
+  batna: 7600.0
+  reserve_price: 4560.0
+  hard_constraints:
+  - minimum_order_500_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_3040
+  - inventory_of_mycelium_products_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_supply_chain_audit
+deal_schema:
+  price: float
+  environmental_commitments: list
+  labor_standards: list
+  transparency_reports: bool
+forbidden_claims: []
+scenario_description: 'Social Enterprise negotiation for mycelium products (1000 units).
+  Context: supply chain audit.'

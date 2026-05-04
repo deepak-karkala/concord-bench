@@ -1,0 +1,34 @@
+id: seed-ecommerce-017
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 3400.0
+  reserve_price: 5100.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_6800
+  - needs_beverage_ingredients
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 4800.0
+  reserve_price: 2880.0
+  hard_constraints:
+  - minimum_order_5000_units
+  private_info:
+  - cost_basis_is_1920
+  - inventory_of_beverage_ingredients_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims: []
+scenario_description: 'Retailer negotiation for beverage ingredients (5000 units).
+  Context: urgent order.'

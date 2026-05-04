@@ -1,0 +1,41 @@
+id: seed-ecommerce-046
+domain: ecommerce
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 19000.0
+  reserve_price: 28500.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  - warranty_coverage_required
+  private_info:
+  - budget_is_38000
+  - needs_sensor_modules
+  walk_away_threshold: 0.7
+  reputation: null
+  relationship_history:
+  - prior_deal_routine_replenishment
+seller_context:
+  batna: 24000.0
+  reserve_price: 14400.0
+  hard_constraints:
+  - minimum_order_150_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_9600
+  - inventory_of_sensor_modules_is_strong
+  walk_away_threshold: 0.8
+  reputation: null
+  relationship_history:
+  - prior_deal_routine_replenishment
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims:
+- cannot_claim_exclusive_deal
+- cannot_claim_product_recalled
+scenario_description: 'Manufacturer negotiation for sensor modules (300 units). Context:
+  routine replenishment.'

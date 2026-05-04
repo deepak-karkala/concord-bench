@@ -1,0 +1,39 @@
+id: seed-settlement-043
+domain: settlement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 44000.0
+  reserve_price: 66000.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  - warranty_coverage_required
+  private_info:
+  - budget_is_88000
+  - needs_non_delivery
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_compliance_settlement
+seller_context:
+  batna: 18000.0
+  reserve_price: 10800.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  - mutual_release_required
+  private_info:
+  - cost_basis_is_7200
+  - inventory_of_non_delivery_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_compliance_settlement
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims: []
+scenario_description: 'Regulator negotiation for non delivery regarding sale_of_goods.
+  Context: compliance settlement.'

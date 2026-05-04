@@ -1,0 +1,39 @@
+id: seed-saas_procurement-043
+domain: saas_procurement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 64.0
+  reserve_price: 96.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  - warranty_coverage_required
+  private_info:
+  - budget_is_128
+  - needs_api_gateway
+  walk_away_threshold: 0.3
+  reputation: null
+  relationship_history:
+  - prior_deal_pilot_expansion
+seller_context:
+  batna: 82.0
+  reserve_price: 49.2
+  hard_constraints:
+  - minimum_order_50_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_32
+  - inventory_of_api_gateway_is_strong
+  walk_away_threshold: 0.6
+  reputation: null
+  relationship_history:
+  - prior_deal_pilot_expansion
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims: []
+scenario_description: 'Distributor negotiation for api gateway (100 units). Context:
+  pilot expansion.'

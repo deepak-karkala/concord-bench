@@ -1,0 +1,34 @@
+id: seed-ethical_business-017
+domain: ethical_business
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 32000.0
+  reserve_price: 48000.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_64000
+  - needs_pharma_supplies
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 20000.0
+  reserve_price: 12000.0
+  hard_constraints:
+  - minimum_order_1000_units
+  private_info:
+  - cost_basis_is_8000
+  - inventory_of_pharma_supplies_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  environmental_commitments: list
+  labor_standards: list
+  transparency_reports: bool
+forbidden_claims: []
+scenario_description: 'Retailer negotiation for pharma supplies (1000 units). Context:
+  carbon neutrality.'

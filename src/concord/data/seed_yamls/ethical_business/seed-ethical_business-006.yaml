@@ -1,0 +1,36 @@
+id: seed-ethical_business-006
+domain: ethical_business
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 10000.0
+  reserve_price: 15000.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_20000
+  - needs_food_processing
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 5000.0
+  reserve_price: 3000.0
+  hard_constraints:
+  - minimum_order_3000_units
+  private_info:
+  - cost_basis_is_2000
+  - inventory_of_food_processing_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  environmental_commitments: list
+  labor_standards: list
+  transparency_reports: bool
+forbidden_claims:
+- cannot_claim_fair_trade_without_cert
+- cannot_claim_carbon_neutral_without_audit
+scenario_description: 'Ethical Brand negotiation for food processing (3000 units).
+  Context: sustainable sourcing.'

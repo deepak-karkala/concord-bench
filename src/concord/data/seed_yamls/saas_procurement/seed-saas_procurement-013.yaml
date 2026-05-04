@@ -1,0 +1,37 @@
+id: seed-saas_procurement-013
+domain: saas_procurement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 18.0
+  reserve_price: 27.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_36
+  - needs_e_learning_platform
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_pilot_expansion
+seller_context:
+  batna: 25.0
+  reserve_price: 15.0
+  hard_constraints:
+  - minimum_order_400_units
+  private_info:
+  - cost_basis_is_10
+  - inventory_of_e_learning_platform_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_pilot_expansion
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims: []
+scenario_description: 'Distributor negotiation for e learning platform (800 units).
+  Context: pilot expansion.'

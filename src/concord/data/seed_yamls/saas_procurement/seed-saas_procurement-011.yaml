@@ -1,0 +1,35 @@
+id: seed-saas_procurement-011
+domain: saas_procurement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 30.0
+  reserve_price: 45.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_60
+  - needs_compliance_mgmt
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 40.0
+  reserve_price: 24.0
+  hard_constraints:
+  - minimum_order_200_units
+  private_info:
+  - cost_basis_is_16
+  - inventory_of_compliance_mgmt_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims:
+- cannot_claim_soc2_without_audit
+scenario_description: 'Manufacturer negotiation for compliance mgmt (200 units). Context:
+  security upgrade.'

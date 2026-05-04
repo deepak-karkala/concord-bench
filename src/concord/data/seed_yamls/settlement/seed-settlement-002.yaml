@@ -1,0 +1,36 @@
+id: seed-settlement-002
+domain: settlement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 32000.0
+  reserve_price: 48000.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_64000
+  - needs_breach_of_contract
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 10000.0
+  reserve_price: 6000.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  private_info:
+  - cost_basis_is_4000
+  - inventory_of_breach_of_contract_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims:
+- cannot_claim_no_evidence
+- cannot_threaten_criminal
+scenario_description: 'Claimant negotiation for breach of contract regarding supply_agreement.
+  Context: mediation.'

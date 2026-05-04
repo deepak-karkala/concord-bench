@@ -1,0 +1,39 @@
+id: seed-ecommerce-004
+domain: ecommerce
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 4800.0
+  reserve_price: 7200.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_9600
+  - needs_packaging_supplies
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_contract_renewal
+seller_context:
+  batna: 8000.0
+  reserve_price: 4800.0
+  hard_constraints:
+  - minimum_order_2500_units
+  private_info:
+  - cost_basis_is_3200
+  - inventory_of_packaging_supplies_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_contract_renewal
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims:
+- cannot_claim_exclusive_deal
+- cannot_claim_product_recalled
+scenario_description: 'Wholesaler negotiation for packaging supplies (5000 units).
+  Context: contract renewal.'

@@ -1,0 +1,36 @@
+id: seed-saas_procurement-038
+domain: saas_procurement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 50.0
+  reserve_price: 75.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_100
+  - needs_seo_tools
+  walk_away_threshold: 0.4
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 64.0
+  reserve_price: 38.4
+  hard_constraints:
+  - minimum_order_50_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_25
+  - inventory_of_seo_tools_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims: []
+scenario_description: 'Distributor negotiation for seo tools (50 units). Context:
+  cost optimization.'

@@ -1,0 +1,36 @@
+id: seed-ecommerce-042
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 3600.0
+  reserve_price: 5400.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_7200
+  - needs_adhesive_materials
+  walk_away_threshold: 0.8
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 4800.0
+  reserve_price: 2880.0
+  hard_constraints:
+  - minimum_order_1200_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_1920
+  - inventory_of_adhesive_materials_is_strong
+  walk_away_threshold: 0.4
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims: []
+scenario_description: 'Retailer negotiation for adhesive materials (1200 units). Context:
+  market expansion.'

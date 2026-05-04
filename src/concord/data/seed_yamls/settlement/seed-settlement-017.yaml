@@ -1,0 +1,34 @@
+id: seed-settlement-017
+domain: settlement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 22000.0
+  reserve_price: 33000.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_44000
+  - needs_wage_and_hour
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 8000.0
+  reserve_price: 4800.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  private_info:
+  - cost_basis_is_3200
+  - inventory_of_wage_and_hour_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims: []
+scenario_description: 'Claimant negotiation for wage and hour regarding labor_law.
+  Context: mediation.'

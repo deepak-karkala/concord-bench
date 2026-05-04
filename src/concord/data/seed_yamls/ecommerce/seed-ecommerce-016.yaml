@@ -1,0 +1,39 @@
+id: seed-ecommerce-016
+domain: ecommerce
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 40000.0
+  reserve_price: 60000.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_80000
+  - needs_solar_panels
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_routine_replenishment
+seller_context:
+  batna: 50000.0
+  reserve_price: 30000.0
+  hard_constraints:
+  - minimum_order_50_units
+  private_info:
+  - cost_basis_is_20000
+  - inventory_of_solar_panels_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_routine_replenishment
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims:
+- cannot_claim_exclusive_deal
+- cannot_claim_product_recalled
+scenario_description: 'Manufacturer negotiation for solar panels (100 units). Context:
+  routine replenishment.'

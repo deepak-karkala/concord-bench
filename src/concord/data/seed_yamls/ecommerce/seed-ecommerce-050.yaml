@@ -1,0 +1,36 @@
+id: seed-ecommerce-050
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 3600.0
+  reserve_price: 5400.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_7200
+  - needs_fasteners_and_bolts
+  walk_away_threshold: 0.4
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 4500.0
+  reserve_price: 2700.0
+  hard_constraints:
+  - minimum_order_5000_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_1800
+  - inventory_of_fasteners_and_bolts_is_strong
+  walk_away_threshold: 0.7
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims: []
+scenario_description: 'Procurement Agent negotiation for fasteners and bolts (5000
+  units). Context: bulk purchase.'

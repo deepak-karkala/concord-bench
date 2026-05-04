@@ -1,0 +1,38 @@
+id: seed-saas_procurement-036
+domain: saas_procurement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 8.0
+  reserve_price: 12.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  private_info:
+  - budget_is_16
+  - needs_video_conferencing
+  walk_away_threshold: 0.8
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 10.0
+  reserve_price: 6.0
+  hard_constraints:
+  - minimum_order_1000_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_4
+  - inventory_of_video_conferencing_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims:
+- cannot_claim_soc2_without_audit
+- cannot_claim_gdpr_compliance
+scenario_description: 'Manufacturer negotiation for video conferencing (1000 units).
+  Context: merger integration.'

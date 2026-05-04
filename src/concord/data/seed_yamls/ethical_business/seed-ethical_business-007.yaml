@@ -1,0 +1,37 @@
+id: seed-ethical_business-007
+domain: ethical_business
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 70000.0
+  reserve_price: 105000.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_140000
+  - needs_mining_equipment
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_circular_economy
+seller_context:
+  batna: 44000.0
+  reserve_price: 26400.0
+  hard_constraints:
+  - minimum_order_50_units
+  private_info:
+  - cost_basis_is_17600
+  - inventory_of_mining_equipment_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_circular_economy
+deal_schema:
+  price: float
+  environmental_commitments: list
+  labor_standards: list
+  transparency_reports: bool
+forbidden_claims: []
+scenario_description: 'Retailer negotiation for mining equipment (100 units). Context:
+  circular economy.'

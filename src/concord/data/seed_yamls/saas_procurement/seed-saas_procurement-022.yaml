@@ -1,0 +1,39 @@
+id: seed-saas_procurement-022
+domain: saas_procurement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 78.0
+  reserve_price: 117.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  - warranty_coverage_required
+  private_info:
+  - budget_is_156
+  - needs_legal_practice_mgmt
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_compliance_req
+seller_context:
+  batna: 104.0
+  reserve_price: 62.4
+  hard_constraints:
+  - minimum_order_35_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_41
+  - inventory_of_legal_practice_mgmt_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_compliance_req
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims: []
+scenario_description: 'Retailer negotiation for legal practice mgmt (70 units). Context:
+  compliance req.'

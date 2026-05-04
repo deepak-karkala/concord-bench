@@ -1,0 +1,38 @@
+id: seed-saas_procurement-001
+domain: saas_procurement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 15.0
+  reserve_price: 22.5
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_30
+  - needs_project_mgmt_platform
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_vendor_evaluation
+seller_context:
+  batna: 20.0
+  reserve_price: 12.0
+  hard_constraints:
+  - minimum_order_100_units
+  private_info:
+  - cost_basis_is_8
+  - inventory_of_project_mgmt_platform_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_vendor_evaluation
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims:
+- cannot_claim_soc2_without_audit
+scenario_description: 'Manufacturer negotiation for project mgmt platform (200 units).
+  Context: vendor evaluation.'

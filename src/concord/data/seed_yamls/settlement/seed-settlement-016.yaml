@@ -1,0 +1,39 @@
+id: seed-settlement-016
+domain: settlement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 200000.0
+  reserve_price: 300000.0
+  hard_constraints:
+  - quality_meets_standards
+  - warranty_coverage_required
+  private_info:
+  - budget_is_400000
+  - needs_antitrust
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_pre_trial_settlement
+seller_context:
+  batna: 100000.0
+  reserve_price: 60000.0
+  hard_constraints:
+  - confidentiality_must_be_maintained
+  private_info:
+  - cost_basis_is_40000
+  - inventory_of_antitrust_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_pre_trial_settlement
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims:
+- cannot_claim_no_evidence
+- cannot_threaten_criminal
+scenario_description: 'Plaintiff negotiation for antitrust regarding competition_law.
+  Context: pre trial settlement.'

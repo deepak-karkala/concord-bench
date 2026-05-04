@@ -1,0 +1,39 @@
+id: seed-ecommerce-040
+domain: ecommerce
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 45000.0
+  reserve_price: 67500.0
+  hard_constraints:
+  - quality_meets_standards
+  - delivery_timeline_must_be_met
+  - warranty_coverage_required
+  private_info:
+  - budget_is_90000
+  - needs_electric_motors
+  walk_away_threshold: 0.7
+  reputation: null
+  relationship_history:
+  - prior_deal_supplier_diversification
+seller_context:
+  batna: 63000.0
+  reserve_price: 37800.0
+  hard_constraints:
+  - minimum_order_40_units
+  - payment_terms_net_30
+  private_info:
+  - cost_basis_is_25200
+  - inventory_of_electric_motors_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history:
+  - prior_deal_supplier_diversification
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims: []
+scenario_description: 'Procurement Agent negotiation for electric motors (80 units).
+  Context: supplier diversification.'

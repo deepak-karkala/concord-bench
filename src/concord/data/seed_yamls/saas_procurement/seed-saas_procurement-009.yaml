@@ -1,0 +1,34 @@
+id: seed-saas_procurement-009
+domain: saas_procurement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 44.0
+  reserve_price: 66.0
+  hard_constraints:
+  - quality_meets_standards
+  private_info:
+  - budget_is_88
+  - needs_customer_support_platform
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 60.0
+  reserve_price: 36.0
+  hard_constraints:
+  - minimum_order_250_units
+  private_info:
+  - cost_basis_is_24
+  - inventory_of_customer_support_platform_is_strong
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims: []
+scenario_description: 'Wholesaler negotiation for customer support platform (250 units).
+  Context: digital transformation.'
