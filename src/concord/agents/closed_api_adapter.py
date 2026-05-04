@@ -1,0 +1,211 @@
+import hashlib
+from typing import Any
+
+from concord.agents.base import Action, AgentProtocol
+from concord.agents.retry import AgentRateLimitError, retry_with_backoff
+from concord.env.offer_parser import parse_offer as parse_raw_offer
+from concord.schemas.episode import ActionType
+
+_NEGOTIATION_SYSTEM_PROMPT = """You are a principal-aligned negotiation agent participating in a multi-turn business negotiation.
+Your goal is to reach a deal that serves your principal's interests while respecting hard constraints.
+Be strategic but honest. Respond with messages and structured offers.
+When making an offer, output it as JSON with a 'domain' field matching the negotiation domain."""
+
+_MODEL_COSTS_PER_1M: dict[str, tuple[float, float]] = {
+    "claude-opus-4-7": (15.0, 75.0),
+    "gpt-5.2": (10.0, 30.0),
+    "gemini-3-pro": (7.0, 21.0),
+}
+
+
+class ClosedAPIAdapter(AgentProtocol):
+    def __init__(self, model_id: str, system_prompt: str = "", temperature: float = 0.7, timeout: float = 120.0):
+        self.model_id = model_id
+        self.system_prompt = system_prompt or _NEGOTIATION_SYSTEM_PROMPT
+        self.temperature = temperature
+        self.timeout = timeout
+        self.total_prompt_tokens: int = 0
+        self.total_completion_tokens: int = 0
+        self.total_cost: float = 0.0
+
+    def _track_tokens(self, prompt_tokens: int, completion_tokens: int) -> None:
+        self.total_prompt_tokens += prompt_tokens
+        self.total_completion_tokens += completion_tokens
+        costs = _MODEL_COSTS_PER_1M.get(self.model_id, (0.0, 0.0))
+        self.total_cost += (prompt_tokens * costs[0] + completion_tokens * costs[1]) / 1_000_000
+
+    def _build_user_prompt(self, env_state, private_ctx) -> str:
+        scenario = env_state.scenario
+        turns = env_state.turns
+        my_role = env_state.current_agent
+        counterparty = "seller" if my_role == "buyer" else "buyer"
+
+        transcript = ""
+        for t in turns:
+            role_label = "You" if t.agent == my_role else "Counterparty"
+            offer_str = ""
+            if t.offer is not None:
+                offer_str = f" [offer: {t.offer.model_dump()}]"
+            transcript += f"{role_label}: {t.content}{offer_str}\n"
+
+        private = private_ctx
+        my_batna = private.batna
+        reserve = private.reserve_price
+        constraints = private.hard_constraints
+
+        prompt = f"""You are the {my_role} in a {scenario.domain.value} negotiation.
+Scenario: {scenario.scenario_description}
+Your private information:
+- BATNA (best alternative): ${my_batna}
+- Reserve price: ${reserve or 'Not specified'}
+- Hard constraints: {', '.join(constraints) if constraints else 'None'}
+- Private info: {', '.join(private.private_info) if private.private_info else 'None'}
+
+The counterparty is the {counterparty}.
+Max turns remaining: {scenario.max_turns - env_state.current_turn}
+
+Transcript so far:
+{transcript if transcript else 'No messages yet.'}
+
+What is your next move? Output a message explaining your reasoning, then a JSON offer if you are making one.
+Respond in the format:
+REASONING: <thoughts>
+OFFER: <JSON object or NONE>"""
+
+        return prompt
+
+    def _prompt_hash(self, prompt: str) -> str:
+        return hashlib.sha256(prompt.encode()).hexdigest()[:16]
+
+    async def act(self, env_state, private_ctx) -> Action:
+        user_prompt = self._build_user_prompt(env_state, private_ctx)
+        prompt_hash = self._prompt_hash(user_prompt)
+
+        async def _call_api() -> dict[str, Any]:
+            response = await self._make_api_call(self.system_prompt, user_prompt)
+            return response
+
+        response = await retry_with_backoff(
+            _call_api,
+            max_retries=3,
+            base_delay=1.0,
+            timeout=self.timeout,
+        )
+        content = response.get("content", "")
+        prompt_tokens = response.get("prompt_tokens", 0)
+        completion_tokens = response.get("completion_tokens", 0)
+        self._track_tokens(prompt_tokens, completion_tokens)
+
+        action_type, offer_dict = self._extract_action(content, env_state.scenario.domain.value)
+
+        return Action(
+            action_type=action_type,
+            content=content,
+            offer_dict=offer_dict,
+        )
+
+    async def _make_api_call(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
+        model = self.model_id.lower()
+
+        if "claude" in model or "anthropic" in model:
+            return await self._call_anthropic(system_prompt, user_prompt)
+        elif "gpt" in model or "openai" in model or "o1" in model or "o3" in model:
+            return await self._call_openai(system_prompt, user_prompt)
+        elif "gemini" in model or "google" in model:
+            return await self._call_google(system_prompt, user_prompt)
+        else:
+            raise ValueError(f"Unknown model provider for: {self.model_id}")
+
+    async def _call_anthropic(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
+        try:
+            import anthropic
+        except ImportError:
+            raise ImportError("anthropic package required: pip install anthropic")
+
+        client = anthropic.AsyncAnthropic()
+        response = await client.messages.create(
+            model=self.model_id,
+            max_tokens=1024,
+            temperature=self.temperature,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_prompt}],
+        )
+        if hasattr(response, "error") and response.error:
+            if "rate" in str(response.error).lower():
+                raise AgentRateLimitError(str(response.error))
+            raise RuntimeError(str(response.error))
+        content = response.content[0].text if response.content else ""
+        return {
+            "content": content,
+            "prompt_tokens": response.usage.input_tokens if response.usage else 0,
+            "completion_tokens": response.usage.output_tokens if response.usage else 0,
+        }
+
+    async def _call_openai(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
+        try:
+            from openai import AsyncOpenAI
+        except ImportError:
+            raise ImportError("openai package required: pip install openai")
+
+        client = AsyncOpenAI()
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+        response = await client.chat.completions.create(
+            model=self.model_id,
+            messages=messages,
+            temperature=self.temperature,
+            max_tokens=1024,
+        )
+        content = response.choices[0].message.content or ""
+        return {
+            "content": content,
+            "prompt_tokens": response.usage.prompt_tokens if response.usage else 0,
+            "completion_tokens": response.usage.completion_tokens if response.usage else 0,
+        }
+
+    async def _call_google(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
+        try:
+            from google import genai
+        except ImportError:
+            raise ImportError("google-genai package required: pip install google-genai")
+
+        client = genai.Client()
+        full_prompt = f"{system_prompt}\n\n{user_prompt}"
+        response = await client.aio.models.generate_content(
+            model=self.model_id,
+            contents=full_prompt,
+        )
+        content = response.text if response.text else ""
+        return {
+            "content": content,
+            "prompt_tokens": response.usage_metadata.prompt_token_count if response.usage_metadata else 0,
+            "completion_tokens": response.usage_metadata.candidates_token_count if response.usage_metadata else 0,
+        }
+
+    def _extract_action(self, content: str, domain: str) -> tuple[ActionType, dict | None]:
+        import re
+
+        offer_dict = None
+        action_type = ActionType.MESSAGE
+
+        json_match = re.search(r'OFFER:\s*(\{.*?\})\s*$', content, re.DOTALL | re.MULTILINE)
+        if not json_match:
+            json_match = re.search(r'\{.*"domain".*\}', content, re.DOTALL)
+
+        if json_match:
+            try:
+                raw = json_match.group(1) if json_match.lastindex else json_match.group(0)
+                offer_dict = parse_raw_offer(raw, domain).model_dump()
+                action_type = ActionType.OFFER
+            except Exception:
+                pass
+
+        if "walk away" in content.lower() or "walk_away" in content.lower():
+            action_type = ActionType.WALK_AWAY
+            offer_dict = None
+        elif "accept" in content.lower() and action_type != ActionType.OFFER:
+            action_type = ActionType.ACCEPT
+
+        return action_type, offer_dict
