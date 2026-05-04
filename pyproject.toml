@@ -27,7 +27,7 @@ synth = [
     "agent-world-model>=0.1.0",
 ]
 interp = [
-    "nnsight>=0.3",
+    "nnsight>=0.3,<0.5",
     "torch>=2.0",
     "transformers>=4.40",
 ]
