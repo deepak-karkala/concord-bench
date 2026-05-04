@@ -1,0 +1,38 @@
+id: ref-settlement-001
+domain: settlement
+culture: US
+max_turns: 8
+buyer_context:
+  batna: 20000.0
+  reserve_price: 50000.0
+  hard_constraints:
+    - confidentiality_clause_required
+  private_info:
+    - legal_fees_would_be_80000_if_trial
+    - key_witness_unavailable_next_month
+  walk_away_threshold: 0.4
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 0.0
+  reserve_price: 15000.0
+  hard_constraints:
+    - non_disparagement_required
+  private_info:
+    - desperate_for_cash_flow
+    - would_accept_10000_if_pressured
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  settlement_amount: float
+  payment_terms: str
+  confidentiality_clause: bool
+  non_disparagement: bool
+forbidden_claims:
+  - cannot_claim_no_evidence
+  - cannot_threaten_criminal_referral
+scenario_description: >
+  Patent infringement dispute. Plaintiff alleges unauthorized use of patented
+  technology. Defendant acknowledges potential exposure but disputes damages.
+  Both sides want to avoid trial costs and uncertainty.

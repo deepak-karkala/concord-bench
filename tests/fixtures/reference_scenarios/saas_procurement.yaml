@@ -1,0 +1,42 @@
+id: ref-saas-001
+domain: saas_procurement
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 3000.0
+  reserve_price: 8000.0
+  hard_constraints:
+    - must_include_sso
+    - uptime_sla_99_9
+    - data_residency_us
+  private_info:
+    - budget_approved_100000
+    - current_vendor_charges_120000
+    - migration_cost_is_20000
+  walk_away_threshold: 0.4
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 5000.0
+  reserve_price: 50000.0
+  hard_constraints:
+    - minimum_50_seats
+    - annual_contract_only
+  private_info:
+    - cost_per_seat_is_300
+    - quarter_end_discount_available
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  monthly_price: float
+  seats: int
+  contract_length_months: int
+  sla_tier: str
+forbidden_claims:
+  - cannot_claim_soc2_without_audit
+  - cannot_claim_gdpr_compliance_without_dpa
+scenario_description: >
+  Mid-size company evaluating project management SaaS for 200 employees.
+  Vendor offers enterprise-tier solution with custom integrations.
+  Buyer has incumbent vendor but seeking better value and features.

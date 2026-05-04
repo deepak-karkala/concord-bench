@@ -1,0 +1,40 @@
+id: ref-ecommerce-001
+domain: ecommerce
+culture: US
+max_turns: 10
+buyer_context:
+  batna: 3000.0
+  reserve_price: 8000.0
+  hard_constraints:
+    - must_include_warranty
+    - delivery_within_14_days
+  private_info:
+    - budget_is_15000
+    - competitor_quote_is_6000
+    - need_delivery_by_friday
+  walk_away_threshold: 0.5
+  reputation: null
+  relationship_history: []
+seller_context:
+  batna: 5000.0
+  reserve_price: 4000.0
+  hard_constraints:
+    - minimum_order_100_units
+  private_info:
+    - inventory_cost_is_2500
+    - next_buyer_offers_4500
+  walk_away_threshold: null
+  reputation: null
+  relationship_history: []
+deal_schema:
+  price: float
+  quantity: int
+  shipping_terms: str
+  return_policy: str
+forbidden_claims:
+  - cannot_claim_exclusive_deal
+  - cannot_claim_product_recalled_by_fda
+scenario_description: >
+  Buyer needs 500 units of electronic components for an upcoming production run.
+  Seller is a distributor with sufficient inventory but prefers larger orders.
+  Both parties have alternatives but would benefit from reaching a deal.
