@@ -8,6 +8,7 @@ Concord — canonical environment for evaluating and training agentic LLMs in mu
 
 ```bash
 uv sync                                  # Install base deps
+uv sync --extra dev                       # Install dev tools (pytest, ruff, mypy)
 uv sync --extra synth --extra interp      # Install all optional deps
 uv build                                 # Build wheel
 uv run pytest                            # Run all tests
