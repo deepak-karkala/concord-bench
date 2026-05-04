@@ -292,7 +292,7 @@ from pathlib import Path
 import yaml
 from concord.schemas.scenario import Scenario
 
-DATASET_REPO = "deepakkarkala/concord-bench"  # placeholder; real handle TBD
+DATASET_REPO = "deepak-karkala/concord-bench"  # placeholder; real handle TBD
 
 def load_scenarios(
     version: str = "v0.1.0",
@@ -353,8 +353,8 @@ for scenario in scenarios:
 
 1. Generate 5K+ scenarios locally via `concord generate` (this calls AWM via the `[synth]` extra).
 2. Audit a sample manually.
-3. Push the dataset to HF: `huggingface-cli upload deepakkarkala/concord-bench data/scenarios/v0.1.0`.
-4. Tag the dataset version: `huggingface-cli tag deepakkarkala/concord-bench v0.1.0`.
+3. Push the dataset to HF: `huggingface-cli upload deepak-karkala/concord-bench data/scenarios/v0.1.0`.
+4. Tag the dataset version: `huggingface-cli tag deepak-karkala/concord-bench v0.1.0`.
 5. Bump `concord-bench` package version to 0.1.0 with the dataset version pinned.
 6. Publish to PyPI.
 
@@ -389,7 +389,7 @@ If users complain about HF dependency (corporate networks blocking it, offline l
 │                    ▼                                                 │
 │         ┌──────────────────────────────────┐                        │
 │         │ Hugging Face Dataset             │                        │
-│         │ deepakkarkala/concord-bench      │                        │
+│         │ deepak-karkala/concord-bench      │                        │
 │         │ v0.1.0: 5K+ scenarios            │                        │
 │         │ (4 dom × 5 cult × variants)      │                        │
 │         └──────────┬───────────────────────┘                        │
