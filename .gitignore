@@ -10,3 +10,10 @@ build/
 outputs/
 *.db
 .DS_Store
+
+concord_ceo_plan.md
+concord_eng_plan.md
+concord_spec.md
+concord_tasks.md
+
+test_plan.md
