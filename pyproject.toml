@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "concord-bench"
+version = "0.1.0.dev0"
+description = "Canonical environment for evaluating and training agentic LLMs in multi-turn negotiations"
+readme = "README.md"
+authors = [
+    { name = "Deepak Karkala", email = "dkarkala01@gmail.com" },
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.0",
+    "pettingzoo>=1.24",
+    "huggingface-hub>=0.20",
+    "anthropic>=0.30",
+    "openai>=1.0",
+    "google-genai>=0.5",
+    "pyyaml>=6.0",
+    "click>=8.0",
+]
+
+[project.optional-dependencies]
+synth = [
+    "agent-world-model>=0.1.0",
+]
+interp = [
+    "nnsight>=0.3",
+    "torch>=2.0",
+    "transformers>=4.40",
+]
+human-league = [
+    "fastapi>=0.110",
+    "sqlalchemy>=2.0",
+    "stripe>=8.0",
+]
+all = ["concord-bench[synth,interp]"]
+
+[project.scripts]
+concord = "concord.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/concord"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "requires_api: marks tests that need live API access (deselect with '-m \"not requires_api\"')",
+    "requires_synth: marks tests that need the [synth] extra",
+    "requires_interp: marks tests that need the [interp] extra",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
