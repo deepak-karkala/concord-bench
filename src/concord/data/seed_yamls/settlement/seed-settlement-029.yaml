@@ -6,11 +6,12 @@ buyer_context:
   batna: 166000.0
   reserve_price: 249000.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - no_admission_of_liability
+  - confidentiality_clause_required
   private_info:
-  - budget_is_332000
-  - needs_negligence
+  - plaintiff_damages_estimate_is_100000_to_150000
+  - has_expert_witness_corroborating_infringement
+  - prefers_settlement_to_avoid_3_year_litigation
   walk_away_threshold: 0.8
   reputation: null
   relationship_history: []
@@ -18,11 +19,13 @@ seller_context:
   batna: 68000.0
   reserve_price: 40800.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - no_admission_of_liability
+  - mutual_release_of_all_claims
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_27200
-  - inventory_of_negligence_is_strong
+  - insurance_covers_up_to_80000
+  - internal_legal_estimate_of_trial_loss_is_120000
+  - executive_deposition_would_be_damaging
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -32,5 +35,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Injured Party negotiation for negligence regarding personal_injury.
-  Context: whistleblower.'
+scenario_description: A class action lawsuit where consumers allege a mobile app collected location data without consent.
+  The class includes 2.3 million users. The defendant faces potential statutory damages of $1K per violation per user. Both
+  sides want to settle before the class certification hearing in 30 days.

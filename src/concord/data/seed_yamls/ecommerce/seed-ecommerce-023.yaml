@@ -4,18 +4,18 @@ culture: US
 max_turns: 10
 buyer_context:
   batna: 49000.0
-  reserve_price: 73500.0
+  reserve_price: 41650.0
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met
   private_info:
   - budget_is_98000
   - needs_hydraulic_systems
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 63000.0
+  batna: 78750.0
   reserve_price: 37800.0
   hard_constraints:
   - minimum_order_20_units
@@ -23,7 +23,7 @@ seller_context:
   private_info:
   - cost_basis_is_25200
   - inventory_of_hydraulic_systems_is_strong
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 deal_schema:
@@ -32,5 +32,7 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Distributor negotiation for hydraulic systems (20 units). Context:
-  new product launch.'
+scenario_description: A construction firm requires hydraulic systems for a development
+  project with penalty clauses for delays. The primary supplier has capacity constraints
+  due to another large contract. A secondary supplier can deliver faster but at a
+  15% premium. Time pressure vs. budget.

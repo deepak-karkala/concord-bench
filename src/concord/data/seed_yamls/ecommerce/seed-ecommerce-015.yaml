@@ -3,7 +3,7 @@ domain: ecommerce
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 9000.0
+  batna: 13500.0
   reserve_price: 13500.0
   hard_constraints:
   - quality_meets_standards
@@ -14,13 +14,14 @@ buyer_context:
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 13600.0
-  reserve_price: 8160.0
+  batna: 12240.0
+  reserve_price: 12920.0
   hard_constraints:
   - minimum_order_2000_units
   private_info:
   - cost_basis_is_5440
   - inventory_of_retail_merchandise_is_strong
+  - end_of_quarter_must_close_deal
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,5 +31,7 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Procurement Agent negotiation for retail merchandise (2000
-  units). Context: exclusive partnership.'
+scenario_description: A pharmaceutical manufacturer needs retail merchandise for a
+  production line with FDA validation constraints. Changing suppliers requires a 6-month
+  requalification process. The current supplier knows this and is leveraging it on
+  pricing.

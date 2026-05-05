@@ -6,12 +6,12 @@ buyer_context:
   batna: 130000.0
   reserve_price: 195000.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
-  - warranty_coverage_required
+  - mutual_release_of_all_claims
+  - no_public_statement_about_settlement
   private_info:
-  - budget_is_260000
-  - needs_slapp_lawsuit
+  - plaintiff_damages_estimate_is_50000_to_80000
+  - discovery_uncovered_internal_emails_showing_awareness
+  - statute_of_limitations_expires_in_90_days
   walk_away_threshold: 0.3
   reputation: null
   relationship_history:
@@ -20,11 +20,12 @@ seller_context:
   batna: 54000.0
   reserve_price: 32400.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - no_public_statement_about_settlement
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_21600
-  - inventory_of_slapp_lawsuit_is_strong
+  - insurance_covers_up_to_150000
+  - reputational_damage_from_trial_estimated_at_50000
+  - similar_case_in_same_jurisdiction_settled_for_45000
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -35,5 +36,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Claimant negotiation for slapp lawsuit regarding defamation.
-  Context: regulatory negotiation.'
+scenario_description: A breach of contract claim between a manufacturer and a component supplier. The manufacturer alleges
+  the supplier delivered sub-spec parts causing a recall costing $3.2M. The supplier claims the manufacturer changed specifications
+  mid-contract without written approval. Both parties want to avoid trial publicity and industry reputation damage.

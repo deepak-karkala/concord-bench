@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - delivery_timeline_must_be_met
   private_info:
-  - budget_is_352
-  - needs_lab_info_system
+  - current_tool_contract_expires_in_90_days
+  - competitor_quote_from_microsoft_is_45_per_seat
+  - requires_eu_data_residency
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
@@ -21,8 +22,9 @@ seller_context:
   - minimum_order_30_units
   - payment_terms_net_30
   private_info:
-  - cost_basis_is_88
-  - inventory_of_lab_info_system_is_strong
+  - end_of_quarter_in_2_weeks
+  - renewal_rate_for_this_account_tier_is_85_percent
+  - pricing_floor_is_28_due_to_reseller_agreement
   walk_away_threshold: 0.7
   reputation: null
   relationship_history: []

@@ -10,8 +10,9 @@ buyer_context:
   - delivery_timeline_must_be_met
   - warranty_coverage_required
   private_info:
-  - budget_is_212
-  - needs_bi_suite
+  - internal_champion_left_company
+  - requires_soc2_type2_compliance
+  - board_mandated_20_percent_cost_reduction
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -23,8 +24,9 @@ seller_context:
   - minimum_order_100_units
   - payment_terms_net_30
   private_info:
-  - cost_basis_is_63
-  - inventory_of_bi_suite_is_strong
+  - renewal_rate_for_this_account_tier_is_92_percent
+  - competing_against_notion_and_clickup
+  - pricing_floor_is_22_with_annual_commitment
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -35,5 +37,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Procurement Agent negotiation for bi suite (200 units). Context:
-  remote work.'
+scenario_description: A financial services firm needs bi suite with specific regulatory compliance features. The vendor has
+  80% of the required features in production and 20% on the roadmap. The buyer's compliance team wants all features now; the
+  vendor cannot commit to the roadmap timeline.

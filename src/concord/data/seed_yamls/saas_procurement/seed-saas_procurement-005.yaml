@@ -3,24 +3,26 @@ domain: saas_procurement
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 21.6
-  reserve_price: 32.4
+  batna: 8.64
+  reserve_price: 43.2
   hard_constraints:
   - quality_meets_standards
   private_info:
-  - budget_is_43
-  - needs_collaboration_tools
+  - competitor_quote_from_oracle_is_50_per_seat
+  - has_25_percent_unused_seats
+  - current_contract_has_6_months_remaining
   walk_away_threshold: null
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 30.0
+  batna: 15.0
   reserve_price: 18.0
   hard_constraints:
   - minimum_order_1000_units
   private_info:
-  - cost_basis_is_12
-  - inventory_of_collaboration_tools_is_strong
+  - end_of_quarter_in_1_week
+  - has_60_percent_discount_authority_for_enterprise
+  - enterprise_deal_requires_data_residency_review
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,6 +32,9 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims:
-- cannot_claim_soc2_without_audit
-scenario_description: 'Procurement Agent negotiation for collaboration tools (1000
-  units). Context: first adoption.'
+- cannot_claim_competitor_is_being_acquired
+- cannot_claim_gdpr_compliance_without_dpa
+scenario_description: A financial services firm needs collaboration tools with specific
+  regulatory compliance features. The vendor has 80% of the required features in production
+  and 20% on the roadmap. The buyer's compliance team wants all features now; the
+  vendor cannot commit to the roadmap timeline.

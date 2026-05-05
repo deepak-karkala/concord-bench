@@ -6,10 +6,12 @@ buyer_context:
   batna: 250000.0
   reserve_price: 375000.0
   hard_constraints:
-  - quality_meets_standards
+  - mutual_release_of_all_claims
+  - no_admission_of_liability
   private_info:
-  - budget_is_500000
-  - needs_malpractice
+  - plaintiff_damages_estimate_is_150000_to_300000
+  - expert_report_is_favorable_to_plaintiff
+  - class_certification_hearing_in_60_days
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -17,10 +19,12 @@ seller_context:
   batna: 84000.0
   reserve_price: 50400.0
   hard_constraints:
-  - confidentiality_must_be_maintained
+  - mutual_release_of_all_claims
+  - no_public_statement_about_settlement
   private_info:
-  - cost_basis_is_33600
-  - inventory_of_malpractice_is_strong
+  - insurance_covers_up_to_120000
+  - reputational_damage_estimated_at_80000
+  - internal_legal_budget_exhausted_at_50000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,5 +34,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Class Rep negotiation for malpractice regarding professional_svc.
-  Context: avoid trial.'
+scenario_description: A product liability case where a medical device manufacturer faces claims from 47 patients alleging
+  design defects caused injury. The manufacturer's insurance covers up to $10M. The plaintiffs' expert testimony is strong
+  but the manufacturer claims the injuries were caused by off-label use. Trial is 8 months away.

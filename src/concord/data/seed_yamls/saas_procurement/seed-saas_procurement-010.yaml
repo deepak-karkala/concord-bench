@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - warranty_coverage_required
   private_info:
-  - budget_is_78
-  - needs_document_mgmt_system
+  - current_tool_contract_expires_in_45_days
+  - annual_churn_risk_if_tool_not_improved
+  - competitor_quote_from_salesforce_is_55_per_seat
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -21,8 +22,9 @@ seller_context:
   hard_constraints:
   - minimum_order_175_units
   private_info:
-  - cost_basis_is_19
-  - inventory_of_document_mgmt_system_is_strong
+  - enterprise_deal_requires_legal_review_taking_3_weeks
+  - end_of_quarter_in_4_weeks
+  - has_40_percent_discount_authority_for_multiyear
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -33,5 +35,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Procurement Agent negotiation for document mgmt system (350
-  units). Context: remote work.'
+scenario_description: A financial services firm needs document mgmt system with specific regulatory compliance features. The
+  vendor has 80% of the required features in production and 20% on the roadmap. The buyer's compliance team wants all features
+  now; the vendor cannot commit to the roadmap timeline.

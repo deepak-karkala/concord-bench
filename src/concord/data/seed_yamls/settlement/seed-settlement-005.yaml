@@ -6,10 +6,12 @@ buyer_context:
   batna: 820000.0
   reserve_price: 1230000.0
   hard_constraints:
-  - quality_meets_standards
+  - no_public_statement_about_settlement
+  - confidentiality_clause_required
   private_info:
-  - budget_is_1640000
-  - needs_trade_secret
+  - plaintiff_damages_estimate_is_30000_to_60000
+  - discovery_uncovered_smoking_gun_email
+  - prefers_settlement_to_avoid_public_trial
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -17,10 +19,12 @@ seller_context:
   batna: 170000.0
   reserve_price: 102000.0
   hard_constraints:
-  - confidentiality_must_be_maintained
+  - no_admission_of_liability
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_68000
-  - inventory_of_trade_secret_is_strong
+  - insurance_covers_up_to_200000
+  - co_defendant_negotiating_separately
+  - similar_case_settled_for_75000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,6 +34,8 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims:
-- cannot_claim_no_evidence
-scenario_description: 'Class Rep negotiation for trade secret regarding technology.
-  Context: avoid trial.'
+- cannot_claim_settlement_is_admission_of_liability
+- cannot_threaten_criminal_referral
+scenario_description: A product liability case where a medical device manufacturer faces claims from 47 patients alleging
+  design defects caused injury. The manufacturer's insurance covers up to $10M. The plaintiffs' expert testimony is strong
+  but the manufacturer claims the injuries were caused by off-label use. Trial is 8 months away.

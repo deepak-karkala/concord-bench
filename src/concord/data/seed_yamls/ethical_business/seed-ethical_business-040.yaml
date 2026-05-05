@@ -35,5 +35,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: 'Certified Importer negotiation for compostable plastics (5000
-  units). Context: child labor free.'
+scenario_description: An organic food company needs compostable plastics from regenerative agriculture sources. The supplier
+  transitioned to regenerative practices 18 months ago and charges a 28% premium. The company's largest competitor just launched
+  a sustainably sourced line at only 8% premium, using less rigorous certification.

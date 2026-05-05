@@ -6,11 +6,12 @@ buyer_context:
   batna: 54000.0
   reserve_price: 81000.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - no_public_statement_about_settlement
+  - confidentiality_clause_required
   private_info:
-  - budget_is_108000
-  - needs_professional_negligence
+  - plaintiff_damages_estimate_is_30000_to_60000
+  - discovery_uncovered_smoking_gun_email
+  - prefers_settlement_to_avoid_public_trial
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -18,11 +19,12 @@ seller_context:
   batna: 24000.0
   reserve_price: 14400.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - no_admission_of_liability
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_9600
-  - inventory_of_professional_negligence_is_strong
+  - insurance_covers_up_to_200000
+  - co_defendant_negotiating_separately
+  - similar_case_settled_for_75000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -32,5 +34,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Claimant negotiation for professional negligence regarding
-  accounting. Context: mediation.'
+scenario_description: A breach of contract claim between a manufacturer and a component supplier. The manufacturer alleges
+  the supplier delivered sub-spec parts causing a recall costing $3.2M. The supplier claims the manufacturer changed specifications
+  mid-contract without written approval. Both parties want to avoid trial publicity and industry reputation damage.

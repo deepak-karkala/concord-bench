@@ -6,11 +6,12 @@ buyer_context:
   batna: 70000.0
   reserve_price: 105000.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - mutual_release_of_all_claims
+  - no_public_statement_about_settlement
   private_info:
-  - budget_is_140000
-  - needs_co_ownership
+  - plaintiff_damages_estimate_is_50000_to_80000
+  - discovery_uncovered_internal_emails_showing_awareness
+  - statute_of_limitations_expires_in_90_days
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -18,11 +19,12 @@ seller_context:
   batna: 34000.0
   reserve_price: 20400.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - no_public_statement_about_settlement
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_13600
-  - inventory_of_co_ownership_is_strong
+  - insurance_covers_up_to_150000
+  - reputational_damage_from_trial_estimated_at_50000
+  - similar_case_in_same_jurisdiction_settled_for_45000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -32,5 +34,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Injured Party negotiation for co ownership regarding property.
-  Context: whistleblower.'
+scenario_description: A class action lawsuit where consumers allege a mobile app collected location data without consent.
+  The class includes 2.3 million users. The defendant faces potential statutory damages of $1K per violation per user. Both
+  sides want to settle before the class certification hearing in 30 days.

@@ -3,8 +3,8 @@ domain: ecommerce
 culture: US
 max_turns: 8
 buyer_context:
-  batna: 7200.0
-  reserve_price: 10800.0
+  batna: 6336.0
+  reserve_price: 6624.0
   hard_constraints:
   - quality_meets_standards
   - warranty_coverage_required
@@ -16,13 +16,14 @@ buyer_context:
   relationship_history:
   - prior_deal_supplier_diversification
 seller_context:
-  batna: 10800.0
-  reserve_price: 6480.0
+  batna: 16200.0
+  reserve_price: 11340.0
   hard_constraints:
   - minimum_order_1500_units
   private_info:
   - cost_basis_is_4320
   - inventory_of_food_ingredients_is_strong
+  - end_of_quarter_must_close_deal
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -33,5 +34,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Procurement Agent negotiation for food ingredients (3000 units).
-  Context: supplier diversification.'
+scenario_description: A pharmaceutical manufacturer needs food ingredients for a production
+  line with FDA validation constraints. Changing suppliers requires a 6-month requalification
+  process. The current supplier knows this and is leveraging it on pricing.

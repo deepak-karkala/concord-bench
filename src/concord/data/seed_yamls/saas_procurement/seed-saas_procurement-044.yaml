@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - delivery_timeline_must_be_met
   private_info:
-  - budget_is_60
-  - needs_event_management
+  - has_30_percent_unused_seats_in_current_contract
+  - board_mandated_15_percent_software_cost_reduction
+  - sso_integration_required_by_it_policy
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
@@ -21,8 +22,9 @@ seller_context:
   - minimum_order_200_units
   - payment_terms_net_30
   private_info:
-  - cost_basis_is_15
-  - inventory_of_event_management_is_strong
+  - product_roadmap_covers_buyer_feature_gap_in_q3
+  - has_50_percent_discount_authority_for_annual_deal
+  - competing_against_monday_dot_com_and_asana
   walk_away_threshold: 0.7
   reputation: null
   relationship_history: []

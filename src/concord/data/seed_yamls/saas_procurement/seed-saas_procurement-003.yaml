@@ -3,24 +3,26 @@ domain: saas_procurement
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 36.0
-  reserve_price: 54.0
+  batna: 14.4
+  reserve_price: 72.0
   hard_constraints:
   - quality_meets_standards
   private_info:
-  - budget_is_72
-  - needs_hr_management_suite
+  - current_tool_contract_expires_in_45_days
+  - annual_churn_risk_if_tool_not_improved
+  - competitor_quote_from_salesforce_is_55_per_seat
   walk_away_threshold: null
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 50.0
+  batna: 25.0
   reserve_price: 30.0
   hard_constraints:
   - minimum_order_300_units
   private_info:
-  - cost_basis_is_20
-  - inventory_of_hr_management_suite_is_strong
+  - enterprise_deal_requires_legal_review_taking_3_weeks
+  - end_of_quarter_in_4_weeks
+  - has_40_percent_discount_authority_for_multiyear
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -31,5 +33,8 @@ deal_schema:
   sla_tier: str
 forbidden_claims:
 - cannot_claim_soc2_without_audit
-scenario_description: 'Distributor negotiation for hr management suite (300 units).
-  Context: dept expansion.'
+- cannot_claim_competitor_will_raise_prices_next_quarter
+scenario_description: An enterprise undergoing digital transformation is consolidating
+  from 8 tools to a single hr management suite platform. The vendor is competing against
+  two established players. The buyer's CIO needs board approval for deals over $100K,
+  creating a 3-week decision cycle.

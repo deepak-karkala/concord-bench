@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - delivery_timeline_must_be_met
   private_info:
-  - budget_is_24
-  - needs_payroll_system
+  - competitor_quote_from_oracle_is_50_per_seat
+  - has_25_percent_unused_seats
+  - current_contract_has_6_months_remaining
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
@@ -21,8 +22,9 @@ seller_context:
   - minimum_order_400_units
   - payment_terms_net_30
   private_info:
-  - cost_basis_is_7
-  - inventory_of_payroll_system_is_strong
+  - end_of_quarter_in_1_week
+  - has_60_percent_discount_authority_for_enterprise
+  - enterprise_deal_requires_data_residency_review
   walk_away_threshold: null
   reputation: null
   relationship_history: []

@@ -6,12 +6,12 @@ buyer_context:
   batna: 42000.0
   reserve_price: 63000.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
-  - warranty_coverage_required
+  - no_public_statement_about_settlement
+  - confidentiality_clause_required
   private_info:
-  - budget_is_84000
-  - needs_easement_dispute
+  - plaintiff_damages_estimate_is_30000_to_60000
+  - discovery_uncovered_smoking_gun_email
+  - prefers_settlement_to_avoid_public_trial
   walk_away_threshold: 0.7
   reputation: null
   relationship_history:
@@ -20,11 +20,12 @@ seller_context:
   batna: 17000.0
   reserve_price: 10200.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - no_admission_of_liability
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_6800
-  - inventory_of_easement_dispute_is_strong
+  - insurance_covers_up_to_200000
+  - co_defendant_negotiating_separately
+  - similar_case_settled_for_75000
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -35,5 +36,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Class Rep negotiation for easement dispute regarding property_rights.
-  Context: bankruptcy negotiation.'
+scenario_description: A product liability case where a medical device manufacturer faces claims from 47 patients alleging
+  design defects caused injury. The manufacturer's insurance covers up to $10M. The plaintiffs' expert testimony is strong
+  but the manufacturer claims the injuries were caused by off-label use. Trial is 8 months away.

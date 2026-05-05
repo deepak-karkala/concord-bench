@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - warranty_coverage_required
   private_info:
-  - budget_is_22
-  - needs_communication_platform
+  - competitor_quote_from_oracle_is_50_per_seat
+  - has_25_percent_unused_seats
+  - current_contract_has_6_months_remaining
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -21,8 +22,9 @@ seller_context:
   hard_constraints:
   - minimum_order_1000_units
   private_info:
-  - cost_basis_is_6
-  - inventory_of_communication_platform_is_strong
+  - end_of_quarter_in_1_week
+  - has_60_percent_discount_authority_for_enterprise
+  - enterprise_deal_requires_data_residency_review
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -33,5 +35,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Wholesaler negotiation for communication platform (2000 units).
-  Context: replacing incumbent.'
+scenario_description: A government agency is procuring communication platform with strict data sovereignty and FedRAMP requirements.
+  Only three vendors qualify. The procurement cycle is 18 months and the current contract expires in 6 months, creating urgency
+  without flexibility.

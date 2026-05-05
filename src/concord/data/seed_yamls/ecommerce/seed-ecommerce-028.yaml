@@ -3,8 +3,8 @@ domain: ecommerce
 culture: US
 max_turns: 8
 buyer_context:
-  batna: 7000.0
-  reserve_price: 10500.0
+  batna: 9100.0
+  reserve_price: 7735.0
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met
@@ -12,12 +12,14 @@ buyer_context:
   private_info:
   - budget_is_14000
   - needs_led_lighting
+  - competitor_a_quoted_lower
+  - competitor_b_quoted_lower
   walk_away_threshold: 0.7
   reputation: null
   relationship_history:
   - prior_deal_merger_consolidation
 seller_context:
-  batna: 10200.0
+  batna: 12750.0
   reserve_price: 6120.0
   hard_constraints:
   - minimum_order_750_units

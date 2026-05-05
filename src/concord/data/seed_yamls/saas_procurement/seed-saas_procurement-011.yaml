@@ -8,8 +8,9 @@ buyer_context:
   hard_constraints:
   - quality_meets_standards
   private_info:
-  - budget_is_60
-  - needs_compliance_mgmt
+  - internal_champion_left_company
+  - requires_soc2_type2_compliance
+  - board_mandated_20_percent_cost_reduction
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -19,8 +20,9 @@ seller_context:
   hard_constraints:
   - minimum_order_200_units
   private_info:
-  - cost_basis_is_16
-  - inventory_of_compliance_mgmt_is_strong
+  - renewal_rate_for_this_account_tier_is_92_percent
+  - competing_against_notion_and_clickup
+  - pricing_floor_is_22_with_annual_commitment
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -31,5 +33,6 @@ deal_schema:
   sla_tier: str
 forbidden_claims:
 - cannot_claim_soc2_without_audit
-scenario_description: 'Manufacturer negotiation for compliance mgmt (200 units). Context:
-  security upgrade.'
+scenario_description: A mid-market company is evaluating compliance mgmt to replace their legacy system. The current vendor's
+  contract expires in 60 days and they are offering a 30% discount to retain the account. The buyer's IT team prefers a modern
+  solution but the CFO favors the cheaper renewal.

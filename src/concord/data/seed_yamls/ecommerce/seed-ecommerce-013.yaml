@@ -3,7 +3,7 @@ domain: ecommerce
 culture: US
 max_turns: 8
 buyer_context:
-  batna: 9000.0
+  batna: 13500.0
   reserve_price: 13500.0
   hard_constraints:
   - quality_meets_standards
@@ -16,13 +16,14 @@ buyer_context:
   relationship_history:
   - prior_deal_merger_consolidation
 seller_context:
-  batna: 13200.0
-  reserve_price: 7920.0
+  batna: 11880.0
+  reserve_price: 12540.0
   hard_constraints:
   - minimum_order_300_units
   private_info:
   - cost_basis_is_5280
   - inventory_of_safety_equipment_is_strong
+  - end_of_quarter_must_close_deal
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -33,5 +34,7 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Distributor negotiation for safety equipment (600 units). Context:
-  merger consolidation.'
+scenario_description: A construction firm requires safety equipment for a development
+  project with penalty clauses for delays. The primary supplier has capacity constraints
+  due to another large contract. A secondary supplier can deliver faster but at a
+  15% premium. Time pressure vs. budget.

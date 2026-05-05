@@ -8,8 +8,9 @@ buyer_context:
   hard_constraints:
   - quality_meets_standards
   private_info:
-  - budget_is_64000
-  - needs_pharma_supplies
+  - csr_team_requires_full_supply_chain_disclosure
+  - competitor_has_not_required_this_from_their_suppliers
+  - board_has_committed_to_full_transparency
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -19,8 +20,8 @@ seller_context:
   hard_constraints:
   - minimum_order_1000_units
   private_info:
-  - cost_basis_is_8000
-  - inventory_of_pharma_supplies_is_strong
+  - tier_2_supplier_identities_are_competitive_ip
+  - disclosure_could_jeopardize_20_percent_of_supplier_relationships
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,5 +31,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for pharma supplies (1000 units). Context:
-  carbon neutrality.'
+scenario_description: A coffee roaster committed to direct trade wants to secure pharma supplies from a cooperative. The cooperative's
+  pricing reflects living-wage commitments. A commodity broker offers the same grade at 35% less. The roaster's largest client
+  has requested proof of ethical sourcing for their ESG report.

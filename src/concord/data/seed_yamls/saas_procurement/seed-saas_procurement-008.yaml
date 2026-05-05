@@ -8,8 +8,9 @@ buyer_context:
   hard_constraints:
   - quality_meets_standards
   private_info:
-  - budget_is_180
-  - needs_marketing_automation
+  - current_tool_contract_expires_in_90_days
+  - competitor_quote_from_microsoft_is_45_per_seat
+  - requires_eu_data_residency
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -19,8 +20,9 @@ seller_context:
   hard_constraints:
   - minimum_order_100_units
   private_info:
-  - cost_basis_is_51
-  - inventory_of_marketing_automation_is_strong
+  - end_of_quarter_in_2_weeks
+  - renewal_rate_for_this_account_tier_is_85_percent
+  - pricing_floor_is_28_due_to_reseller_agreement
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -29,6 +31,9 @@ deal_schema:
   seats: int
   contract_length_months: int
   sla_tier: str
-forbidden_claims: []
-scenario_description: 'Distributor negotiation for marketing automation (100 units).
-  Context: cost optimization.'
+forbidden_claims:
+- cannot_claim_competitor_is_being_acquired
+- cannot_claim_gdpr_compliance_without_dpa
+scenario_description: An enterprise undergoing digital transformation is consolidating from 8 tools to a single marketing
+  automation platform. The vendor is competing against two established players. The buyer's CIO needs board approval for deals
+  over $100K, creating a 3-week decision cycle.

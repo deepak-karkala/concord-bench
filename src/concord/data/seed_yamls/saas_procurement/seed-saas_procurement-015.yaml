@@ -8,8 +8,9 @@ buyer_context:
   hard_constraints:
   - quality_meets_standards
   private_info:
-  - budget_is_520
-  - needs_data_warehousing
+  - current_tool_contract_expires_in_90_days
+  - competitor_quote_from_microsoft_is_45_per_seat
+  - requires_eu_data_residency
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -19,8 +20,9 @@ seller_context:
   hard_constraints:
   - minimum_order_50_units
   private_info:
-  - cost_basis_is_140
-  - inventory_of_data_warehousing_is_strong
+  - end_of_quarter_in_2_weeks
+  - renewal_rate_for_this_account_tier_is_85_percent
+  - pricing_floor_is_28_due_to_reseller_agreement
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,5 +32,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Procurement Agent negotiation for data warehousing (50 units).
-  Context: custom integration.'
+scenario_description: A financial services firm needs data warehousing with specific regulatory compliance features. The vendor
+  has 80% of the required features in production and 20% on the roadmap. The buyer's compliance team wants all features now;
+  the vendor cannot commit to the roadmap timeline.

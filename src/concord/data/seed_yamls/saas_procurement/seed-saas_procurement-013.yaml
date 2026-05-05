@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - warranty_coverage_required
   private_info:
-  - budget_is_36
-  - needs_e_learning_platform
+  - sso_integration_required_by_it_policy
+  - annual_churn_risk_if_tool_not_improved
+  - board_mandated_12_percent_reduction
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -21,8 +22,9 @@ seller_context:
   hard_constraints:
   - minimum_order_400_units
   private_info:
-  - cost_basis_is_10
-  - inventory_of_e_learning_platform_is_strong
+  - product_roadmap_has_ai_features_in_beta
+  - renewal_rate_for_this_tier_is_78_percent
+  - pricing_floor_is_35_due_to_reseller
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -33,5 +35,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Distributor negotiation for e learning platform (800 units).
-  Context: pilot expansion.'
+scenario_description: An enterprise undergoing digital transformation is consolidating from 8 tools to a single e learning
+  platform platform. The vendor is competing against two established players. The buyer's CIO needs board approval for deals
+  over $100K, creating a 3-week decision cycle.

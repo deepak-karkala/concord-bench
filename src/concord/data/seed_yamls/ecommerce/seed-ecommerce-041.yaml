@@ -3,8 +3,8 @@ domain: ecommerce
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 9000.0
-  reserve_price: 13500.0
+  batna: 5400.0
+  reserve_price: 9450.0
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met
@@ -15,7 +15,7 @@ buyer_context:
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 12000.0
+  batna: 16800.0
   reserve_price: 7200.0
   hard_constraints:
   - minimum_order_300_units

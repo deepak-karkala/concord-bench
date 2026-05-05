@@ -6,10 +6,12 @@ buyer_context:
   batna: 51000.0
   reserve_price: 76500.0
   hard_constraints:
-  - quality_meets_standards
+  - structured_payment_required_for_tax_treatment
+  - confidentiality_clause_required
   private_info:
-  - budget_is_102000
-  - needs_defamation
+  - plaintiff_damages_estimate_is_40000_to_70000
+  - damages_calculation_has_strong_precedent
+  - plaintiff_witnesses_are_credible
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -17,10 +19,12 @@ seller_context:
   batna: 17000.0
   reserve_price: 10200.0
   hard_constraints:
-  - confidentiality_must_be_maintained
+  - confidentiality_clause_required
+  - structured_payment_required_for_tax_treatment
   private_info:
-  - cost_basis_is_6800
-  - inventory_of_defamation_is_strong
+  - admission_risk_high_if_case_goes_to_trial
+  - executive_deposition_scheduled_in_2_weeks
+  - insurance_covers_up_to_90000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,5 +34,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Injured Party negotiation for defamation regarding business_reputation.
-  Context: whistleblower.'
+scenario_description: A class action lawsuit where consumers allege a mobile app collected location data without consent.
+  The class includes 2.3 million users. The defendant faces potential statutory damages of $1K per violation per user. Both
+  sides want to settle before the class certification hearing in 30 days.

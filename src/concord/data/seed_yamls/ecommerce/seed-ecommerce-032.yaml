@@ -3,7 +3,7 @@ domain: ecommerce
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 9600.0
+  batna: 19968.0
   reserve_price: 14400.0
   hard_constraints:
   - quality_meets_standards
@@ -11,11 +11,13 @@ buyer_context:
   private_info:
   - budget_is_19200
   - needs_industrial_lubricants
+  - competitor_a_quoted_lower
+  - competitor_b_quoted_lower
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 12000.0
+  batna: 8400.0
   reserve_price: 7200.0
   hard_constraints:
   - minimum_order_250_units

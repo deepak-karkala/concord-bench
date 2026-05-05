@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - warranty_coverage_required
   private_info:
-  - budget_is_140000
-  - needs_mining_equipment
+  - air_freight_hits_deadline_but_triples_carbon_footprint
+  - board_sustainability_presentation_in_2_weeks
+  - sea_freight_saves_60_percent_carbon_but_adds_4_weeks
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -21,8 +22,8 @@ seller_context:
   hard_constraints:
   - minimum_order_50_units
   private_info:
-  - cost_basis_is_17600
-  - inventory_of_mining_equipment_is_strong
+  - sea_freight_capacity_is_80_percent_booked
+  - expedited_manufacturing_increases_energy_use_40_percent
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -32,6 +33,9 @@ deal_schema:
   environmental_commitments: list
   labor_standards: list
   transparency_reports: bool
-forbidden_claims: []
-scenario_description: 'Retailer negotiation for mining equipment (100 units). Context:
-  circular economy.'
+forbidden_claims:
+- cannot_claim_competitor_is_not_actually_certified
+- cannot_claim_partial_cert_is_equivalent_to_full_cert
+scenario_description: A coffee roaster committed to direct trade wants to secure mining equipment from a cooperative. The
+  cooperative's pricing reflects living-wage commitments. A commodity broker offers the same grade at 35% less. The roaster's
+  largest client has requested proof of ethical sourcing for their ESG report.

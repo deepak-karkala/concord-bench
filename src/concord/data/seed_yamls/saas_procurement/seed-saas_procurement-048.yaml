@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - delivery_timeline_must_be_met
   private_info:
-  - budget_is_38
-  - needs_invoicing_platform
+  - sso_integration_required_by_it_policy
+  - annual_churn_risk_if_tool_not_improved
+  - board_mandated_12_percent_reduction
   walk_away_threshold: 0.8
   reputation: null
   relationship_history: []
@@ -21,8 +22,9 @@ seller_context:
   - minimum_order_150_units
   - payment_terms_net_30
   private_info:
-  - cost_basis_is_10
-  - inventory_of_invoicing_platform_is_strong
+  - product_roadmap_has_ai_features_in_beta
+  - renewal_rate_for_this_tier_is_78_percent
+  - pricing_floor_is_35_due_to_reseller
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []

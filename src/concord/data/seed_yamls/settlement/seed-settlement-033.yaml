@@ -6,11 +6,12 @@ buyer_context:
   batna: 39000.0
   reserve_price: 58500.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - no_public_statement_about_settlement
+  - confidentiality_clause_required
   private_info:
-  - budget_is_78000
-  - needs_adverse_possession
+  - plaintiff_damages_estimate_is_30000_to_60000
+  - discovery_uncovered_smoking_gun_email
+  - prefers_settlement_to_avoid_public_trial
   walk_away_threshold: 0.6
   reputation: null
   relationship_history: []
@@ -18,11 +19,12 @@ seller_context:
   batna: 15000.0
   reserve_price: 9000.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - no_admission_of_liability
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_6000
-  - inventory_of_adverse_possession_is_strong
+  - insurance_covers_up_to_200000
+  - co_defendant_negotiating_separately
+  - similar_case_settled_for_75000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -32,5 +34,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Regulator negotiation for adverse possession regarding real_property.
-  Context: arbitration.'
+scenario_description: An employment dispute where a senior executive was terminated and alleges wrongful termination with
+  age discrimination. The executive seeks $850K in damages including stock options. The company claims performance-based termination
+  with documented reviews. Settlement would avoid reputational harm to both parties.

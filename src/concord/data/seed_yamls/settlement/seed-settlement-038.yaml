@@ -6,11 +6,12 @@ buyer_context:
   batna: 41000.0
   reserve_price: 61500.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - confidentiality_clause_required
+  - structured_payment_required_for_tax_treatment
   private_info:
-  - budget_is_82000
-  - needs_construction_lien
+  - plaintiff_damages_estimate_is_200000_to_500000
+  - lead_plaintiff_prefers_settlement_for_personal_reasons
+  - class_certification_hearing_in_30_days
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
@@ -18,11 +19,12 @@ seller_context:
   batna: 15000.0
   reserve_price: 9000.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - mutual_release_of_all_claims
+  - no_admission_of_liability
   private_info:
-  - cost_basis_is_6000
-  - inventory_of_construction_lien_is_strong
+  - insurance_covers_up_to_50000
+  - admission_risk_high_if_case_goes_to_trial
+  - co_defendant_negotiating_separately
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -32,5 +34,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Regulator negotiation for construction lien regarding contractor.
-  Context: collective bargaining.'
+scenario_description: An employment dispute where a senior executive was terminated and alleges wrongful termination with
+  age discrimination. The executive seeks $850K in damages including stock options. The company claims performance-based termination
+  with documented reviews. Settlement would avoid reputational harm to both parties.

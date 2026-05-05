@@ -6,10 +6,13 @@ buyer_context:
   batna: 25000.0
   reserve_price: 37500.0
   hard_constraints:
-  - quality_meets_standards
+  - no_admission_of_liability
+  - mutual_release_of_all_claims
+  - confidentiality_clause_required
   private_info:
-  - budget_is_50000
-  - needs_franchise_dispute
+  - plaintiff_damages_estimate_is_75000_to_120000
+  - has_expert_witness_corroborating_breach
+  - litigation_cost_estimate_is_40000_over_3_years
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -17,10 +20,12 @@ seller_context:
   batna: 10000.0
   reserve_price: 6000.0
   hard_constraints:
-  - confidentiality_must_be_maintained
+  - structured_payment_required_for_tax_treatment
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_4000
-  - inventory_of_franchise_dispute_is_strong
+  - internal_legal_budget_exhausted_at_60000
+  - executive_deposition_scheduled_in_3_weeks
+  - insurance_covers_up_to_100000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -31,5 +36,7 @@ deal_schema:
   non_disparagement: bool
 forbidden_claims:
 - cannot_claim_no_evidence
-scenario_description: 'Plaintiff negotiation for franchise dispute regarding franchise_agreement.
-  Context: merger condition.'
+scenario_description: A patent infringement dispute between two tech companies over display technology. The plaintiff alleges
+  willful infringement of three patents covering manufacturing processes. The defendant acknowledges using similar processes
+  but claims independent development. Both sides face 18-24 months of litigation, $2-4M in legal fees each, and the risk of
+  an injunction shutting down the defendant's production line.

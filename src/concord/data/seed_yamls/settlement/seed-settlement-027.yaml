@@ -6,11 +6,12 @@ buyer_context:
   batna: 180000.0
   reserve_price: 270000.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - mutual_release_of_all_claims
+  - no_admission_of_liability
   private_info:
-  - budget_is_360000
-  - needs_m_and_a_dispute
+  - plaintiff_damages_estimate_is_150000_to_300000
+  - expert_report_is_favorable_to_plaintiff
+  - class_certification_hearing_in_60_days
   walk_away_threshold: 0.6
   reputation: null
   relationship_history: []
@@ -18,11 +19,12 @@ seller_context:
   batna: 80000.0
   reserve_price: 48000.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - mutual_release_of_all_claims
+  - no_public_statement_about_settlement
   private_info:
-  - cost_basis_is_32000
-  - inventory_of_m_and_a_dispute_is_strong
+  - insurance_covers_up_to_120000
+  - reputational_damage_estimated_at_80000
+  - internal_legal_budget_exhausted_at_50000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -32,5 +34,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Claimant negotiation for m and a dispute regarding merger.
-  Context: license renewal.'
+scenario_description: A breach of contract claim between a manufacturer and a component supplier. The manufacturer alleges
+  the supplier delivered sub-spec parts causing a recall costing $3.2M. The supplier claims the manufacturer changed specifications
+  mid-contract without written approval. Both parties want to avoid trial publicity and industry reputation damage.

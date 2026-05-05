@@ -10,8 +10,9 @@ buyer_context:
   - delivery_timeline_must_be_met
   - warranty_coverage_required
   private_info:
-  - budget_is_156
-  - needs_legal_practice_mgmt
+  - current_tool_contract_expires_in_90_days
+  - competitor_quote_from_microsoft_is_45_per_seat
+  - requires_eu_data_residency
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -23,8 +24,9 @@ seller_context:
   - minimum_order_35_units
   - payment_terms_net_30
   private_info:
-  - cost_basis_is_41
-  - inventory_of_legal_practice_mgmt_is_strong
+  - end_of_quarter_in_2_weeks
+  - renewal_rate_for_this_account_tier_is_85_percent
+  - pricing_floor_is_28_due_to_reseller_agreement
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -35,5 +37,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for legal practice mgmt (70 units). Context:
-  compliance req.'
+scenario_description: A fast-growing startup needs legal practice mgmt for their expanding team. They have priced three vendors
+  and found a 40% spread between options. The board wants the best-in-class solution but the COO is pushing for the budget
+  option. The vendor's end-of-quarter is in 3 weeks.

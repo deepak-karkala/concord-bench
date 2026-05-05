@@ -32,5 +32,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for cotton fabric (6000 units). Context:
-  biodiversity.'
+scenario_description: A coffee roaster committed to direct trade wants to secure cotton fabric from a cooperative. The cooperative's
+  pricing reflects living-wage commitments. A commodity broker offers the same grade at 35% less. The roaster's largest client
+  has requested proof of ethical sourcing for their ESG report.

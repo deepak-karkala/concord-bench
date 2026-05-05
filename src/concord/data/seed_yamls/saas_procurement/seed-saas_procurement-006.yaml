@@ -8,8 +8,9 @@ buyer_context:
   hard_constraints:
   - quality_meets_standards
   private_info:
-  - budget_is_100
-  - needs_erp_system
+  - sso_integration_required_by_it_policy
+  - annual_churn_risk_if_tool_not_improved
+  - board_mandated_12_percent_reduction
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -19,8 +20,9 @@ seller_context:
   hard_constraints:
   - minimum_order_400_units
   private_info:
-  - cost_basis_is_32
-  - inventory_of_erp_system_is_strong
+  - product_roadmap_has_ai_features_in_beta
+  - renewal_rate_for_this_tier_is_78_percent
+  - pricing_floor_is_35_due_to_reseller
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -31,6 +33,7 @@ deal_schema:
   sla_tier: str
 forbidden_claims:
 - cannot_claim_soc2_without_audit
-- cannot_claim_gdpr_compliance
-scenario_description: 'Manufacturer negotiation for erp system (400 units). Context:
-  merger integration.'
+- cannot_claim_competitor_will_raise_prices_next_quarter
+scenario_description: A mid-market company is evaluating erp system to replace their legacy system. The current vendor's contract
+  expires in 60 days and they are offering a 30% discount to retain the account. The buyer's IT team prefers a modern solution
+  but the CFO favors the cheaper renewal.

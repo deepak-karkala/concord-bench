@@ -35,5 +35,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: 'Social Enterprise negotiation for mycelium products (1000 units).
-  Context: supply chain audit.'
+scenario_description: A multinational retailer pledged to eliminate forced labor from their supply chain by 2027. Their mycelium
+  products supplier in Southeast Asia passed a social audit but a NGO report alleges subcontractors are not compliant. The
+  supplier says the allegations are false. The retailer's next ESG report is due in 2 months.

@@ -4,18 +4,18 @@ culture: US
 max_turns: 10
 buyer_context:
   batna: 40000.0
-  reserve_price: 60000.0
+  reserve_price: 34000.0
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met
   private_info:
   - budget_is_80000
   - needs_semiconductor_wafers
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 56000.0
+  batna: 70000.0
   reserve_price: 33600.0
   hard_constraints:
   - minimum_order_500_units
@@ -23,7 +23,7 @@ seller_context:
   private_info:
   - cost_basis_is_22400
   - inventory_of_semiconductor_wafers_is_strong
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 deal_schema:
@@ -32,5 +32,7 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Wholesaler negotiation for semiconductor wafers (500 units).
-  Context: cost reduction.'
+scenario_description: An automotive parts distributor is sourcing semiconductor wafers
+  for a new vehicle platform launch. The incumbent supplier has been reliable for
+  5 years but is 18% above market. The buyer has qualified two new suppliers but risks
+  production delays during the transition.

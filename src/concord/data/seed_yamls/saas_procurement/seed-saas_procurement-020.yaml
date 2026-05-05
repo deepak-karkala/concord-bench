@@ -8,8 +8,9 @@ buyer_context:
   hard_constraints:
   - quality_meets_standards
   private_info:
-  - budget_is_520
-  - needs_cad_cam_software
+  - sso_integration_required_by_it_policy
+  - annual_churn_risk_if_tool_not_improved
+  - board_mandated_12_percent_reduction
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -19,8 +20,9 @@ seller_context:
   hard_constraints:
   - minimum_order_50_units
   private_info:
-  - cost_basis_is_140
-  - inventory_of_cad_cam_software_is_strong
+  - product_roadmap_has_ai_features_in_beta
+  - renewal_rate_for_this_tier_is_78_percent
+  - pricing_floor_is_35_due_to_reseller
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,5 +32,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Procurement Agent negotiation for cad cam software (50 units).
-  Context: first adoption.'
+scenario_description: A financial services firm needs cad cam software with specific regulatory compliance features. The vendor
+  has 80% of the required features in production and 20% on the roadmap. The buyer's compliance team wants all features now;
+  the vendor cannot commit to the roadmap timeline.

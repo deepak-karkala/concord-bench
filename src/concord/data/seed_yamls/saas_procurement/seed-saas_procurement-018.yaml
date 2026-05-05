@@ -8,8 +8,9 @@ buyer_context:
   hard_constraints:
   - quality_meets_standards
   private_info:
-  - budget_is_54
-  - needs_identity_management
+  - internal_champion_left_company
+  - requires_soc2_type2_compliance
+  - board_mandated_20_percent_cost_reduction
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -19,8 +20,9 @@ seller_context:
   hard_constraints:
   - minimum_order_500_units
   private_info:
-  - cost_basis_is_13
-  - inventory_of_identity_management_is_strong
+  - renewal_rate_for_this_account_tier_is_92_percent
+  - competing_against_notion_and_clickup
+  - pricing_floor_is_22_with_annual_commitment
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,5 +32,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Distributor negotiation for identity management (500 units).
-  Context: dept expansion.'
+scenario_description: An enterprise undergoing digital transformation is consolidating from 8 tools to a single identity management
+  platform. The vendor is competing against two established players. The buyer's CIO needs board approval for deals over $100K,
+  creating a 3-week decision cycle.

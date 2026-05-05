@@ -3,25 +3,25 @@ domain: ecommerce
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 5200.0
-  reserve_price: 7800.0
+  batna: 7800.0
+  reserve_price: 7220.0
   hard_constraints:
   - quality_meets_standards
   private_info:
   - budget_is_10400
   - needs_printing_supplies
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 7600.0
-  reserve_price: 4560.0
+  batna: 6840.0
+  reserve_price: 7220.0
   hard_constraints:
   - minimum_order_1000_units
   private_info:
   - cost_basis_is_3040
   - inventory_of_printing_supplies_is_strong
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 deal_schema:
@@ -30,5 +30,7 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Distributor negotiation for printing supplies (1000 units).
-  Context: new supplier.'
+scenario_description: A construction firm requires printing supplies for a development
+  project with penalty clauses for delays. The primary supplier has capacity constraints
+  due to another large contract. A secondary supplier can deliver faster but at a
+  15% premium. Time pressure vs. budget.

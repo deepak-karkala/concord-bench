@@ -6,11 +6,12 @@ buyer_context:
   batna: 200000.0
   reserve_price: 300000.0
   hard_constraints:
-  - quality_meets_standards
-  - warranty_coverage_required
+  - mutual_release_of_all_claims
+  - no_public_statement_about_settlement
   private_info:
-  - budget_is_400000
-  - needs_antitrust
+  - plaintiff_damages_estimate_is_50000_to_80000
+  - discovery_uncovered_internal_emails_showing_awareness
+  - statute_of_limitations_expires_in_90_days
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -19,10 +20,12 @@ seller_context:
   batna: 100000.0
   reserve_price: 60000.0
   hard_constraints:
-  - confidentiality_must_be_maintained
+  - no_public_statement_about_settlement
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_40000
-  - inventory_of_antitrust_is_strong
+  - insurance_covers_up_to_150000
+  - reputational_damage_from_trial_estimated_at_50000
+  - similar_case_in_same_jurisdiction_settled_for_45000
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -35,5 +38,7 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_no_evidence
 - cannot_threaten_criminal
-scenario_description: 'Plaintiff negotiation for antitrust regarding competition_law.
-  Context: pre trial settlement.'
+scenario_description: A patent infringement dispute between two tech companies over display technology. The plaintiff alleges
+  willful infringement of three patents covering manufacturing processes. The defendant acknowledges using similar processes
+  but claims independent development. Both sides face 18-24 months of litigation, $2-4M in legal fees each, and the risk of
+  an injunction shutting down the defendant's production line.

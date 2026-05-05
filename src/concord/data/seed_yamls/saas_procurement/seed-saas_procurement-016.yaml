@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - warranty_coverage_required
   private_info:
-  - budget_is_160
-  - needs_ai_ml_platform
+  - has_30_percent_unused_seats_in_current_contract
+  - board_mandated_15_percent_software_cost_reduction
+  - sso_integration_required_by_it_policy
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -21,8 +22,9 @@ seller_context:
   hard_constraints:
   - minimum_order_40_units
   private_info:
-  - cost_basis_is_48
-  - inventory_of_ai_ml_platform_is_strong
+  - product_roadmap_covers_buyer_feature_gap_in_q3
+  - has_50_percent_discount_authority_for_annual_deal
+  - competing_against_monday_dot_com_and_asana
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -35,5 +37,6 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_soc2_without_audit
 - cannot_claim_gdpr_compliance
-scenario_description: 'Manufacturer negotiation for ai ml platform (80 units). Context:
-  vendor evaluation.'
+scenario_description: A mid-market company is evaluating ai ml platform to replace their legacy system. The current vendor's
+  contract expires in 60 days and they are offering a 30% discount to retain the account. The buyer's IT team prefers a modern
+  solution but the CFO favors the cheaper renewal.

@@ -6,11 +6,12 @@ buyer_context:
   batna: 51000.0
   reserve_price: 76500.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - confidentiality_clause_required
+  - structured_payment_required_for_tax_treatment
   private_info:
-  - budget_is_102000
-  - needs_reverse_discrimination
+  - plaintiff_damages_estimate_is_200000_to_500000
+  - lead_plaintiff_prefers_settlement_for_personal_reasons
+  - class_certification_hearing_in_30_days
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -18,11 +19,12 @@ seller_context:
   batna: 21000.0
   reserve_price: 12600.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - mutual_release_of_all_claims
+  - no_admission_of_liability
   private_info:
-  - cost_basis_is_8400
-  - inventory_of_reverse_discrimination_is_strong
+  - insurance_covers_up_to_50000
+  - admission_risk_high_if_case_goes_to_trial
+  - co_defendant_negotiating_separately
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -32,5 +34,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Class Rep negotiation for reverse discrimination regarding
-  hiring. Context: cross border.'
+scenario_description: A product liability case where a medical device manufacturer faces claims from 47 patients alleging
+  design defects caused injury. The manufacturer's insurance covers up to $10M. The plaintiffs' expert testimony is strong
+  but the manufacturer claims the injuries were caused by off-label use. Trial is 8 months away.

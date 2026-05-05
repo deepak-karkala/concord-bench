@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - warranty_coverage_required
   private_info:
-  - budget_is_30400
-  - needs_rubber_products
+  - csr_team_requires_full_supply_chain_disclosure
+  - competitor_has_not_required_this_from_their_suppliers
+  - board_has_committed_to_full_transparency
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -21,8 +22,8 @@ seller_context:
   hard_constraints:
   - minimum_order_1500_units
   private_info:
-  - cost_basis_is_3040
-  - inventory_of_rubber_products_is_strong
+  - tier_2_supplier_identities_are_competitive_ip
+  - disclosure_could_jeopardize_20_percent_of_supplier_relationships
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -33,5 +34,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: 'Social Enterprise negotiation for rubber products (3000 units).
-  Context: supply chain audit.'
+scenario_description: A multinational retailer pledged to eliminate forced labor from their supply chain by 2027. Their rubber
+  products supplier in Southeast Asia passed a social audit but a NGO report alleges subcontractors are not compliant. The
+  supplier says the allegations are false. The retailer's next ESG report is due in 2 months.

@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - delivery_timeline_must_be_met
   private_info:
-  - budget_is_100
-  - needs_fleet_management
+  - has_30_percent_unused_seats_in_current_contract
+  - board_mandated_15_percent_software_cost_reduction
+  - sso_integration_required_by_it_policy
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -21,8 +22,9 @@ seller_context:
   - minimum_order_120_units
   - payment_terms_net_30
   private_info:
-  - cost_basis_is_25
-  - inventory_of_fleet_management_is_strong
+  - product_roadmap_covers_buyer_feature_gap_in_q3
+  - has_50_percent_discount_authority_for_annual_deal
+  - competing_against_monday_dot_com_and_asana
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -32,5 +34,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Distributor negotiation for fleet management (120 units). Context:
-  cost optimization.'
+scenario_description: An enterprise undergoing digital transformation is consolidating from 8 tools to a single fleet management
+  platform. The vendor is competing against two established players. The buyer's CIO needs board approval for deals over $100K,
+  creating a 3-week decision cycle.

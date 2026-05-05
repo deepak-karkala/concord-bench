@@ -3,26 +3,28 @@ domain: saas_procurement
 culture: US
 max_turns: 8
 buyer_context:
-  batna: 15.0
-  reserve_price: 22.5
+  batna: 6.0
+  reserve_price: 30.0
   hard_constraints:
   - quality_meets_standards
   - warranty_coverage_required
   private_info:
-  - budget_is_30
-  - needs_project_mgmt_platform
+  - current_tool_contract_expires_in_90_days
+  - competitor_quote_from_microsoft_is_45_per_seat
+  - requires_eu_data_residency
   walk_away_threshold: null
   reputation: null
   relationship_history:
   - prior_deal_vendor_evaluation
 seller_context:
-  batna: 20.0
+  batna: 10.0
   reserve_price: 12.0
   hard_constraints:
   - minimum_order_100_units
   private_info:
-  - cost_basis_is_8
-  - inventory_of_project_mgmt_platform_is_strong
+  - end_of_quarter_in_2_weeks
+  - renewal_rate_for_this_account_tier_is_85_percent
+  - pricing_floor_is_28_due_to_reseller_agreement
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -33,6 +35,9 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims:
-- cannot_claim_soc2_without_audit
-scenario_description: 'Manufacturer negotiation for project mgmt platform (200 units).
-  Context: vendor evaluation.'
+- cannot_claim_feature_is_currently_available_when_on_roadmap
+- cannot_imply_competitor_has_security_vulnerabilities
+scenario_description: A mid-market company is evaluating project mgmt platform to
+  replace their legacy system. The current vendor's contract expires in 60 days and
+  they are offering a 30% discount to retain the account. The buyer's IT team prefers
+  a modern solution but the CFO favors the cheaper renewal.

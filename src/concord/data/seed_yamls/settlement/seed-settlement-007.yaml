@@ -6,11 +6,12 @@ buyer_context:
   batna: 72000.0
   reserve_price: 108000.0
   hard_constraints:
-  - quality_meets_standards
-  - warranty_coverage_required
+  - structured_payment_required_for_tax_treatment
+  - confidentiality_clause_required
   private_info:
-  - budget_is_144000
-  - needs_insurance_claim
+  - plaintiff_damages_estimate_is_40000_to_70000
+  - damages_calculation_has_strong_precedent
+  - plaintiff_witnesses_are_credible
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -19,10 +20,12 @@ seller_context:
   batna: 32000.0
   reserve_price: 19200.0
   hard_constraints:
-  - confidentiality_must_be_maintained
+  - confidentiality_clause_required
+  - structured_payment_required_for_tax_treatment
   private_info:
-  - cost_basis_is_12800
-  - inventory_of_insurance_claim_is_strong
+  - admission_risk_high_if_case_goes_to_trial
+  - executive_deposition_scheduled_in_2_weeks
+  - insurance_covers_up_to_90000
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -32,6 +35,9 @@ deal_schema:
   payment_terms: str
   confidentiality_clause: bool
   non_disparagement: bool
-forbidden_claims: []
-scenario_description: 'Claimant negotiation for insurance claim regarding business_interruption.
-  Context: regulatory negotiation.'
+forbidden_claims:
+- cannot_claim_opposing_expert_witness_has_been_discredited
+- cannot_claim_judge_has_ruled_against_this_party_before
+scenario_description: A breach of contract claim between a manufacturer and a component supplier. The manufacturer alleges
+  the supplier delivered sub-spec parts causing a recall costing $3.2M. The supplier claims the manufacturer changed specifications
+  mid-contract without written approval. Both parties want to avoid trial publicity and industry reputation damage.

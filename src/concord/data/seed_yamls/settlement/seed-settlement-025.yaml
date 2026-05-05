@@ -6,12 +6,13 @@ buyer_context:
   batna: 4040000.0
   reserve_price: 6060000.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
-  - warranty_coverage_required
+  - no_admission_of_liability
+  - mutual_release_of_all_claims
+  - confidentiality_clause_required
   private_info:
-  - budget_is_8080000
-  - needs_class_action
+  - plaintiff_damages_estimate_is_75000_to_120000
+  - has_expert_witness_corroborating_breach
+  - litigation_cost_estimate_is_40000_over_3_years
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -20,11 +21,12 @@ seller_context:
   batna: 820000.0
   reserve_price: 492000.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - structured_payment_required_for_tax_treatment
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_328000
-  - inventory_of_class_action_is_strong
+  - internal_legal_budget_exhausted_at_60000
+  - executive_deposition_scheduled_in_3_weeks
+  - insurance_covers_up_to_100000
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -35,5 +37,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Class Rep negotiation for class action regarding consumer.
-  Context: bankruptcy negotiation.'
+scenario_description: A product liability case where a medical device manufacturer faces claims from 47 patients alleging
+  design defects caused injury. The manufacturer's insurance covers up to $10M. The plaintiffs' expert testimony is strong
+  but the manufacturer claims the injuries were caused by off-label use. Trial is 8 months away.

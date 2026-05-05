@@ -3,19 +3,21 @@ domain: ecommerce
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 14000.0
-  reserve_price: 21000.0
+  batna: 18200.0
+  reserve_price: 15470.0
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met
   private_info:
   - budget_is_28000
   - needs_kitchen_appliances
+  - competitor_a_quoted_lower
+  - competitor_b_quoted_lower
   walk_away_threshold: 0.6
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 18800.0
+  batna: 23500.0
   reserve_price: 11280.0
   hard_constraints:
   - minimum_order_350_units

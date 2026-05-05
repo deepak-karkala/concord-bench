@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - warranty_coverage_required
   private_info:
-  - budget_is_60000
-  - needs_agricultural_equip
+  - csr_team_requires_full_supply_chain_disclosure
+  - competitor_has_not_required_this_from_their_suppliers
+  - board_has_committed_to_full_transparency
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -21,8 +22,8 @@ seller_context:
   hard_constraints:
   - minimum_order_100_units
   private_info:
-  - cost_basis_is_8000
-  - inventory_of_agricultural_equip_is_strong
+  - tier_2_supplier_identities_are_competitive_ip
+  - disclosure_could_jeopardize_20_percent_of_supplier_relationships
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -35,5 +36,6 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_fair_trade_without_cert
 - cannot_claim_carbon_neutral_without_audit
-scenario_description: 'Ethical Brand negotiation for agricultural equip (200 units).
-  Context: fair trade cert.'
+scenario_description: A sustainable fashion brand sources agricultural equip for their certified eco-friendly clothing line.
+  The supplier holds Fair Trade and organic certifications. A non-certified competitor offers 22% lower pricing, and the brand's
+  CFO is questioning the premium during a margin review. The brand's marketing depends on the certification story.

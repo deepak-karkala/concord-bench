@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - delivery_timeline_must_be_met
   private_info:
-  - budget_is_20
-  - needs_dns_security
+  - requires_eu_data_residency
+  - internal_champion_left_company
+  - competitor_quote_from_google_is_40_per_seat
   walk_away_threshold: 0.8
   reputation: null
   relationship_history: []
@@ -21,8 +22,9 @@ seller_context:
   - minimum_order_300_units
   - payment_terms_net_30
   private_info:
-  - cost_basis_is_5
-  - inventory_of_dns_security_is_strong
+  - has_45_percent_discount_authority_for_annual_deal
+  - competing_against_salesforce_and_hubspot
+  - end_of_quarter_in_3_weeks
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []

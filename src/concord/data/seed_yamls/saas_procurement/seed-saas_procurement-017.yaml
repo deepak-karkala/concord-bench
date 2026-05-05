@@ -8,8 +8,9 @@ buyer_context:
   hard_constraints:
   - quality_meets_standards
   private_info:
-  - budget_is_70
-  - needs_devops_tools
+  - current_tool_contract_expires_in_45_days
+  - annual_churn_risk_if_tool_not_improved
+  - competitor_quote_from_salesforce_is_55_per_seat
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -19,8 +20,9 @@ seller_context:
   hard_constraints:
   - minimum_order_300_units
   private_info:
-  - cost_basis_is_19
-  - inventory_of_devops_tools_is_strong
+  - enterprise_deal_requires_legal_review_taking_3_weeks
+  - end_of_quarter_in_4_weeks
+  - has_40_percent_discount_authority_for_multiyear
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,5 +32,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for devops tools (300 units). Context:
-  contract renewal.'
+scenario_description: A fast-growing startup needs devops tools for their expanding team. They have priced three vendors and
+  found a 40% spread between options. The board wants the best-in-class solution but the COO is pushing for the budget option.
+  The vendor's end-of-quarter is in 3 weeks.

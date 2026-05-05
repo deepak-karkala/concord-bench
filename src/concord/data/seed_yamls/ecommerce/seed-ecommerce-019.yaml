@@ -3,27 +3,27 @@ domain: ecommerce
 culture: US
 max_turns: 8
 buyer_context:
-  batna: 12200.0
-  reserve_price: 18300.0
+  batna: 18300.0
+  reserve_price: 15960.0
   hard_constraints:
   - quality_meets_standards
   - warranty_coverage_required
   private_info:
   - budget_is_24400
   - needs_sporting_goods
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history:
   - prior_deal_contract_renewal
 seller_context:
-  batna: 16800.0
-  reserve_price: 10080.0
+  batna: 15120.0
+  reserve_price: 15960.0
   hard_constraints:
   - minimum_order_200_units
   private_info:
   - cost_basis_is_6720
   - inventory_of_sporting_goods_is_strong
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history:
   - prior_deal_contract_renewal
@@ -33,5 +33,7 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Wholesaler negotiation for sporting goods (400 units). Context:
-  contract renewal.'
+scenario_description: An automotive parts distributor is sourcing sporting goods for
+  a new vehicle platform launch. The incumbent supplier has been reliable for 5 years
+  but is 18% above market. The buyer has qualified two new suppliers but risks production
+  delays during the transition.

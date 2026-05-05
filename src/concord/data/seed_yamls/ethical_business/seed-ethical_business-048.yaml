@@ -32,5 +32,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: 'Ngo negotiation for lab grown leather (600 units). Context:
-  living wage.'
+scenario_description: A tech company's hardware division is sourcing lab grown leather and has committed to carbon-neutral
+  supply chain by 2030. The primary supplier has partial renewable energy usage and is 3 years from full carbon neutrality.
+  A competitor supplier claims net-zero but refuses to share audit data.

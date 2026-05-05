@@ -3,7 +3,7 @@ domain: ecommerce
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 60000.0
+  batna: 90000.0
   reserve_price: 90000.0
   hard_constraints:
   - quality_meets_standards
@@ -14,13 +14,14 @@ buyer_context:
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 86000.0
-  reserve_price: 51600.0
+  batna: 77400.0
+  reserve_price: 81700.0
   hard_constraints:
   - minimum_order_10_units
   private_info:
   - cost_basis_is_34400
   - inventory_of_industrial_machinery_is_strong
+  - end_of_quarter_must_close_deal
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,5 +31,7 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for industrial machinery (10 units). Context:
-  market expansion.'
+scenario_description: A national retailer needs industrial machinery for upcoming
+  holiday season. Their current supplier raised prices 12% citing raw material costs.
+  A new overseas supplier is offering competitive pricing but has no track record
+  with the retailer. The buyer must decide between reliability and cost.

@@ -6,12 +6,12 @@ buyer_context:
   batna: 68000.0
   reserve_price: 102000.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
-  - warranty_coverage_required
+  - mutual_release_of_all_claims
+  - no_admission_of_liability
   private_info:
-  - budget_is_136000
-  - needs_zoning_dispute
+  - plaintiff_damages_estimate_is_150000_to_300000
+  - expert_report_is_favorable_to_plaintiff
+  - class_certification_hearing_in_60_days
   walk_away_threshold: 0.7
   reputation: null
   relationship_history:
@@ -20,11 +20,12 @@ seller_context:
   batna: 34000.0
   reserve_price: 20400.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - mutual_release_of_all_claims
+  - no_public_statement_about_settlement
   private_info:
-  - cost_basis_is_13600
-  - inventory_of_zoning_dispute_is_strong
+  - insurance_covers_up_to_120000
+  - reputational_damage_estimated_at_80000
+  - internal_legal_budget_exhausted_at_50000
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -35,5 +36,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Injured Party negotiation for zoning dispute regarding land_use.
-  Context: early resolution.'
+scenario_description: A class action lawsuit where consumers allege a mobile app collected location data without consent.
+  The class includes 2.3 million users. The defendant faces potential statutory damages of $1K per violation per user. Both
+  sides want to settle before the class certification hearing in 30 days.

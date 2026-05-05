@@ -3,26 +3,28 @@ domain: saas_procurement
 culture: US
 max_turns: 8
 buyer_context:
-  batna: 88.0
-  reserve_price: 132.0
+  batna: 35.2
+  reserve_price: 176.0
   hard_constraints:
   - quality_meets_standards
   - warranty_coverage_required
   private_info:
-  - budget_is_176
-  - needs_analytics_dashboard
+  - internal_champion_left_company
+  - requires_soc2_type2_compliance
+  - board_mandated_20_percent_cost_reduction
   walk_away_threshold: null
   reputation: null
   relationship_history:
   - prior_deal_replacing_incumbent
 seller_context:
-  batna: 132.0
+  batna: 66.0
   reserve_price: 79.2
   hard_constraints:
   - minimum_order_75_units
   private_info:
-  - cost_basis_is_52
-  - inventory_of_analytics_dashboard_is_strong
+  - renewal_rate_for_this_account_tier_is_92_percent
+  - competing_against_notion_and_clickup
+  - pricing_floor_is_22_with_annual_commitment
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -33,7 +35,9 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims:
-- cannot_claim_soc2_without_audit
-- cannot_claim_gdpr_compliance
-scenario_description: 'Wholesaler negotiation for analytics dashboard (150 units).
-  Context: replacing incumbent.'
+- cannot_claim_feature_is_currently_available_when_on_roadmap
+- cannot_imply_competitor_has_security_vulnerabilities
+scenario_description: A government agency is procuring analytics dashboard with strict
+  data sovereignty and FedRAMP requirements. Only three vendors qualify. The procurement
+  cycle is 18 months and the current contract expires in 6 months, creating urgency
+  without flexibility.

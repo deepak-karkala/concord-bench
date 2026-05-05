@@ -54,3 +54,7 @@ class Scenario(BaseModel):
         default="",
         description="Public description of the negotiation context visible to both parties",
     )
+    metadata: dict = Field(
+        default_factory=dict,
+        description="Optional enrichment metadata (difficulty_tier, pressure_type, etc.)",
+    )

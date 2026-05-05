@@ -4,7 +4,7 @@ culture: US
 max_turns: 8
 buyer_context:
   batna: 6800.0
-  reserve_price: 10200.0
+  reserve_price: 5780.0
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met
@@ -12,12 +12,12 @@ buyer_context:
   private_info:
   - budget_is_13600
   - needs_battery_cells
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history:
   - prior_deal_seasonal_build
 seller_context:
-  batna: 9400.0
+  batna: 11750.0
   reserve_price: 5640.0
   hard_constraints:
   - minimum_order_1000_units
@@ -25,7 +25,7 @@ seller_context:
   private_info:
   - cost_basis_is_3760
   - inventory_of_battery_cells_is_strong
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history:
   - prior_deal_seasonal_build
@@ -35,5 +35,7 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for battery cells (2000 units). Context:
-  seasonal build.'
+scenario_description: A national retailer needs battery cells for upcoming holiday
+  season. Their current supplier raised prices 12% citing raw material costs. A new
+  overseas supplier is offering competitive pricing but has no track record with the
+  retailer. The buyer must decide between reliability and cost.

@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - delivery_timeline_must_be_met
   private_info:
-  - budget_is_300
-  - needs_clinical_trials_software
+  - requires_eu_data_residency
+  - internal_champion_left_company
+  - competitor_quote_from_google_is_40_per_seat
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -21,8 +22,9 @@ seller_context:
   - minimum_order_30_units
   - payment_terms_net_30
   private_info:
-  - cost_basis_is_80
-  - inventory_of_clinical_trials_software_is_strong
+  - has_45_percent_discount_authority_for_annual_deal
+  - competing_against_salesforce_and_hubspot
+  - end_of_quarter_in_3_weeks
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -33,5 +35,6 @@ deal_schema:
   sla_tier: str
 forbidden_claims:
 - cannot_claim_soc2_without_audit
-scenario_description: 'Manufacturer negotiation for clinical trials software (30 units).
-  Context: merger integration.'
+scenario_description: A mid-market company is evaluating clinical trials software to replace their legacy system. The current
+  vendor's contract expires in 60 days and they are offering a 30% discount to retain the account. The buyer's IT team prefers
+  a modern solution but the CFO favors the cheaper renewal.

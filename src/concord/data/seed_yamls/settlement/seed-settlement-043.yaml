@@ -6,12 +6,12 @@ buyer_context:
   batna: 44000.0
   reserve_price: 66000.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
-  - warranty_coverage_required
+  - no_admission_of_liability
+  - confidentiality_clause_required
   private_info:
-  - budget_is_88000
-  - needs_non_delivery
+  - plaintiff_damages_estimate_is_100000_to_150000
+  - has_expert_witness_corroborating_infringement
+  - prefers_settlement_to_avoid_3_year_litigation
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -20,11 +20,13 @@ seller_context:
   batna: 18000.0
   reserve_price: 10800.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - no_admission_of_liability
+  - mutual_release_of_all_claims
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_7200
-  - inventory_of_non_delivery_is_strong
+  - insurance_covers_up_to_80000
+  - internal_legal_estimate_of_trial_loss_is_120000
+  - executive_deposition_would_be_damaging
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -35,5 +37,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Regulator negotiation for non delivery regarding sale_of_goods.
-  Context: compliance settlement.'
+scenario_description: An employment dispute where a senior executive was terminated and alleges wrongful termination with
+  age discrimination. The executive seeks $850K in damages including stock options. The company claims performance-based termination
+  with documented reviews. Settlement would avoid reputational harm to both parties.

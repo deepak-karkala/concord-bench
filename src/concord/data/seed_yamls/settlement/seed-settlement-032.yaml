@@ -6,11 +6,13 @@ buyer_context:
   batna: 100000.0
   reserve_price: 150000.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - no_admission_of_liability
+  - mutual_release_of_all_claims
+  - confidentiality_clause_required
   private_info:
-  - budget_is_200000
-  - needs_fraudulent_misrep
+  - plaintiff_damages_estimate_is_75000_to_120000
+  - has_expert_witness_corroborating_breach
+  - litigation_cost_estimate_is_40000_over_3_years
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
@@ -18,11 +20,12 @@ seller_context:
   batna: 36000.0
   reserve_price: 21600.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - structured_payment_required_for_tax_treatment
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_14400
-  - inventory_of_fraudulent_misrep_is_strong
+  - internal_legal_budget_exhausted_at_60000
+  - executive_deposition_scheduled_in_3_weeks
+  - insurance_covers_up_to_100000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -32,5 +35,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Claimant negotiation for fraudulent misrep regarding sale_of_business.
-  Context: mediation.'
+scenario_description: A breach of contract claim between a manufacturer and a component supplier. The manufacturer alleges
+  the supplier delivered sub-spec parts causing a recall costing $3.2M. The supplier claims the manufacturer changed specifications
+  mid-contract without written approval. Both parties want to avoid trial publicity and industry reputation damage.

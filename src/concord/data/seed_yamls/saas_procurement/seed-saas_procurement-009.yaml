@@ -8,8 +8,9 @@ buyer_context:
   hard_constraints:
   - quality_meets_standards
   private_info:
-  - budget_is_88
-  - needs_customer_support_platform
+  - has_30_percent_unused_seats_in_current_contract
+  - board_mandated_15_percent_software_cost_reduction
+  - sso_integration_required_by_it_policy
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -19,8 +20,9 @@ seller_context:
   hard_constraints:
   - minimum_order_250_units
   private_info:
-  - cost_basis_is_24
-  - inventory_of_customer_support_platform_is_strong
+  - product_roadmap_covers_buyer_feature_gap_in_q3
+  - has_50_percent_discount_authority_for_annual_deal
+  - competing_against_monday_dot_com_and_asana
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,5 +32,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Wholesaler negotiation for customer support platform (250 units).
-  Context: digital transformation.'
+scenario_description: A government agency is procuring customer support platform with strict data sovereignty and FedRAMP
+  requirements. Only three vendors qualify. The procurement cycle is 18 months and the current contract expires in 6 months,
+  creating urgency without flexibility.

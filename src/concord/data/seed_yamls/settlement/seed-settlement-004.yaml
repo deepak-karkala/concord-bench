@@ -6,11 +6,13 @@ buyer_context:
   batna: 320000.0
   reserve_price: 480000.0
   hard_constraints:
-  - quality_meets_standards
-  - warranty_coverage_required
+  - no_admission_of_liability
+  - mutual_release_of_all_claims
+  - confidentiality_clause_required
   private_info:
-  - budget_is_640000
-  - needs_product_liability
+  - plaintiff_damages_estimate_is_75000_to_120000
+  - has_expert_witness_corroborating_breach
+  - litigation_cost_estimate_is_40000_over_3_years
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -19,10 +21,12 @@ seller_context:
   batna: 68000.0
   reserve_price: 40800.0
   hard_constraints:
-  - confidentiality_must_be_maintained
+  - structured_payment_required_for_tax_treatment
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_27200
-  - inventory_of_product_liability_is_strong
+  - internal_legal_budget_exhausted_at_60000
+  - executive_deposition_scheduled_in_3_weeks
+  - insurance_covers_up_to_100000
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -33,7 +37,8 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims:
-- cannot_claim_no_evidence
-- cannot_threaten_criminal
-scenario_description: 'Injured Party negotiation for product liability regarding consumer_goods.
-  Context: early resolution.'
+- cannot_claim_opposing_expert_witness_has_been_discredited
+- cannot_claim_judge_has_ruled_against_this_party_before
+scenario_description: A class action lawsuit where consumers allege a mobile app collected location data without consent.
+  The class includes 2.3 million users. The defendant faces potential statutory damages of $1K per violation per user. Both
+  sides want to settle before the class certification hearing in 30 days.

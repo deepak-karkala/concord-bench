@@ -6,11 +6,12 @@ buyer_context:
   batna: 42000.0
   reserve_price: 63000.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - mutual_release_of_all_claims
+  - no_public_statement_about_settlement
   private_info:
-  - budget_is_84000
-  - needs_nuisance_claim
+  - plaintiff_damages_estimate_is_50000_to_80000
+  - discovery_uncovered_internal_emails_showing_awareness
+  - statute_of_limitations_expires_in_90_days
   walk_away_threshold: 0.8
   reputation: null
   relationship_history: []
@@ -18,11 +19,12 @@ seller_context:
   batna: 17000.0
   reserve_price: 10200.0
   hard_constraints:
-  - confidentiality_must_be_maintained
-  - mutual_release_required
+  - no_public_statement_about_settlement
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_6800
-  - inventory_of_nuisance_claim_is_strong
+  - insurance_covers_up_to_150000
+  - reputational_damage_from_trial_estimated_at_50000
+  - similar_case_in_same_jurisdiction_settled_for_45000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -32,5 +34,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Class Rep negotiation for nuisance claim regarding property.
-  Context: cross border.'
+scenario_description: A product liability case where a medical device manufacturer faces claims from 47 patients alleging
+  design defects caused injury. The manufacturer's insurance covers up to $10M. The plaintiffs' expert testimony is strong
+  but the manufacturer claims the injuries were caused by off-label use. Trial is 8 months away.

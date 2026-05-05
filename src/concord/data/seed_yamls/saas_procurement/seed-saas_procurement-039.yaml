@@ -9,8 +9,9 @@ buyer_context:
   - quality_meets_standards
   - delivery_timeline_must_be_met
   private_info:
-  - budget_is_22
-  - needs_form_builder
+  - internal_champion_left_company
+  - requires_soc2_type2_compliance
+  - board_mandated_20_percent_cost_reduction
   walk_away_threshold: 0.6
   reputation: null
   relationship_history: []
@@ -21,8 +22,9 @@ seller_context:
   - minimum_order_400_units
   - payment_terms_net_30
   private_info:
-  - cost_basis_is_6
-  - inventory_of_form_builder_is_strong
+  - renewal_rate_for_this_account_tier_is_92_percent
+  - competing_against_notion_and_clickup
+  - pricing_floor_is_22_with_annual_commitment
   walk_away_threshold: null
   reputation: null
   relationship_history: []

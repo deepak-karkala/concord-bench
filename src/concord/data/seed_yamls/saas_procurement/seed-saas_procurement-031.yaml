@@ -10,8 +10,9 @@ buyer_context:
   - delivery_timeline_must_be_met
   - warranty_coverage_required
   private_info:
-  - budget_is_40
-  - needs_kpi_dashboard
+  - current_tool_contract_expires_in_45_days
+  - annual_churn_risk_if_tool_not_improved
+  - competitor_quote_from_salesforce_is_55_per_seat
   walk_away_threshold: 0.3
   reputation: null
   relationship_history:
@@ -23,8 +24,9 @@ seller_context:
   - minimum_order_125_units
   - payment_terms_net_30
   private_info:
-  - cost_basis_is_12
-  - inventory_of_kpi_dashboard_is_strong
+  - enterprise_deal_requires_legal_review_taking_3_weeks
+  - end_of_quarter_in_4_weeks
+  - has_40_percent_discount_authority_for_multiyear
   walk_away_threshold: null
   reputation: null
   relationship_history:

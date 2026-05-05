@@ -6,10 +6,12 @@ buyer_context:
   batna: 78000.0
   reserve_price: 117000.0
   hard_constraints:
-  - quality_meets_standards
+  - confidentiality_clause_required
+  - structured_payment_required_for_tax_treatment
   private_info:
-  - budget_is_156000
-  - needs_employment_dispute
+  - plaintiff_damages_estimate_is_200000_to_500000
+  - lead_plaintiff_prefers_settlement_for_personal_reasons
+  - class_certification_hearing_in_30_days
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -17,10 +19,12 @@ seller_context:
   batna: 26000.0
   reserve_price: 15600.0
   hard_constraints:
-  - confidentiality_must_be_maintained
+  - mutual_release_of_all_claims
+  - no_admission_of_liability
   private_info:
-  - cost_basis_is_10400
-  - inventory_of_employment_dispute_is_strong
+  - insurance_covers_up_to_50000
+  - admission_risk_high_if_case_goes_to_trial
+  - co_defendant_negotiating_separately
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,6 +34,8 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims:
-- cannot_claim_no_evidence
-scenario_description: 'Regulator negotiation for employment dispute regarding wrongful_term.
-  Context: arbitration.'
+- cannot_claim_opposing_counsel_is_under_investigation
+- cannot_claim_new_damages_evidence_was_discovered
+scenario_description: An employment dispute where a senior executive was terminated and alleges wrongful termination with
+  age discrimination. The executive seeks $850K in damages including stock options. The company claims performance-based termination
+  with documented reviews. Settlement would avoid reputational harm to both parties.

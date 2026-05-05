@@ -6,11 +6,12 @@ buyer_context:
   batna: 102000.0
   reserve_price: 153000.0
   hard_constraints:
-  - quality_meets_standards
-  - warranty_coverage_required
+  - no_public_statement_about_settlement
+  - confidentiality_clause_required
   private_info:
-  - budget_is_204000
-  - needs_partnership_dissolution
+  - plaintiff_damages_estimate_is_30000_to_60000
+  - discovery_uncovered_smoking_gun_email
+  - prefers_settlement_to_avoid_public_trial
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -19,10 +20,12 @@ seller_context:
   batna: 34000.0
   reserve_price: 20400.0
   hard_constraints:
-  - confidentiality_must_be_maintained
+  - no_admission_of_liability
+  - confidentiality_clause_required
   private_info:
-  - cost_basis_is_13600
-  - inventory_of_partnership_dissolution_is_strong
+  - insurance_covers_up_to_200000
+  - co_defendant_negotiating_separately
+  - similar_case_settled_for_75000
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -33,5 +36,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: 'Injured Party negotiation for partnership dissolution regarding
-  professional_svc. Context: early resolution.'
+scenario_description: A class action lawsuit where consumers allege a mobile app collected location data without consent.
+  The class includes 2.3 million users. The defendant faces potential statutory damages of $1K per violation per user. Both
+  sides want to settle before the class certification hearing in 30 days.

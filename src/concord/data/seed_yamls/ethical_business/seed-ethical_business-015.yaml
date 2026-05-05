@@ -8,8 +8,9 @@ buyer_context:
   hard_constraints:
   - quality_meets_standards
   private_info:
-  - budget_is_104000
-  - needs_jewelry_mfg
+  - marketing_team_requires_full_cert_for_next_campaign
+  - partial_cert_would_require_disclaimer_on_packaging
+  - competitors_all_use_full_cert
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -19,8 +20,9 @@ seller_context:
   hard_constraints:
   - minimum_order_200_units
   private_info:
-  - cost_basis_is_12160
-  - inventory_of_jewelry_mfg_is_strong
+  - full_bcorp_cert_adds_20_percent_to_cost
+  - partial_compliance_cert_available_at_5_percent_premium
+  - cert_upgrade_takes_6_months
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -30,5 +32,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: 'Certified Importer negotiation for jewelry mfg (200 units).
-  Context: regenerative ag.'
+scenario_description: An organic food company needs jewelry mfg from regenerative agriculture sources. The supplier transitioned
+  to regenerative practices 18 months ago and charges a 28% premium. The company's largest competitor just launched a sustainably
+  sourced line at only 8% premium, using less rigorous certification.
