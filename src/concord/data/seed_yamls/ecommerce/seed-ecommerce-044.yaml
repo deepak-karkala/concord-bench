@@ -32,5 +32,5 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Wholesaler negotiation for stainless steel pipes (150 units).
-  Context: sustainability switch.'
+scenario_description: A hospital procurement team is sourcing medical supplies under a GPO contract with volume-based tiered
+  pricing. They are 12% short of the next tier break. The supplier needs the volume to maintain their GPO slot.

@@ -34,5 +34,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Distributor negotiation for aluminum extrusions (500 units).
-  Context: new product launch.'
+scenario_description: 'A water utility procuring pipe infrastructure for a system replacement mandated by a consent decree
+  with a 2027 deadline. Two qualified suppliers: one union shop at union rates, one non-union 18% cheaper. The city council
+  is divided on labor standards.'

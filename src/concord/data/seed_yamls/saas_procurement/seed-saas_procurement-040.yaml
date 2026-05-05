@@ -36,5 +36,7 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Procurement Agent negotiation for backup solution (500 units).
-  Context: remote work.'
+scenario_description: A professional services firm with 2000 consultants needs time tracking software that integrates with
+  their ERP and supports 200 different billing rate structures. The vendor's API supports standard billing but the custom
+  rate structures require professional services. The buyer's IT team says they can build the integration in-house if given
+  API access.

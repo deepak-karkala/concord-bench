@@ -37,5 +37,5 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_exclusive_deal
 - cannot_claim_product_recalled
-scenario_description: 'Manufacturer negotiation for sensor modules (300 units). Context:
-  routine replenishment.'
+scenario_description: A chain of restaurants is buying kitchen equipment for 15 new locations. The manufacturer has 60-day
+  lead times but the buyer needs first deliveries in 4 weeks for soft openings. The manufacturer can expedite at 18% premium.

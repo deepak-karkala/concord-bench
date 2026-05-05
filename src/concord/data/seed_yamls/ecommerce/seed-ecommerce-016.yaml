@@ -3,28 +3,28 @@ domain: ecommerce
 culture: US
 max_turns: 8
 buyer_context:
-  batna: 60000.0
-  reserve_price: 60000.0
+  batna: 42000.0
+  reserve_price: 45000.0
   hard_constraints:
   - quality_meets_standards
   - warranty_coverage_required
   private_info:
   - budget_is_80000
   - needs_solar_panels
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history:
   - prior_deal_routine_replenishment
 seller_context:
-  batna: 45000.0
-  reserve_price: 41400.0
+  batna: 67500.0
+  reserve_price: 58500.0
   hard_constraints:
   - minimum_order_50_units
   private_info:
   - cost_basis_is_20000
   - inventory_of_solar_panels_is_strong
   - end_of_quarter_must_close_deal
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history:
   - prior_deal_routine_replenishment

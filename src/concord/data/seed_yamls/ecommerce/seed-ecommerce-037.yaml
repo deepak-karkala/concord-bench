@@ -37,7 +37,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: A distribution company needs to restock inventory before peak
-  season. Their primary supplier is offering volume discounts but requires commitment
-  before market prices potentially drop. The buyer must balance guaranteed supply
-  against the risk of overpaying.
+scenario_description: An electric vehicle manufacturer buying battery cells under a take-or-pay contract. Market lithium prices
+  have dropped 40% since the contract was signed. The supplier refuses to reprice citing the contract. The buyer is threatening
+  to invoke the force majeure clause.

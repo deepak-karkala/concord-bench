@@ -3,26 +3,26 @@ domain: ecommerce
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 90000.0
-  reserve_price: 90000.0
+  batna: 63000.0
+  reserve_price: 67500.0
   hard_constraints:
   - quality_meets_standards
   private_info:
   - budget_is_120000
   - needs_industrial_machinery
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 77400.0
-  reserve_price: 71208.0
+  batna: 116100.0
+  reserve_price: 100620.0
   hard_constraints:
   - minimum_order_10_units
   private_info:
   - cost_basis_is_34400
   - inventory_of_industrial_machinery_is_strong
   - end_of_quarter_must_close_deal
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 deal_schema:

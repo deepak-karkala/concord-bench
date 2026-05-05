@@ -35,5 +35,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Distributor negotiation for power supplies (200 units). Context:
-  merger consolidation.'
+scenario_description: A global logistics company needs to secure warehouse equipment from a supplier who recently lost their
+  second-largest customer. The buyer has been offered a 7% discount from a competitor. The supplier is willing to negotiate
+  aggressively to fill capacity.

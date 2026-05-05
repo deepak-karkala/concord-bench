@@ -3,8 +3,8 @@ domain: ethical_business
 culture: US
 max_turns: 8
 buyer_context:
-  batna: 8800.0
-  reserve_price: 7216.0
+  batna: 6160.0
+  reserve_price: 6600.0
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met
@@ -18,8 +18,8 @@ buyer_context:
   relationship_history:
   - prior_deal_child_labor_free
 seller_context:
-  batna: 5200.0
-  reserve_price: 7793.28
+  batna: 7800.0
+  reserve_price: 6760.0
   hard_constraints:
   - minimum_order_1000_units
   - payment_terms_net_30

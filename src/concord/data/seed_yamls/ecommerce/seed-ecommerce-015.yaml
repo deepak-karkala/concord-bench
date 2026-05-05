@@ -3,26 +3,26 @@ domain: ecommerce
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 13500.0
-  reserve_price: 13500.0
+  batna: 9450.0
+  reserve_price: 10125.0
   hard_constraints:
   - quality_meets_standards
   private_info:
   - budget_is_18000
   - needs_retail_merchandise
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 12240.0
-  reserve_price: 11260.8
+  batna: 18360.0
+  reserve_price: 15912.0
   hard_constraints:
   - minimum_order_2000_units
   private_info:
   - cost_basis_is_5440
   - inventory_of_retail_merchandise_is_strong
   - end_of_quarter_must_close_deal
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 deal_schema:

@@ -37,5 +37,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Procurement Agent negotiation for electric motors (80 units).
-  Context: supplier diversification.'
+scenario_description: A data center operator buying backup generators for 3 new facilities opening next year. The global generator
+  supply chain is constrained after a major recall. The buyer needs 24 units prioritized. The supplier has 18 confirmed orders
+  and 6 uncommitted slots.

@@ -34,5 +34,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for industrial lubricants (250 units).
-  Context: urgent order.'
+scenario_description: A mining company needs heavy equipment with specialized safety certifications for a new site. Two suppliers
+  are certified; one offers 5-year warranty at premium, one 2-year at discount. The safety team prefers the premium supplier;
+  procurement wants the savings.

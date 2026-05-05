@@ -3,28 +3,28 @@ domain: ecommerce
 culture: US
 max_turns: 8
 buyer_context:
-  batna: 13500.0
-  reserve_price: 13500.0
+  batna: 9450.0
+  reserve_price: 10125.0
   hard_constraints:
   - quality_meets_standards
   - warranty_coverage_required
   private_info:
   - budget_is_18000
   - needs_safety_equipment
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history:
   - prior_deal_merger_consolidation
 seller_context:
-  batna: 11880.0
-  reserve_price: 10929.6
+  batna: 17820.0
+  reserve_price: 15444.0
   hard_constraints:
   - minimum_order_300_units
   private_info:
   - cost_basis_is_5280
   - inventory_of_safety_equipment_is_strong
   - end_of_quarter_must_close_deal
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history:
   - prior_deal_merger_consolidation

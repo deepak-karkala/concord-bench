@@ -34,7 +34,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A company's software contract is up for renewal. The incumbent
-  vendor is offering a loyalty discount but the procurement team has benchmarked three
-  competitors at lower rates. The vendor knows the company's migration costs are estimated
-  at $200K, which strengthens their negotiating position.
+scenario_description: An airline buying crew scheduling software that must integrate with union contract rules for 3 different
+  unions. Union rules change with each contract negotiation. The vendor charges $50K per rules engine change. The buyer wants
+  annual maintenance that includes rule changes; the vendor says that's custom work.

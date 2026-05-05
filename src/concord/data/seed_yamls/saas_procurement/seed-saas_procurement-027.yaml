@@ -3,8 +3,8 @@ domain: saas_procurement
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 34.0
-  reserve_price: 27.88
+  batna: 23.8
+  reserve_price: 25.5
   hard_constraints:
   - data_export_api_required
   - sso_integration_required
@@ -16,8 +16,8 @@ buyer_context:
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 46.0
-  reserve_price: 43.7
+  batna: 69.0
+  reserve_price: 59.8
   hard_constraints:
   - minimum_10_seats_for_small_business_tier
   - quarterly_billing_available
@@ -34,5 +34,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for recruitment platform (150 units).
-  Context: scaling ops.'
+scenario_description: An insurance company is modernizing their claims processing platform. The incumbent built a custom system
+  12 years ago that runs on a mainframe. The vendor offers a cloud-native replacement with APIs but the migration involves
+  15 years of historical claims data and regulatory compliance.

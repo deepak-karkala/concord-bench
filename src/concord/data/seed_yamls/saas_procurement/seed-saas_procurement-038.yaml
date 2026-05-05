@@ -34,7 +34,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: An enterprise is standardizing on a single platform across all
-  business units. The vendor is offering enterprise pricing but the buyer wants departmental
-  flexibility. The vendor's end-of-quarter is approaching and the deal would make
-  their number. The buyer's legal team needs 3 weeks for contract review.
+scenario_description: A biotech startup with Series B funding needs lab information management software. They have 15 scientists
+  and expect to grow to 100 in 18 months. The vendor's enterprise tier starts at 50 seats. The buyer wants startup pricing
+  with an enterprise upgrade path without renegotiation penalties.

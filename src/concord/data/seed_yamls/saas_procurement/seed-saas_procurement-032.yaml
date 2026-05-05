@@ -3,8 +3,8 @@ domain: saas_procurement
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 13.0
-  reserve_price: 10.66
+  batna: 9.1
+  reserve_price: 9.75
   hard_constraints:
   - sso_integration_required
   - hipaa_compliance_required
@@ -16,8 +16,8 @@ buyer_context:
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 19.0
-  reserve_price: 18.05
+  batna: 28.5
+  reserve_price: 24.7
   hard_constraints:
   - minimum_25_seats_for_pilot
   - monthly_billing_not_available
@@ -34,7 +34,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A company's software contract is up for renewal. The incumbent
-  vendor is offering a loyalty discount but the procurement team has benchmarked three
-  competitors at lower rates. The vendor knows the company's migration costs are estimated
-  at $200K, which strengthens their negotiating position.
+scenario_description: A manufacturing company needs IoT monitoring for 12 factory floors with legacy PLC controllers from
+  the 1990s. The vendor's platform supports modern PLCs out of the box. Legacy controllers need gateway hardware at $2K per
+  machine, which the buyer considers excessive.

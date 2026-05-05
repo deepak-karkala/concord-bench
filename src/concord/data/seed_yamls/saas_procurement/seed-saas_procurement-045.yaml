@@ -34,5 +34,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Procurement Agent negotiation for donor management (60 units).
-  Context: custom integration.'
+scenario_description: A government intelligence agency needs secure communication software with air-gapped deployment. The
+  vendor has never done an air-gapped installation. The deployment complexity is high and the vendor estimates 12 months of
+  professional services. The agency's budget cycle is annual — they need to commit before the scope is clear.

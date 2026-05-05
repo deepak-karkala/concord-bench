@@ -34,5 +34,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Procurement Agent negotiation for risk management (80 units).
-  Context: custom integration.'
+scenario_description: A gaming company with 200M MAU needs real-time analytics for player behavior. The vendor's platform
+  is built for batch processing. The buyer needs sub-second queries on 500TB of event data. The vendor says a custom deployment
+  can meet the requirement at 3x standard pricing.

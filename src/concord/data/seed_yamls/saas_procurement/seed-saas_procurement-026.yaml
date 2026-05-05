@@ -36,5 +36,6 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_soc2_without_audit
 - cannot_claim_gdpr_compliance
-scenario_description: 'Manufacturer negotiation for payroll system (400 units). Context:
-  security upgrade.'
+scenario_description: A marketing agency is buying email automation software for their 50-person creative team. They currently
+  use a combination of Mailchimp and manual processes. The vendor offers AI-powered features the team needs but the agency's
+  tech lead worries about migration complexity and training overhead.

@@ -3,26 +3,26 @@ domain: ecommerce
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 48000.0
-  reserve_price: 48000.0
+  batna: 33600.0
+  reserve_price: 36000.0
   hard_constraints:
   - quality_meets_standards
   private_info:
   - budget_is_64000
   - needs_lab_equipment
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 43200.0
-  reserve_price: 39744.0
+  batna: 64800.0
+  reserve_price: 56160.0
   hard_constraints:
   - minimum_order_50_units
   private_info:
   - cost_basis_is_19200
   - inventory_of_lab_equipment_is_strong
   - end_of_quarter_must_close_deal
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 deal_schema:

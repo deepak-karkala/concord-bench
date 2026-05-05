@@ -3,8 +3,8 @@ domain: saas_procurement
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 9.0
-  reserve_price: 7.38
+  batna: 6.3
+  reserve_price: 6.75
   hard_constraints:
   - gdpr_compliance_required
   - uptime_sla_99_9_required
@@ -16,8 +16,8 @@ buyer_context:
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 12.8
-  reserve_price: 12.16
+  batna: 19.2
+  reserve_price: 16.64
   hard_constraints:
   - setup_fee_applies_below_200_seats
   - annual_contract_required
@@ -34,5 +34,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Distributor negotiation for survey platform (300 units). Context:
-  dept expansion.'
+scenario_description: A large school district purchasing student information system covering 85K students. The contract requires
+  FERPA and state-specific data residency compliance. The vendor is Soc 2 certified but has never deployed in this state.
+  The district's legal team needs 8 weeks for compliance review.

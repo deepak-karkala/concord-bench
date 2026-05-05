@@ -34,5 +34,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Wholesaler negotiation for form builder (400 units). Context:
-  digital transformation.'
+scenario_description: A nonprofit advocacy organization needs a donor management platform integrated with their advocacy CRM.
+  They have 50K donors and a $15K annual software budget. Vendors in this space start at $25K. The buyer is exploring whether
+  to compromise on features or seek grant funding for the gap.

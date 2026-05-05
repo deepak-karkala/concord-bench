@@ -32,5 +32,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for plastic enclosures (1000 units). Context:
-  urgent order.'
+scenario_description: A university purchasing lab equipment with grant money that expires in 45 days. The preferred supplier's
+  quote is within budget but delivery is 8 weeks. An alternate supplier can deliver in 3 weeks at 22% higher cost. The PI
+  must choose between speed and budget compliance.

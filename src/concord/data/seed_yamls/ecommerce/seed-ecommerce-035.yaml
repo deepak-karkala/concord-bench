@@ -34,5 +34,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Procurement Agent negotiation for ceramic components (400 units).
-  Context: bulk purchase.'
+scenario_description: A telecommunications company buying fiber optic cable for rural broadband expansion funded by a federal
+  grant with a completion deadline. The primary supplier had a plant fire reducing capacity 30%. Secondary suppliers are 20-25%
+  more expensive but have availability.

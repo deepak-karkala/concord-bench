@@ -36,7 +36,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: An enterprise is standardizing on a single platform across all
-  business units. The vendor is offering enterprise pricing but the buyer wants departmental
-  flexibility. The vendor's end-of-quarter is approaching and the deal would make
-  their number. The buyer's legal team needs 3 weeks for contract review.
+scenario_description: A large hospital system needs revenue cycle management software across 12 hospitals. Each hospital uses
+  different chargemaster formats. The vendor's platform requires standardized chargemasters. Standardization will take 8 months
+  and the hospitals resist process changes. The vendor won't start deployment until standardization is complete.

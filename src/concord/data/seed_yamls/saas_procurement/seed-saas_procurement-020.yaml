@@ -3,8 +3,8 @@ domain: saas_procurement
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 260.0
-  reserve_price: 213.2
+  batna: 182.0
+  reserve_price: 195.0
   hard_constraints:
   - data_export_api_required
   - sso_integration_required
@@ -16,8 +16,8 @@ buyer_context:
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 350.0
-  reserve_price: 332.5
+  batna: 525.0
+  reserve_price: 455.0
   hard_constraints:
   - minimum_10_seats_for_small_business_tier
   - quarterly_billing_available

@@ -32,5 +32,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for adhesive materials (1200 units). Context:
-  market expansion.'
+scenario_description: A pharmaceutical company buying chromatography columns for a new production line awaiting FDA approval.
+  The columns have 14-week lead time and the FDA decision is in 12 weeks. If approved, delays cost $80K/day. If rejected,
+  the columns are specialty inventory.

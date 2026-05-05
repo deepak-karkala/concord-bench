@@ -3,8 +3,8 @@ domain: ethical_business
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 22000.0
-  reserve_price: 18040.0
+  batna: 15400.0
+  reserve_price: 16500.0
   hard_constraints:
   - environmental_audit_required_before_shipment
   private_info:
@@ -15,8 +15,8 @@ buyer_context:
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 13200.0
-  reserve_price: 19483.2
+  batna: 19800.0
+  reserve_price: 17160.0
   hard_constraints:
   - living_wage_requirement_cannot_be_waived
   private_info:

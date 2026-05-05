@@ -36,7 +36,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A company's software contract is up for renewal. The incumbent
-  vendor is offering a loyalty discount but the procurement team has benchmarked three
-  competitors at lower rates. The vendor knows the company's migration costs are estimated
-  at $200K, which strengthens their negotiating position.
+scenario_description: A staffing agency with 5000 contractors needs time tracking and invoicing integrated with 12 different
+  client ERP systems. The vendor supports 8 of 12 natively. The remaining 4 need custom API development. The vendor wants
+  to charge professional services fees; the buyer wants it included or discounted.

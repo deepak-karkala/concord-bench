@@ -35,5 +35,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Wholesaler negotiation for thermal paste (2000 units). Context:
-  contract renewal.'
+scenario_description: A renewable energy company buying solar panel components with IRA domestic content requirements. The
+  US supplier charges 35% more than the Chinese supplier. The tax credit requires 60% domestic content. The buyer must balance
+  per-unit cost against the credit value.

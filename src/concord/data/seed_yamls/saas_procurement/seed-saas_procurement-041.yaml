@@ -35,5 +35,6 @@ deal_schema:
   sla_tier: str
 forbidden_claims:
 - cannot_claim_soc2_without_audit
-scenario_description: 'Manufacturer negotiation for virtual desktop (150 units). Context:
-  security upgrade.'
+scenario_description: A public utility needs outage management software with integration to their SCADA system. The vendor
+  has never integrated with this specific SCADA platform. The integration is an unknown scope — the vendor wants time-and-materials;
+  the buyer wants fixed price. Both are uncomfortable with the risk.

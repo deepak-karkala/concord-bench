@@ -3,8 +3,8 @@ domain: saas_procurement
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 14.4
-  reserve_price: 11.81
+  batna: 10.08
+  reserve_price: 10.8
   hard_constraints:
   - api_access_and_webhooks_required
   - uptime_sla_99_9_required
@@ -16,8 +16,8 @@ buyer_context:
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 25.0
-  reserve_price: 23.75
+  batna: 37.5
+  reserve_price: 32.5
   hard_constraints:
   - enterprise_plan_required_for_custom_sla
   - annual_commitment_required

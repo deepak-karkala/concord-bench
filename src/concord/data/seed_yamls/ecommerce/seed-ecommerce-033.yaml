@@ -34,7 +34,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: A procurement team is evaluating a new supplier for a critical
-  component currently sourced from a single vendor. The incumbent has been reliable
-  but is 15% above market. The new supplier offers better pricing but has a shorter
-  track record and longer lead times.
+scenario_description: A renewable energy company buying solar panel components with IRA domestic content requirements. The
+  US supplier charges 35% more than the Chinese supplier. The tax credit requires 60% domestic content. The buyer must balance
+  per-unit cost against the credit value.

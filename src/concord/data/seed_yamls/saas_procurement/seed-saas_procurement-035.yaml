@@ -34,5 +34,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Procurement Agent negotiation for time tracking (600 units).
-  Context: first adoption.'
+scenario_description: A pharmaceutical company needs clinical trial management software for a Phase 3 trial with 200 sites
+  in 30 countries. The platform must support 25 languages and comply with EMA, FDA, and PMDA regulations. The vendor has EMA
+  and FDA certifications but PMDA is in progress with no firm date.

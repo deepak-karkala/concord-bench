@@ -36,5 +36,6 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_soc2_without_audit
 - cannot_claim_gdpr_compliance
-scenario_description: 'Manufacturer negotiation for video conferencing (1000 units).
-  Context: merger integration.'
+scenario_description: A cryptocurrency exchange needs KYC/AML compliance software to operate in 40 jurisdictions. Regulatory
+  requirements change quarterly. The vendor updates their rule engine monthly, which the buyer considers too slow. The buyer
+  wants a contractual SLA for 7-day rule updates after regulatory changes.

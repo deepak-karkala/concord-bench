@@ -37,5 +37,6 @@ deal_schema:
   sla_tier: str
 forbidden_claims:
 - cannot_claim_soc2_without_audit
-scenario_description: 'Manufacturer negotiation for kpi dashboard (250 units). Context:
-  vendor evaluation.'
+scenario_description: A law firm with 400 attorneys needs document management with e-discovery integration. The firm has 40TB
+  of legacy documents in 6 different formats. The vendor's migration tool handles 4 formats. The remaining 2 require a manual
+  migration the vendor won't include in the contract price.

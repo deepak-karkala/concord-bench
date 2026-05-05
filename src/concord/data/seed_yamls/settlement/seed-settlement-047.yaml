@@ -3,8 +3,8 @@ domain: settlement
 culture: US
 max_turns: 10
 buyer_context:
-  batna: 54000.0
-  reserve_price: 44280.0
+  batna: 37800.0
+  reserve_price: 38475.0
   hard_constraints:
   - no_public_statement_about_settlement
   - confidentiality_clause_required
@@ -16,8 +16,8 @@ buyer_context:
   reputation: null
   relationship_history: []
 seller_context:
-  batna: 24000.0
-  reserve_price: 47822.4
+  batna: 44550.0
+  reserve_price: 42525.0
   hard_constraints:
   - no_admission_of_liability
   - confidentiality_clause_required

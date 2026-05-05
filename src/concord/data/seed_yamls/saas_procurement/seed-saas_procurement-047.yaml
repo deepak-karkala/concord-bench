@@ -34,5 +34,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for content management (250 units). Context:
-  contract renewal.'
+scenario_description: An insurance company is modernizing their claims processing platform. The incumbent built a custom system
+  12 years ago that runs on a mainframe. The vendor offers a cloud-native replacement with APIs but the migration involves
+  15 years of historical claims data and regulatory compliance.

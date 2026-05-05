@@ -34,5 +34,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Wholesaler negotiation for glass containers (2000 units). Context:
-  cost reduction.'
+scenario_description: A semiconductor fab buying ultra-pure chemicals where contamination risk is existential. The incumbent
+  supplier has 100% quality record across 5 years. A challenger claims equivalent purity at 30% less but has no track record.
+  A failed batch costs $2M to scrap.

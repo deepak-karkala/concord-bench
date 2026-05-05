@@ -34,5 +34,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Wholesaler negotiation for contract lifecycle (100 units).
-  Context: global rollout.'
+scenario_description: A private equity firm's portfolio company needs accounting software for 8 subsidiaries across 4 countries
+  with different tax regimes. The vendor's multi-entity consolidation works for 6 of 8 entities. Two require custom development
+  the vendor is reluctant to commit to.

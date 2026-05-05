@@ -34,5 +34,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Wholesaler negotiation for paper products (4000 units). Context:
-  sustainability switch.'
+scenario_description: A defense contractor is buying classified components where only 3 suppliers hold clearance. One supplier
+  is under DoD review; another is at capacity. The remaining supplier knows the buyer has limited options but also wants to
+  expand their cleared contract base.

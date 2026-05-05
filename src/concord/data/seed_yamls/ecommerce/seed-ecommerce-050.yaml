@@ -32,5 +32,6 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Procurement Agent negotiation for fasteners and bolts (5000
-  units). Context: bulk purchase.'
+scenario_description: 'An aerospace manufacturer sourcing titanium forgings with 18-month lead time from mill to delivery.
+  The current order was placed 14 months ago and may not meet the revised spec. A new order restarts the 18-month clock. Production
+  line idle cost: $50K/day.'

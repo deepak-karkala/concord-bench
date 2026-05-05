@@ -36,5 +36,6 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Distributor negotiation for expense management (300 units).
-  Context: pilot expansion.'
+scenario_description: A university system with 23 campuses is standardizing on a single LMS. Three vendors are in final evaluation.
+  The faculty senate prefers open-source; IT prefers licensed for support. The procurement team has a state-mandated RFP process
+  that takes 6 months.
