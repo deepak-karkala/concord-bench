@@ -6,8 +6,8 @@ buyer_context:
   batna: 50.0
   reserve_price: 75.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - api_access_and_webhooks_required
+  - uptime_sla_99_9_required
   private_info:
   - current_tool_contract_expires_in_45_days
   - annual_churn_risk_if_tool_not_improved
@@ -19,8 +19,8 @@ seller_context:
   batna: 64.0
   reserve_price: 38.4
   hard_constraints:
-  - minimum_order_50_units
-  - payment_terms_net_30
+  - enterprise_plan_required_for_custom_sla
+  - annual_commitment_required
   private_info:
   - enterprise_deal_requires_legal_review_taking_3_weeks
   - end_of_quarter_in_4_weeks
@@ -34,5 +34,7 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Distributor negotiation for seo tools (50 units). Context:
-  cost optimization.'
+scenario_description: An enterprise is standardizing on a single platform across all
+  business units. The vendor is offering enterprise pricing but the buyer wants departmental
+  flexibility. The vendor's end-of-quarter is approaching and the deal would make
+  their number. The buyer's legal team needs 3 weeks for contract review.

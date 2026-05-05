@@ -6,7 +6,8 @@ buyer_context:
   batna: 17.6
   reserve_price: 88.0
   hard_constraints:
-  - quality_meets_standards
+  - data_residency_eu_required
+  - soc2_type2_certification_required
   private_info:
   - has_30_percent_unused_seats_in_current_contract
   - board_mandated_15_percent_software_cost_reduction
@@ -16,9 +17,10 @@ buyer_context:
   relationship_history: []
 seller_context:
   batna: 35.0
-  reserve_price: 42.0
+  reserve_price: 32.2
   hard_constraints:
-  - minimum_order_500_units
+  - minimum_100_seats
+  - annual_contract_only
   private_info:
   - product_roadmap_covers_buyer_feature_gap_in_q3
   - has_50_percent_discount_authority_for_annual_deal

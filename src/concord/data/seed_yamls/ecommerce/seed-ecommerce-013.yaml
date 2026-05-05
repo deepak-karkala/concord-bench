@@ -17,7 +17,7 @@ buyer_context:
   - prior_deal_merger_consolidation
 seller_context:
   batna: 11880.0
-  reserve_price: 12540.0
+  reserve_price: 10929.6
   hard_constraints:
   - minimum_order_300_units
   private_info:

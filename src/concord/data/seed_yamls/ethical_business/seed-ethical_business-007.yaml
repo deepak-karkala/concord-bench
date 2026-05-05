@@ -4,7 +4,7 @@ culture: US
 max_turns: 8
 buyer_context:
   batna: 70000.0
-  reserve_price: 105000.0
+  reserve_price: 57400.0
   hard_constraints:
   - quality_meets_standards
   - warranty_coverage_required
@@ -12,19 +12,19 @@ buyer_context:
   - air_freight_hits_deadline_but_triples_carbon_footprint
   - board_sustainability_presentation_in_2_weeks
   - sea_freight_saves_60_percent_carbon_but_adds_4_weeks
-  walk_away_threshold: null
+  walk_away_threshold: 0.35
   reputation: null
   relationship_history:
   - prior_deal_circular_economy
 seller_context:
   batna: 44000.0
-  reserve_price: 26400.0
+  reserve_price: 61992.0
   hard_constraints:
   - minimum_order_50_units
   private_info:
   - sea_freight_capacity_is_80_percent_booked
   - expedited_manufacturing_increases_energy_use_40_percent
-  walk_away_threshold: null
+  walk_away_threshold: 0.35
   reputation: null
   relationship_history:
   - prior_deal_circular_economy
@@ -36,6 +36,7 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_competitor_is_not_actually_certified
 - cannot_claim_partial_cert_is_equivalent_to_full_cert
-scenario_description: A coffee roaster committed to direct trade wants to secure mining equipment from a cooperative. The
-  cooperative's pricing reflects living-wage commitments. A commodity broker offers the same grade at 35% less. The roaster's
-  largest client has requested proof of ethical sourcing for their ESG report.
+scenario_description: A coffee roaster committed to direct trade wants to secure mining
+  equipment from a cooperative. The cooperative's pricing reflects living-wage commitments.
+  A commodity broker offers the same grade at 35% less. The roaster's largest client
+  has requested proof of ethical sourcing for their ESG report.

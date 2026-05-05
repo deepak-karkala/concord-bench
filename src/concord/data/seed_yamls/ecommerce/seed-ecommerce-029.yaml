@@ -4,7 +4,7 @@ culture: US
 max_turns: 10
 buyer_context:
   batna: 7904.0
-  reserve_price: 5700.0
+  reserve_price: 8694.4
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met
@@ -13,19 +13,19 @@ buyer_context:
   - needs_paper_products
   - competitor_a_quoted_lower
   - competitor_b_quoted_lower
-  walk_away_threshold: 0.8
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 seller_context:
   batna: 3780.0
-  reserve_price: 3240.0
+  reserve_price: 3402.0
   hard_constraints:
   - minimum_order_4000_units
   - payment_terms_net_30
   private_info:
   - cost_basis_is_2160
   - inventory_of_paper_products_is_strong
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 deal_schema:

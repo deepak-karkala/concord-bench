@@ -6,9 +6,8 @@ buyer_context:
   batna: 20.0
   reserve_price: 30.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
-  - warranty_coverage_required
+  - api_access_and_webhooks_required
+  - uptime_sla_99_9_required
   private_info:
   - current_tool_contract_expires_in_45_days
   - annual_churn_risk_if_tool_not_improved
@@ -21,8 +20,8 @@ seller_context:
   batna: 30.0
   reserve_price: 18.0
   hard_constraints:
-  - minimum_order_125_units
-  - payment_terms_net_30
+  - enterprise_plan_required_for_custom_sla
+  - annual_commitment_required
   private_info:
   - enterprise_deal_requires_legal_review_taking_3_weeks
   - end_of_quarter_in_4_weeks

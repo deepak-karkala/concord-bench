@@ -6,12 +6,11 @@ buyer_context:
   batna: 5000.0
   reserve_price: 7500.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
-  - warranty_coverage_required
+  - fair_trade_certification_must_be_maintained
   private_info:
-  - budget_is_10000
-  - needs_organic_cotton
+  - cheaper_uncertified_supplier_offers_20_percent_discount
+  - cfo_is_questioning_fair_trade_premium_this_quarter
+  - ngo_partner_will_withdraw_endorsement_if_standards_drop
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -20,11 +19,11 @@ seller_context:
   batna: 3000.0
   reserve_price: 1800.0
   hard_constraints:
-  - minimum_order_2000_units
-  - payment_terms_net_30
+  - transparency_reports_must_be_annual
   private_info:
-  - cost_basis_is_1200
-  - inventory_of_organic_cotton_is_strong
+  - certification_costs_represent_8_percent_of_unit_price
+  - audit_cycle_costs_5000_every_6_months
+  - cannot_match_uncertified_prices
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -37,6 +36,6 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_fair_trade_without_cert
 - cannot_claim_carbon_neutral_without_audit
-scenario_description: A sustainable fashion brand sources organic cotton for their certified eco-friendly clothing line. The
-  supplier holds Fair Trade and organic certifications. A non-certified competitor offers 22% lower pricing, and the brand's
-  CFO is questioning the premium during a margin review. The brand's marketing depends on the certification story.
+scenario_description: A sustainable brand sources certified materials from an ethical
+  supplier. A cheaper non-certified competitor is pressuring the buyer to switch.
+  The seller cannot reduce price without cutting certification costs.

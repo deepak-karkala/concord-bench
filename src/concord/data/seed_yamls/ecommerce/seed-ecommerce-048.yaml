@@ -32,5 +32,7 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Distributor negotiation for cooling fans (400 units). Context:
-  new supplier.'
+scenario_description: A procurement team is evaluating a new supplier for a critical
+  component currently sourced from a single vendor. The incumbent has been reliable
+  but is 15% above market. The new supplier offers better pricing but has a shorter
+  track record and longer lead times.

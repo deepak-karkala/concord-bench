@@ -4,30 +4,29 @@ culture: US
 max_turns: 8
 buyer_context:
   batna: 106.0
-  reserve_price: 159.0
+  reserve_price: 145.36
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
-  - warranty_coverage_required
+  - sso_integration_required
+  - hipaa_compliance_required
   private_info:
   - internal_champion_left_company
   - requires_soc2_type2_compliance
   - board_mandated_20_percent_cost_reduction
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history:
   - prior_deal_remote_work
 seller_context:
   batna: 158.0
-  reserve_price: 94.8
+  reserve_price: 142.2
   hard_constraints:
-  - minimum_order_100_units
-  - payment_terms_net_30
+  - minimum_25_seats_for_pilot
+  - monthly_billing_not_available
   private_info:
   - renewal_rate_for_this_account_tier_is_92_percent
   - competing_against_notion_and_clickup
   - pricing_floor_is_22_with_annual_commitment
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history:
   - prior_deal_remote_work
@@ -37,6 +36,7 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A financial services firm needs bi suite with specific regulatory compliance features. The vendor has
-  80% of the required features in production and 20% on the roadmap. The buyer's compliance team wants all features now; the
-  vendor cannot commit to the roadmap timeline.
+scenario_description: A financial services firm needs bi suite with specific regulatory
+  compliance features. The vendor has 80% of the required features in production and
+  20% on the roadmap. The buyer's compliance team wants all features now; the vendor
+  cannot commit to the roadmap timeline.

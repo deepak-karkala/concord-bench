@@ -6,8 +6,8 @@ buyer_context:
   batna: 39.0
   reserve_price: 58.5
   hard_constraints:
-  - quality_meets_standards
-  - warranty_coverage_required
+  - api_access_and_webhooks_required
+  - uptime_sla_99_9_required
   private_info:
   - current_tool_contract_expires_in_45_days
   - annual_churn_risk_if_tool_not_improved
@@ -20,7 +20,8 @@ seller_context:
   batna: 48.0
   reserve_price: 28.8
   hard_constraints:
-  - minimum_order_175_units
+  - enterprise_plan_required_for_custom_sla
+  - annual_commitment_required
   private_info:
   - enterprise_deal_requires_legal_review_taking_3_weeks
   - end_of_quarter_in_4_weeks
@@ -35,6 +36,7 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A financial services firm needs document mgmt system with specific regulatory compliance features. The
-  vendor has 80% of the required features in production and 20% on the roadmap. The buyer's compliance team wants all features
-  now; the vendor cannot commit to the roadmap timeline.
+scenario_description: A financial services firm needs document mgmt system with specific
+  regulatory compliance features. The vendor has 80% of the required features in production
+  and 20% on the roadmap. The buyer's compliance team wants all features now; the
+  vendor cannot commit to the roadmap timeline.

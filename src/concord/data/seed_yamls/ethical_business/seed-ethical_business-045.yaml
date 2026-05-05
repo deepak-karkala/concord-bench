@@ -6,11 +6,11 @@ buyer_context:
   batna: 31000.0
   reserve_price: 46500.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - environmental_audit_required_before_shipment
   private_info:
-  - budget_is_62000
-  - needs_recycled_metals
+  - local_supplier_10_percent_premium_but_employs_200_local_workers
+  - procurement_policy_prefers_lowest_cost
+  - mayor_has_publicly_asked_companies_to_buy_local
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -18,11 +18,11 @@ seller_context:
   batna: 22000.0
   reserve_price: 13200.0
   hard_constraints:
-  - minimum_order_800_units
-  - payment_terms_net_30
+  - living_wage_requirement_cannot_be_waived
   private_info:
-  - cost_basis_is_8800
-  - inventory_of_recycled_metals_is_strong
+  - 200_families_depend_on_this_factory
+  - cannot_match_imported_goods_on_price_due_to_local_wages
+  - community_investment_program_is_15_percent_of_revenue
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -32,6 +32,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: An organic food company needs recycled metals from regenerative agriculture sources. The supplier transitioned
-  to regenerative practices 18 months ago and charges a 28% premium. The company's largest competitor just launched a sustainably
-  sourced line at only 8% premium, using less rigorous certification.
+scenario_description: A local factory employs 200 workers and charges a 10% premium
+  over imported alternatives. The buyer's procurement mandates lowest cost but community
+  pressure favors local sourcing.

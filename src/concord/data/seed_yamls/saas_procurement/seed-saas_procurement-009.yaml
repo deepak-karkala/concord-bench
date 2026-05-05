@@ -6,7 +6,8 @@ buyer_context:
   batna: 44.0
   reserve_price: 66.0
   hard_constraints:
-  - quality_meets_standards
+  - data_residency_eu_required
+  - soc2_type2_certification_required
   private_info:
   - has_30_percent_unused_seats_in_current_contract
   - board_mandated_15_percent_software_cost_reduction
@@ -18,7 +19,8 @@ seller_context:
   batna: 60.0
   reserve_price: 36.0
   hard_constraints:
-  - minimum_order_250_units
+  - minimum_100_seats
+  - annual_contract_only
   private_info:
   - product_roadmap_covers_buyer_feature_gap_in_q3
   - has_50_percent_discount_authority_for_annual_deal
@@ -32,6 +34,7 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A government agency is procuring customer support platform with strict data sovereignty and FedRAMP
-  requirements. Only three vendors qualify. The procurement cycle is 18 months and the current contract expires in 6 months,
-  creating urgency without flexibility.
+scenario_description: A government agency is procuring customer support platform with
+  strict data sovereignty and FedRAMP requirements. Only three vendors qualify. The
+  procurement cycle is 18 months and the current contract expires in 6 months, creating
+  urgency without flexibility.

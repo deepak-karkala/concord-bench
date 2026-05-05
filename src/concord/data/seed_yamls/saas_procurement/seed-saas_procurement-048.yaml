@@ -6,8 +6,8 @@ buyer_context:
   batna: 19.2
   reserve_price: 28.8
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - data_export_api_required
+  - sso_integration_required
   private_info:
   - sso_integration_required_by_it_policy
   - annual_churn_risk_if_tool_not_improved
@@ -19,8 +19,8 @@ seller_context:
   batna: 25.0
   reserve_price: 15.0
   hard_constraints:
-  - minimum_order_150_units
-  - payment_terms_net_30
+  - minimum_10_seats_for_small_business_tier
+  - quarterly_billing_available
   private_info:
   - product_roadmap_has_ai_features_in_beta
   - renewal_rate_for_this_tier_is_78_percent

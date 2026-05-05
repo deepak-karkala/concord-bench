@@ -6,9 +6,8 @@ buyer_context:
   batna: 26.0
   reserve_price: 39.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
-  - warranty_coverage_required
+  - gdpr_compliance_required
+  - uptime_sla_99_9_required
   private_info:
   - competitor_quote_from_oracle_is_50_per_seat
   - has_25_percent_unused_seats
@@ -21,8 +20,8 @@ seller_context:
   batna: 35.0
   reserve_price: 21.0
   hard_constraints:
-  - minimum_order_250_units
-  - payment_terms_net_30
+  - setup_fee_applies_below_200_seats
+  - annual_contract_required
   private_info:
   - end_of_quarter_in_1_week
   - has_60_percent_discount_authority_for_enterprise

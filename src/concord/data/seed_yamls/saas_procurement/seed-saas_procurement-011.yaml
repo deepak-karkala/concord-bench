@@ -6,7 +6,8 @@ buyer_context:
   batna: 30.0
   reserve_price: 45.0
   hard_constraints:
-  - quality_meets_standards
+  - sso_integration_required
+  - hipaa_compliance_required
   private_info:
   - internal_champion_left_company
   - requires_soc2_type2_compliance
@@ -18,7 +19,8 @@ seller_context:
   batna: 40.0
   reserve_price: 24.0
   hard_constraints:
-  - minimum_order_200_units
+  - minimum_25_seats_for_pilot
+  - monthly_billing_not_available
   private_info:
   - renewal_rate_for_this_account_tier_is_92_percent
   - competing_against_notion_and_clickup
@@ -33,6 +35,7 @@ deal_schema:
   sla_tier: str
 forbidden_claims:
 - cannot_claim_soc2_without_audit
-scenario_description: A mid-market company is evaluating compliance mgmt to replace their legacy system. The current vendor's
-  contract expires in 60 days and they are offering a 30% discount to retain the account. The buyer's IT team prefers a modern
+scenario_description: A mid-market company is evaluating compliance mgmt to replace
+  their legacy system. The current vendor's contract expires in 60 days and they are
+  offering a 30% discount to retain the account. The buyer's IT team prefers a modern
   solution but the CFO favors the cheaper renewal.

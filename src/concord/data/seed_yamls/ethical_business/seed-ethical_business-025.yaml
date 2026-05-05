@@ -4,7 +4,7 @@ culture: US
 max_turns: 8
 buyer_context:
   batna: 8800.0
-  reserve_price: 13200.0
+  reserve_price: 7216.0
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met
@@ -13,20 +13,20 @@ buyer_context:
   - local_supplier_10_percent_premium_but_employs_200_local_workers
   - procurement_policy_prefers_lowest_cost
   - mayor_has_publicly_asked_companies_to_buy_local
-  walk_away_threshold: null
+  walk_away_threshold: 0.35
   reputation: null
   relationship_history:
   - prior_deal_child_labor_free
 seller_context:
   batna: 5200.0
-  reserve_price: 3120.0
+  reserve_price: 7793.28
   hard_constraints:
   - minimum_order_1000_units
   - payment_terms_net_30
   private_info:
   - 200_families_depend_on_this_factory
   - cannot_match_imported_goods_on_price_due_to_local_wages
-  walk_away_threshold: null
+  walk_away_threshold: 0.35
   reputation: null
   relationship_history:
   - prior_deal_child_labor_free
@@ -36,6 +36,7 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: An organic food company needs organic produce from regenerative agriculture sources. The supplier transitioned
-  to regenerative practices 18 months ago and charges a 28% premium. The company's largest competitor just launched a sustainably
-  sourced line at only 8% premium, using less rigorous certification.
+scenario_description: An organic food company needs organic produce from regenerative
+  agriculture sources. The supplier transitioned to regenerative practices 18 months
+  ago and charges a 28% premium. The company's largest competitor just launched a
+  sustainably sourced line at only 8% premium, using less rigorous certification.

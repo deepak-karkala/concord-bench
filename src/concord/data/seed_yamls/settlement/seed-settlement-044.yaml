@@ -4,7 +4,7 @@ culture: US
 max_turns: 10
 buyer_context:
   batna: 70000.0
-  reserve_price: 105000.0
+  reserve_price: 77000.0
   hard_constraints:
   - mutual_release_of_all_claims
   - no_public_statement_about_settlement
@@ -12,12 +12,12 @@ buyer_context:
   - plaintiff_damages_estimate_is_50000_to_80000
   - discovery_uncovered_internal_emails_showing_awareness
   - statute_of_limitations_expires_in_90_days
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 seller_context:
   batna: 34000.0
-  reserve_price: 20400.0
+  reserve_price: 30600.0
   hard_constraints:
   - no_public_statement_about_settlement
   - confidentiality_clause_required
@@ -25,7 +25,7 @@ seller_context:
   - insurance_covers_up_to_150000
   - reputational_damage_from_trial_estimated_at_50000
   - similar_case_in_same_jurisdiction_settled_for_45000
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 deal_schema:
@@ -34,6 +34,7 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: A class action lawsuit where consumers allege a mobile app collected location data without consent.
-  The class includes 2.3 million users. The defendant faces potential statutory damages of $1K per violation per user. Both
-  sides want to settle before the class certification hearing in 30 days.
+scenario_description: A class action lawsuit where consumers allege a mobile app collected
+  location data without consent. The class includes 2.3 million users. The defendant
+  faces potential statutory damages of $1K per violation per user. Both sides want
+  to settle before the class certification hearing in 30 days.

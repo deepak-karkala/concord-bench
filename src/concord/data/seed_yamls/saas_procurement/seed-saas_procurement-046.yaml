@@ -6,9 +6,8 @@ buyer_context:
   batna: 10.0
   reserve_price: 15.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
-  - warranty_coverage_required
+  - sso_integration_required
+  - hipaa_compliance_required
   private_info:
   - internal_champion_left_company
   - requires_soc2_type2_compliance
@@ -21,8 +20,8 @@ seller_context:
   batna: 15.0
   reserve_price: 9.0
   hard_constraints:
-  - minimum_order_200_units
-  - payment_terms_net_30
+  - minimum_25_seats_for_pilot
+  - monthly_billing_not_available
   private_info:
   - renewal_rate_for_this_account_tier_is_92_percent
   - competing_against_notion_and_clickup

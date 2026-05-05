@@ -4,26 +4,28 @@ culture: US
 max_turns: 10
 buyer_context:
   batna: 76.0
-  reserve_price: 114.0
+  reserve_price: 62.32
   hard_constraints:
-  - quality_meets_standards
+  - fedramp_authorization_required
+  - uptime_sla_99_99_required
   private_info:
   - requires_eu_data_residency
   - internal_champion_left_company
   - competitor_quote_from_google_is_40_per_seat
-  walk_away_threshold: null
+  walk_away_threshold: 0.35
   reputation: null
   relationship_history: []
 seller_context:
   batna: 114.0
-  reserve_price: 68.4
+  reserve_price: 108.3
   hard_constraints:
-  - minimum_order_100_units
+  - enterprise_features_require_annual_commitment
+  - minimum_commitment_12_months
   private_info:
   - has_45_percent_discount_authority_for_annual_deal
   - competing_against_salesforce_and_hubspot
   - end_of_quarter_in_3_weeks
-  walk_away_threshold: null
+  walk_away_threshold: 0.35
   reputation: null
   relationship_history: []
 deal_schema:
@@ -32,6 +34,7 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A government agency is procuring financial planning tools with strict data sovereignty and FedRAMP requirements.
-  Only three vendors qualify. The procurement cycle is 18 months and the current contract expires in 6 months, creating urgency
-  without flexibility.
+scenario_description: A government agency is procuring financial planning tools with
+  strict data sovereignty and FedRAMP requirements. Only three vendors qualify. The
+  procurement cycle is 18 months and the current contract expires in 6 months, creating
+  urgency without flexibility.

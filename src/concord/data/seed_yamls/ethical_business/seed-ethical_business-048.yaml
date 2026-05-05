@@ -6,11 +6,11 @@ buyer_context:
   batna: 19200.0
   reserve_price: 28800.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - transparency_reports_must_be_annual
   private_info:
-  - budget_is_38400
-  - needs_lab_grown_leather
+  - marketing_team_requires_full_cert_for_next_campaign
+  - partial_cert_would_require_disclaimer_on_packaging
+  - competitors_all_use_full_cert
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -18,11 +18,11 @@ seller_context:
   batna: 12800.0
   reserve_price: 7680.0
   hard_constraints:
-  - minimum_order_600_units
-  - payment_terms_net_30
+  - environmental_audit_required_before_shipment
   private_info:
-  - cost_basis_is_5120
-  - inventory_of_lab_grown_leather_is_strong
+  - full_bcorp_cert_adds_20_percent_to_cost
+  - partial_compliance_cert_available_at_5_percent_premium
+  - cert_upgrade_takes_6_months
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -32,6 +32,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: A tech company's hardware division is sourcing lab grown leather and has committed to carbon-neutral
-  supply chain by 2030. The primary supplier has partial renewable energy usage and is 3 years from full carbon neutrality.
-  A competitor supplier claims net-zero but refuses to share audit data.
+scenario_description: The supplier offers partial certification at lower cost. The
+  buyer's marketing team needs full certification for their campaign. The supplier
+  says full certification takes 6 months and costs 20% more.

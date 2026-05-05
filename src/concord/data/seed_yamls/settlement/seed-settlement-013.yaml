@@ -4,7 +4,7 @@ culture: US
 max_turns: 8
 buyer_context:
   batna: 260000.0
-  reserve_price: 390000.0
+  reserve_price: 286000.0
   hard_constraints:
   - mutual_release_of_all_claims
   - no_admission_of_liability
@@ -12,13 +12,13 @@ buyer_context:
   - plaintiff_damages_estimate_is_150000_to_300000
   - expert_report_is_favorable_to_plaintiff
   - class_certification_hearing_in_60_days
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history:
   - prior_deal_compliance_settlement
 seller_context:
   batna: 110000.0
-  reserve_price: 66000.0
+  reserve_price: 99000.0
   hard_constraints:
   - mutual_release_of_all_claims
   - no_public_statement_about_settlement
@@ -26,7 +26,7 @@ seller_context:
   - insurance_covers_up_to_120000
   - reputational_damage_estimated_at_80000
   - internal_legal_budget_exhausted_at_50000
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history:
   - prior_deal_compliance_settlement
@@ -36,6 +36,7 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: An employment dispute where a senior executive was terminated and alleges wrongful termination with
-  age discrimination. The executive seeks $850K in damages including stock options. The company claims performance-based termination
+scenario_description: An employment dispute where a senior executive was terminated
+  and alleges wrongful termination with age discrimination. The executive seeks $850K
+  in damages including stock options. The company claims performance-based termination
   with documented reviews. Settlement would avoid reputational harm to both parties.

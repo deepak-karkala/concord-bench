@@ -6,7 +6,8 @@ buyer_context:
   batna: 27.0
   reserve_price: 40.5
   hard_constraints:
-  - quality_meets_standards
+  - sso_integration_required
+  - hipaa_compliance_required
   private_info:
   - internal_champion_left_company
   - requires_soc2_type2_compliance
@@ -18,7 +19,8 @@ seller_context:
   batna: 34.0
   reserve_price: 20.4
   hard_constraints:
-  - minimum_order_500_units
+  - minimum_25_seats_for_pilot
+  - monthly_billing_not_available
   private_info:
   - renewal_rate_for_this_account_tier_is_92_percent
   - competing_against_notion_and_clickup
@@ -32,6 +34,7 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: An enterprise undergoing digital transformation is consolidating from 8 tools to a single identity management
-  platform. The vendor is competing against two established players. The buyer's CIO needs board approval for deals over $100K,
+scenario_description: An enterprise undergoing digital transformation is consolidating
+  from 8 tools to a single identity management platform. The vendor is competing against
+  two established players. The buyer's CIO needs board approval for deals over $100K,
   creating a 3-week decision cycle.

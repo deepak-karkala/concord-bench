@@ -4,7 +4,7 @@ culture: US
 max_turns: 10
 buyer_context:
   batna: 7800.0
-  reserve_price: 7220.0
+  reserve_price: 8424.0
   hard_constraints:
   - quality_meets_standards
   private_info:
@@ -15,7 +15,7 @@ buyer_context:
   relationship_history: []
 seller_context:
   batna: 6840.0
-  reserve_price: 7220.0
+  reserve_price: 6292.8
   hard_constraints:
   - minimum_order_1000_units
   private_info:

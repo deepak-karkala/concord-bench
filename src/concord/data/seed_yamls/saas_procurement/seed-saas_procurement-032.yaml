@@ -4,28 +4,28 @@ culture: US
 max_turns: 10
 buyer_context:
   batna: 13.0
-  reserve_price: 19.5
+  reserve_price: 10.66
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - sso_integration_required
+  - hipaa_compliance_required
   private_info:
   - internal_champion_left_company
   - requires_soc2_type2_compliance
   - board_mandated_20_percent_cost_reduction
-  walk_away_threshold: 0.4
+  walk_away_threshold: 0.35
   reputation: null
   relationship_history: []
 seller_context:
   batna: 19.0
-  reserve_price: 11.4
+  reserve_price: 18.05
   hard_constraints:
-  - minimum_order_500_units
-  - payment_terms_net_30
+  - minimum_25_seats_for_pilot
+  - monthly_billing_not_available
   private_info:
   - renewal_rate_for_this_account_tier_is_92_percent
   - competing_against_notion_and_clickup
   - pricing_floor_is_22_with_annual_commitment
-  walk_away_threshold: null
+  walk_away_threshold: 0.35
   reputation: null
   relationship_history: []
 deal_schema:
@@ -34,5 +34,7 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for knowledge base (500 units). Context:
-  contract renewal.'
+scenario_description: A company's software contract is up for renewal. The incumbent
+  vendor is offering a loyalty discount but the procurement team has benchmarked three
+  competitors at lower rates. The vendor knows the company's migration costs are estimated
+  at $200K, which strengthens their negotiating position.

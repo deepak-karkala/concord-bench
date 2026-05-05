@@ -6,8 +6,8 @@ buyer_context:
   batna: 6.0
   reserve_price: 30.0
   hard_constraints:
-  - quality_meets_standards
-  - warranty_coverage_required
+  - uptime_sla_99_9_required
+  - sso_integration_required
   private_info:
   - current_tool_contract_expires_in_90_days
   - competitor_quote_from_microsoft_is_45_per_seat
@@ -18,9 +18,10 @@ buyer_context:
   - prior_deal_vendor_evaluation
 seller_context:
   batna: 10.0
-  reserve_price: 12.0
+  reserve_price: 9.2
   hard_constraints:
-  - minimum_order_100_units
+  - minimum_50_seats
+  - annual_contract_only
   private_info:
   - end_of_quarter_in_2_weeks
   - renewal_rate_for_this_account_tier_is_85_percent

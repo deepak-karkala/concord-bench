@@ -4,7 +4,7 @@ culture: US
 max_turns: 10
 buyer_context:
   batna: 22000.0
-  reserve_price: 33000.0
+  reserve_price: 18040.0
   hard_constraints:
   - confidentiality_clause_required
   - structured_payment_required_for_tax_treatment
@@ -12,12 +12,12 @@ buyer_context:
   - plaintiff_damages_estimate_is_200000_to_500000
   - lead_plaintiff_prefers_settlement_for_personal_reasons
   - class_certification_hearing_in_30_days
-  walk_away_threshold: null
+  walk_away_threshold: 0.35
   reputation: null
   relationship_history: []
 seller_context:
   batna: 8000.0
-  reserve_price: 4800.0
+  reserve_price: 19483.2
   hard_constraints:
   - mutual_release_of_all_claims
   - no_admission_of_liability
@@ -25,7 +25,7 @@ seller_context:
   - insurance_covers_up_to_50000
   - admission_risk_high_if_case_goes_to_trial
   - co_defendant_negotiating_separately
-  walk_away_threshold: null
+  walk_away_threshold: 0.35
   reputation: null
   relationship_history: []
 deal_schema:
@@ -34,6 +34,8 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: A breach of contract claim between a manufacturer and a component supplier. The manufacturer alleges
-  the supplier delivered sub-spec parts causing a recall costing $3.2M. The supplier claims the manufacturer changed specifications
-  mid-contract without written approval. Both parties want to avoid trial publicity and industry reputation damage.
+scenario_description: A breach of contract claim between a manufacturer and a component
+  supplier. The manufacturer alleges the supplier delivered sub-spec parts causing
+  a recall costing $3.2M. The supplier claims the manufacturer changed specifications
+  mid-contract without written approval. Both parties want to avoid trial publicity
+  and industry reputation damage.

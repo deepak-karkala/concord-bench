@@ -6,7 +6,8 @@ buyer_context:
   batna: 260.0
   reserve_price: 390.0
   hard_constraints:
-  - quality_meets_standards
+  - uptime_sla_99_9_required
+  - sso_integration_required
   private_info:
   - current_tool_contract_expires_in_90_days
   - competitor_quote_from_microsoft_is_45_per_seat
@@ -18,7 +19,8 @@ seller_context:
   batna: 350.0
   reserve_price: 210.0
   hard_constraints:
-  - minimum_order_50_units
+  - minimum_50_seats
+  - annual_contract_only
   private_info:
   - end_of_quarter_in_2_weeks
   - renewal_rate_for_this_account_tier_is_85_percent
@@ -32,6 +34,7 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A financial services firm needs data warehousing with specific regulatory compliance features. The vendor
-  has 80% of the required features in production and 20% on the roadmap. The buyer's compliance team wants all features now;
-  the vendor cannot commit to the roadmap timeline.
+scenario_description: A financial services firm needs data warehousing with specific
+  regulatory compliance features. The vendor has 80% of the required features in production
+  and 20% on the roadmap. The buyer's compliance team wants all features now; the
+  vendor cannot commit to the roadmap timeline.

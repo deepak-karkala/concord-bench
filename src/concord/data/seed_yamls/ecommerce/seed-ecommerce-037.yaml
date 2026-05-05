@@ -4,7 +4,7 @@ culture: US
 max_turns: 8
 buyer_context:
   batna: 8064.0
-  reserve_price: 7920.0
+  reserve_price: 8709.12
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met
@@ -37,5 +37,7 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for rubber hoses (800 units). Context:
-  seasonal build.'
+scenario_description: A distribution company needs to restock inventory before peak
+  season. Their primary supplier is offering volume discounts but requires commitment
+  before market prices potentially drop. The buyer must balance guaranteed supply
+  against the risk of overpaying.

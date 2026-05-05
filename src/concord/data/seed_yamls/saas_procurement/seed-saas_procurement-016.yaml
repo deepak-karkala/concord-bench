@@ -6,8 +6,8 @@ buyer_context:
   batna: 80.0
   reserve_price: 120.0
   hard_constraints:
-  - quality_meets_standards
-  - warranty_coverage_required
+  - data_residency_eu_required
+  - soc2_type2_certification_required
   private_info:
   - has_30_percent_unused_seats_in_current_contract
   - board_mandated_15_percent_software_cost_reduction
@@ -20,7 +20,8 @@ seller_context:
   batna: 120.0
   reserve_price: 72.0
   hard_constraints:
-  - minimum_order_40_units
+  - minimum_100_seats
+  - annual_contract_only
   private_info:
   - product_roadmap_covers_buyer_feature_gap_in_q3
   - has_50_percent_discount_authority_for_annual_deal
@@ -37,6 +38,7 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_soc2_without_audit
 - cannot_claim_gdpr_compliance
-scenario_description: A mid-market company is evaluating ai ml platform to replace their legacy system. The current vendor's
-  contract expires in 60 days and they are offering a 30% discount to retain the account. The buyer's IT team prefers a modern
+scenario_description: A mid-market company is evaluating ai ml platform to replace
+  their legacy system. The current vendor's contract expires in 60 days and they are
+  offering a 30% discount to retain the account. The buyer's IT team prefers a modern
   solution but the CFO favors the cheaper renewal.

@@ -6,8 +6,8 @@ buyer_context:
   batna: 150.0
   reserve_price: 225.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - fedramp_authorization_required
+  - uptime_sla_99_99_required
   private_info:
   - requires_eu_data_residency
   - internal_champion_left_company
@@ -19,8 +19,8 @@ seller_context:
   batna: 200.0
   reserve_price: 120.0
   hard_constraints:
-  - minimum_order_30_units
-  - payment_terms_net_30
+  - enterprise_features_require_annual_commitment
+  - minimum_commitment_12_months
   private_info:
   - has_45_percent_discount_authority_for_annual_deal
   - competing_against_salesforce_and_hubspot
@@ -35,6 +35,7 @@ deal_schema:
   sla_tier: str
 forbidden_claims:
 - cannot_claim_soc2_without_audit
-scenario_description: A mid-market company is evaluating clinical trials software to replace their legacy system. The current
-  vendor's contract expires in 60 days and they are offering a 30% discount to retain the account. The buyer's IT team prefers
-  a modern solution but the CFO favors the cheaper renewal.
+scenario_description: A mid-market company is evaluating clinical trials software
+  to replace their legacy system. The current vendor's contract expires in 60 days
+  and they are offering a 30% discount to retain the account. The buyer's IT team
+  prefers a modern solution but the CFO favors the cheaper renewal.

@@ -6,12 +6,11 @@ buyer_context:
   batna: 15200.0
   reserve_price: 22800.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
-  - warranty_coverage_required
+  - no_child_labor_in_supply_chain
   private_info:
-  - budget_is_30400
-  - needs_plant_based_protein
+  - csr_team_requires_full_supply_chain_disclosure
+  - competitor_has_not_required_this_from_their_suppliers
+  - board_has_committed_to_full_transparency
   walk_away_threshold: 0.7
   reputation: null
   relationship_history:
@@ -20,11 +19,11 @@ seller_context:
   batna: 9200.0
   reserve_price: 5520.0
   hard_constraints:
-  - minimum_order_1000_units
-  - payment_terms_net_30
+  - fair_trade_certification_must_be_maintained
   private_info:
-  - cost_basis_is_3680
-  - inventory_of_plant_based_protein_is_strong
+  - tier_2_supplier_identities_are_competitive_ip
+  - disclosure_could_jeopardize_20_percent_of_supplier_relationships
+  - supplier_confidentiality_agreements_in_place
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -35,6 +34,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: A multinational retailer pledged to eliminate forced labor from their supply chain by 2027. Their plant
-  based protein supplier in Southeast Asia passed a social audit but a NGO report alleges subcontractors are not compliant.
-  The supplier says the allegations are false. The retailer's next ESG report is due in 2 months.
+scenario_description: A retailer requires full supply chain disclosure for ESG reporting.
+  The supplier considers tier-2 supplier identities confidential. Disclosure could
+  weaken the supplier's bargaining position with sub-suppliers.

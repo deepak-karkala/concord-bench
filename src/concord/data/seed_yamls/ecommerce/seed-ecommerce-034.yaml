@@ -4,7 +4,7 @@ culture: US
 max_turns: 8
 buyer_context:
   batna: 7168.0
-  reserve_price: 7040.0
+  reserve_price: 7741.44
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met

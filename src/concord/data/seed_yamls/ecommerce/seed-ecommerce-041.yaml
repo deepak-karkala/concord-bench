@@ -4,26 +4,26 @@ culture: US
 max_turns: 10
 buyer_context:
   batna: 5400.0
-  reserve_price: 9450.0
+  reserve_price: 4428.0
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met
   private_info:
   - budget_is_18000
   - needs_valves_and_fittings
-  walk_away_threshold: 0.8
+  walk_away_threshold: 0.35
   reputation: null
   relationship_history: []
 seller_context:
   batna: 16800.0
-  reserve_price: 7200.0
+  reserve_price: 15960.0
   hard_constraints:
   - minimum_order_300_units
   - payment_terms_net_30
   private_info:
   - cost_basis_is_4800
   - inventory_of_valves_and_fittings_is_strong
-  walk_away_threshold: 0.3
+  walk_away_threshold: 0.35
   reputation: null
   relationship_history: []
 deal_schema:

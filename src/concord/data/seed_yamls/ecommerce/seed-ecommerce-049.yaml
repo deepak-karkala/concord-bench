@@ -18,7 +18,7 @@ buyer_context:
   - prior_deal_contract_renewal
 seller_context:
   batna: 1500.0
-  reserve_price: 1800.0
+  reserve_price: 1380.0
   hard_constraints:
   - minimum_order_1000_units
   - payment_terms_net_30

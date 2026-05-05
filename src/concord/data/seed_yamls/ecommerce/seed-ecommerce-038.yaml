@@ -4,7 +4,7 @@ culture: US
 max_turns: 10
 buyer_context:
   batna: 17248.0
-  reserve_price: 16940.0
+  reserve_price: 18972.8
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met
@@ -18,14 +18,14 @@ buyer_context:
   relationship_history: []
 seller_context:
   batna: 14700.0
-  reserve_price: 12600.0
+  reserve_price: 13230.0
   hard_constraints:
   - minimum_order_500_units
   - payment_terms_net_30
   private_info:
   - cost_basis_is_8400
   - inventory_of_aluminum_extrusions_is_strong
-  walk_away_threshold: null
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 deal_schema:

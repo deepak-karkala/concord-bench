@@ -6,8 +6,8 @@ buyer_context:
   batna: 18.0
   reserve_price: 27.0
   hard_constraints:
-  - quality_meets_standards
-  - warranty_coverage_required
+  - data_export_api_required
+  - sso_integration_required
   private_info:
   - sso_integration_required_by_it_policy
   - annual_churn_risk_if_tool_not_improved
@@ -20,7 +20,8 @@ seller_context:
   batna: 25.0
   reserve_price: 15.0
   hard_constraints:
-  - minimum_order_400_units
+  - minimum_10_seats_for_small_business_tier
+  - quarterly_billing_available
   private_info:
   - product_roadmap_has_ai_features_in_beta
   - renewal_rate_for_this_tier_is_78_percent
@@ -35,6 +36,7 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: An enterprise undergoing digital transformation is consolidating from 8 tools to a single e learning
-  platform platform. The vendor is competing against two established players. The buyer's CIO needs board approval for deals
-  over $100K, creating a 3-week decision cycle.
+scenario_description: An enterprise undergoing digital transformation is consolidating
+  from 8 tools to a single e learning platform platform. The vendor is competing against
+  two established players. The buyer's CIO needs board approval for deals over $100K,
+  creating a 3-week decision cycle.

@@ -4,26 +4,26 @@ culture: US
 max_turns: 10
 buyer_context:
   batna: 6000.0
-  reserve_price: 9000.0
+  reserve_price: 6600.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
+  - no_child_labor_in_supply_chain
   private_info:
-  - budget_is_12000
-  - needs_fair_trade_spices
-  walk_away_threshold: null
+  - csr_team_requires_full_supply_chain_disclosure
+  - competitor_has_not_required_this_from_their_suppliers
+  - board_has_committed_to_full_transparency
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 seller_context:
   batna: 3800.0
-  reserve_price: 2280.0
+  reserve_price: 3420.0
   hard_constraints:
-  - minimum_order_1500_units
-  - payment_terms_net_30
+  - fair_trade_certification_must_be_maintained
   private_info:
-  - cost_basis_is_1520
-  - inventory_of_fair_trade_spices_is_strong
-  walk_away_threshold: null
+  - tier_2_supplier_identities_are_competitive_ip
+  - disclosure_could_jeopardize_20_percent_of_supplier_relationships
+  - supplier_confidentiality_agreements_in_place
+  walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 deal_schema:
@@ -32,6 +32,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: A multinational retailer pledged to eliminate forced labor from their supply chain by 2027. Their fair
-  trade spices supplier in Southeast Asia passed a social audit but a NGO report alleges subcontractors are not compliant.
-  The supplier says the allegations are false. The retailer's next ESG report is due in 2 months.
+scenario_description: A retailer requires full supply chain disclosure for ESG reporting.
+  The supplier considers tier-2 supplier identities confidential. Disclosure could
+  weaken the supplier's bargaining position with sub-suppliers.

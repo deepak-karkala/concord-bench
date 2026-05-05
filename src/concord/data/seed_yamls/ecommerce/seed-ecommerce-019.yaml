@@ -4,7 +4,7 @@ culture: US
 max_turns: 8
 buyer_context:
   batna: 18300.0
-  reserve_price: 15960.0
+  reserve_price: 19764.0
   hard_constraints:
   - quality_meets_standards
   - warranty_coverage_required
@@ -17,7 +17,7 @@ buyer_context:
   - prior_deal_contract_renewal
 seller_context:
   batna: 15120.0
-  reserve_price: 15960.0
+  reserve_price: 13910.4
   hard_constraints:
   - minimum_order_200_units
   private_info:

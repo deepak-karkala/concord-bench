@@ -6,7 +6,8 @@ buyer_context:
   batna: 50.0
   reserve_price: 75.0
   hard_constraints:
-  - quality_meets_standards
+  - data_export_api_required
+  - sso_integration_required
   private_info:
   - sso_integration_required_by_it_policy
   - annual_churn_risk_if_tool_not_improved
@@ -18,7 +19,8 @@ seller_context:
   batna: 80.0
   reserve_price: 48.0
   hard_constraints:
-  - minimum_order_400_units
+  - minimum_10_seats_for_small_business_tier
+  - quarterly_billing_available
   private_info:
   - product_roadmap_has_ai_features_in_beta
   - renewal_rate_for_this_tier_is_78_percent
@@ -34,6 +36,7 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_soc2_without_audit
 - cannot_claim_competitor_will_raise_prices_next_quarter
-scenario_description: A mid-market company is evaluating erp system to replace their legacy system. The current vendor's contract
-  expires in 60 days and they are offering a 30% discount to retain the account. The buyer's IT team prefers a modern solution
+scenario_description: A mid-market company is evaluating erp system to replace their
+  legacy system. The current vendor's contract expires in 60 days and they are offering
+  a 30% discount to retain the account. The buyer's IT team prefers a modern solution
   but the CFO favors the cheaper renewal.

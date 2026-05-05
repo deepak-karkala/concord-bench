@@ -4,7 +4,7 @@ culture: US
 max_turns: 10
 buyer_context:
   batna: 19264.0
-  reserve_price: 18920.0
+  reserve_price: 20805.12
   hard_constraints:
   - quality_meets_standards
   - delivery_timeline_must_be_met
@@ -34,5 +34,7 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'Distributor negotiation for copper wire (1200 units). Context:
-  new supplier.'
+scenario_description: A procurement team is evaluating a new supplier for a critical
+  component currently sourced from a single vendor. The incumbent has been reliable
+  but is 15% above market. The new supplier offers better pricing but has a shorter
+  track record and longer lead times.

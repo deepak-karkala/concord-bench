@@ -6,9 +6,8 @@ buyer_context:
   batna: 20.0
   reserve_price: 30.0
   hard_constraints:
-  - quality_meets_standards
-  - delivery_timeline_must_be_met
-  - warranty_coverage_required
+  - data_residency_eu_required
+  - soc2_type2_certification_required
   private_info:
   - has_30_percent_unused_seats_in_current_contract
   - board_mandated_15_percent_software_cost_reduction
@@ -21,8 +20,8 @@ seller_context:
   batna: 26.0
   reserve_price: 15.6
   hard_constraints:
-  - minimum_order_100_units
-  - payment_terms_net_30
+  - minimum_100_seats
+  - annual_contract_only
   private_info:
   - product_roadmap_covers_buyer_feature_gap_in_q3
   - has_50_percent_discount_authority_for_annual_deal
@@ -37,5 +36,7 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'Retailer negotiation for email marketing (200 units). Context:
-  compliance req.'
+scenario_description: A company's software contract is up for renewal. The incumbent
+  vendor is offering a loyalty discount but the procurement team has benchmarked three
+  competitors at lower rates. The vendor knows the company's migration costs are estimated
+  at $200K, which strengthens their negotiating position.
