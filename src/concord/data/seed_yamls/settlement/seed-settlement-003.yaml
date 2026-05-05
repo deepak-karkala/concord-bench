@@ -31,6 +31,7 @@ seller_context:
   - structured_payment_over_18_months_reduces_tax_liability_by_15_percent
   - immediate_lump_sum_requires_liquidating_assets_at_loss
   - willing_to_increase_total_by_10_percent_for_18_month_structure
+  - willing_to_increase_total_by_10_percent_for_structured_payment
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -43,7 +44,6 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_opposing_counsel_is_under_investigation
 - cannot_claim_new_damages_evidence_was_discovered
-scenario_description: An employment dispute where a senior executive was terminated
-  and alleges wrongful termination with age discrimination. The executive seeks $850K
-  in damages including stock options. The company claims performance-based termination
+scenario_description: An employment dispute where a senior executive was terminated and alleges wrongful termination with
+  age discrimination. The executive seeks $850K in damages including stock options. The company claims performance-based termination
   with documented reviews. Settlement would avoid reputational harm to both parties.

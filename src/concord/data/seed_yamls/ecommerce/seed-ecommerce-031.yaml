@@ -9,6 +9,7 @@ buyer_context:
   - quality_meets_standards
   - delivery_timeline_must_be_met
   - warranty_coverage_required
+  - cannot_commit_to_price_increase_without_budget_approval
   private_info:
   - budget_is_20000
   - needs_fiberglass_insulation

@@ -29,6 +29,9 @@ seller_context:
   - quarterly_audit_costs_9000_including_consultant_fees
   - biannual_audit_costs_5000_reduced_overhead
   - 12_month_transition_possible_if_premium_pricing
+  - biannual_audit_saves_12000_per_year_in_compliance_costs
+  - willing_to_offer_3_percent_discount_for_biannual_schedule
+  - each_audit_cycle_disrupts_operations_for_2_weeks
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -40,7 +43,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: A coffee roaster committed to direct trade wants to secure furniture
-  production from a cooperative. The cooperative's pricing reflects living-wage commitments.
-  A commodity broker offers the same grade at 35% less. The roaster's largest client
-  has requested proof of ethical sourcing for their ESG report.
+scenario_description: A coffee roaster committed to direct trade wants to secure furniture production from a cooperative.
+  The cooperative's pricing reflects living-wage commitments. A commodity broker offers the same grade at 35% less. The roaster's
+  largest client has requested proof of ethical sourcing for their ESG report.

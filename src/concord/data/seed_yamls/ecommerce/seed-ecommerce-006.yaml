@@ -7,6 +7,7 @@ buyer_context:
   reserve_price: 10267.2
   hard_constraints:
   - quality_meets_standards
+  - cannot_commit_to_order_above_50000_without_procurement_approval
   private_info:
   - budget_is_16000
   - needs_textile_fabric

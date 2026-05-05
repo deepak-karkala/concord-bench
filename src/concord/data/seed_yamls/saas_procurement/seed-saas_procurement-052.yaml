@@ -21,6 +21,8 @@ seller_context:
   private_info:
   - free_migration_offer_uses_idle_implementation_team
   - offer_expires_as_team_reassigned_next_week
+  - onboarding_support_costs_seller_2000_per_40_hours
+  - willing_to_include_onboarding_if_contract_24_months_or_longer
   walk_away_threshold: null
   reputation: null
   relationship_history: []

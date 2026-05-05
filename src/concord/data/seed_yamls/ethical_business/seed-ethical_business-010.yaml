@@ -30,6 +30,9 @@ seller_context:
   - audit_costs_6000_per_quarter_for_full_supply_chain_scope
   - biannual_audit_reduces_cost_to_3500
   - willing_to_accept_quarterly_audit_if_3_year_contract
+  - transition_timeline_dependent_on_supplier_certification_schedule
+  - accept_18_month_transition_if_buyer_provides_technical_assistance
+  - 3_year_transition_would_require_capital_investment_not_yet_approved
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -42,7 +45,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: An organic food company needs logistics services from regenerative
-  agriculture sources. The supplier transitioned to regenerative practices 18 months
-  ago and charges a 28% premium. The company's largest competitor just launched a
-  sustainably sourced line at only 8% premium, using less rigorous certification.
+scenario_description: An organic food company needs logistics services from regenerative agriculture sources. The supplier
+  transitioned to regenerative practices 18 months ago and charges a 28% premium. The company's largest competitor just launched
+  a sustainably sourced line at only 8% premium, using less rigorous certification.

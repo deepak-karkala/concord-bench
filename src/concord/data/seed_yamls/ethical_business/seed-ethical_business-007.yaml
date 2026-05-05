@@ -24,6 +24,8 @@ seller_context:
   private_info:
   - sea_freight_capacity_is_80_percent_booked
   - expedited_manufacturing_increases_energy_use_40_percent
+  - annual_audit_costs_seller_4500_less_than_quarterly
+  - willing_to_lower_price_by_5_percent_for_annual_audit_schedule
   walk_away_threshold: 0.35
   reputation: null
   relationship_history:
@@ -36,7 +38,6 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_competitor_is_not_actually_certified
 - cannot_claim_partial_cert_is_equivalent_to_full_cert
-scenario_description: A coffee roaster committed to direct trade wants to secure mining
-  equipment from a cooperative. The cooperative's pricing reflects living-wage commitments.
-  A commodity broker offers the same grade at 35% less. The roaster's largest client
-  has requested proof of ethical sourcing for their ESG report.
+scenario_description: A coffee roaster committed to direct trade wants to secure mining equipment from a cooperative. The
+  cooperative's pricing reflects living-wage commitments. A commodity broker offers the same grade at 35% less. The roaster's
+  largest client has requested proof of ethical sourcing for their ESG report.

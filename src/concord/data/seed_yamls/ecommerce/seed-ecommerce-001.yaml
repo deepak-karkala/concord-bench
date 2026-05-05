@@ -8,6 +8,7 @@ buyer_context:
   hard_constraints:
   - quality_meets_standards
   - warranty_coverage_required
+  - cannot_place_order_without_purchase_order_approval
   private_info:
   - budget_is_4000
   - needs_electronic_components

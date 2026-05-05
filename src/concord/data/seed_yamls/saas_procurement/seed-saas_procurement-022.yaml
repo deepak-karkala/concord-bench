@@ -32,6 +32,8 @@ seller_context:
   - 36_month_contract_worth_22_percent_enterprise_kicker
   - onboarding_costs_3000_per_50_hours
   - include_onboarding_if_annualized_value_above_150k
+  - onboarding_support_costs_seller_2000_per_40_hours
+  - willing_to_include_onboarding_if_contract_24_months_or_longer
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -43,7 +45,6 @@ deal_schema:
   onboarding_support_hours: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A fast-growing startup needs legal practice mgmt for their expanding
-  team. They have priced three vendors and found a 40% spread between options. The
-  board wants the best-in-class solution but the COO is pushing for the budget option.
-  The vendor's end-of-quarter is in 3 weeks.
+scenario_description: A fast-growing startup needs legal practice mgmt for their expanding team. They have priced three vendors
+  and found a 40% spread between options. The board wants the best-in-class solution but the COO is pushing for the budget
+  option. The vendor's end-of-quarter is in 3 weeks.

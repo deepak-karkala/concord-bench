@@ -28,6 +28,9 @@ seller_context:
   - each_audit_cycle_costs_7000_staff_and_preparation
   - annual_audit_would_save_12000_per_year_in_compliance_costs
   - 24_month_transition_needed_for_certification_upgrade
+  - 12_month_transition_possible_with_current_staffing
+  - 24_month_transition_would_require_new_hires_at_additional_cost
+  - willing_to_commit_to_milestone_dates_with_quarterly_reporting
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -41,7 +44,6 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_child_labor_free_without_verification
 - cannot_claim_carbon_neutral_without_audit
-scenario_description: An organic food company needs chemical supply from regenerative
-  agriculture sources. The supplier transitioned to regenerative practices 18 months
-  ago and charges a 28% premium. The company's largest competitor just launched a
-  sustainably sourced line at only 8% premium, using less rigorous certification.
+scenario_description: An organic food company needs chemical supply from regenerative agriculture sources. The supplier transitioned
+  to regenerative practices 18 months ago and charges a 28% premium. The company's largest competitor just launched a sustainably
+  sourced line at only 8% premium, using less rigorous certification.

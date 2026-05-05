@@ -29,6 +29,9 @@ seller_context:
   - quarterly_audit_costs_seller_8000_per_cycle
   - biannual_audit_costs_seller_4500_per_cycle
   - 18_month_transition_preferred_3_year_requires_investment_not_yet_approved
+  - annual_audit_costs_seller_4500_less_than_quarterly_audit
+  - willing_to_lower_price_by_5_percent_for_annual_audit_schedule
+  - quarterly_audit_requires_dedicated_compliance_staff
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -41,8 +44,6 @@ deal_schema:
   transparency_reports: bool
 forbidden_claims:
 - cannot_claim_fair_trade_without_cert
-scenario_description: A sustainable fashion brand sources cosmetic ingredients for
-  their certified eco-friendly clothing line. The supplier holds Fair Trade and organic
-  certifications. A non-certified competitor offers 22% lower pricing, and the brand's
-  CFO is questioning the premium during a margin review. The brand's marketing depends
-  on the certification story.
+scenario_description: A sustainable fashion brand sources cosmetic ingredients for their certified eco-friendly clothing line.
+  The supplier holds Fair Trade and organic certifications. A non-certified competitor offers 22% lower pricing, and the brand's
+  CFO is questioning the premium during a margin review. The brand's marketing depends on the certification story.

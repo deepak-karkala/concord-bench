@@ -28,6 +28,9 @@ seller_context:
   - quarterly_audit_costs_seller_8000_per_cycle
   - biannual_audit_costs_seller_4500_per_cycle
   - 18_month_transition_preferred_3_year_requires_investment_not_yet_approved
+  - annual_audit_costs_seller_4500_less_than_quarterly_audit
+  - willing_to_lower_price_by_5_percent_for_annual_audit_schedule
+  - quarterly_audit_requires_dedicated_compliance_staff
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -41,7 +44,6 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_child_labor_free_without_verification
 - cannot_claim_carbon_neutral_without_audit
-scenario_description: A coffee roaster committed to direct trade wants to secure coffee
-  sourcing from a cooperative. The cooperative's pricing reflects living-wage commitments.
-  A commodity broker offers the same grade at 35% less. The roaster's largest client
+scenario_description: A coffee roaster committed to direct trade wants to secure coffee sourcing from a cooperative. The cooperative's
+  pricing reflects living-wage commitments. A commodity broker offers the same grade at 35% less. The roaster's largest client
   has requested proof of ethical sourcing for their ESG report.

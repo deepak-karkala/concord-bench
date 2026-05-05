@@ -32,6 +32,11 @@ seller_context:
   - 12_month_structure_optimal_for_insurance_payout_schedule
   - lump_sum_creates_tax_event_in_current_year
   - increase_amount_by_8_percent_for_structured_terms
+  - tax_treatment_favors_structured_over_lump_sum_by_18_percent
+  - increase_total_by_8_percent_for_24_month_payment_schedule
+  - immediate_cash_outlay_would_trigger_covenant_violation
+  - structured_payment_reduces_tax_liability_significantly
+  - willing_to_increase_total_by_10_percent_for_structured_payment
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -43,8 +48,6 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: A product liability case where a medical device manufacturer
-  faces claims from 47 patients alleging design defects caused injury. The manufacturer's
-  insurance covers up to $10M. The plaintiffs' expert testimony is strong but the
-  manufacturer claims the injuries were caused by off-label use. Trial is 8 months
-  away.
+scenario_description: A product liability case where a medical device manufacturer faces claims from 47 patients alleging
+  design defects caused injury. The manufacturer's insurance covers up to $10M. The plaintiffs' expert testimony is strong
+  but the manufacturer claims the injuries were caused by off-label use. Trial is 8 months away.

@@ -30,6 +30,9 @@ seller_context:
   - quarterly_audit_costs_9000_including_consultant_fees
   - biannual_audit_costs_5000_reduced_overhead
   - 12_month_transition_possible_if_premium_pricing
+  - biannual_audit_saves_12000_per_year_in_compliance_costs
+  - willing_to_offer_3_percent_discount_for_biannual_schedule
+  - each_audit_cycle_disrupts_operations_for_2_weeks
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -44,8 +47,6 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_competitor_is_not_actually_certified
 - cannot_claim_partial_cert_is_equivalent_to_full_cert
-scenario_description: A multinational retailer pledged to eliminate forced labor from
-  their supply chain by 2027. Their construction project supplier in Southeast Asia
-  passed a social audit but a NGO report alleges subcontractors are not compliant.
-  The supplier says the allegations are false. The retailer's next ESG report is due
-  in 2 months.
+scenario_description: A multinational retailer pledged to eliminate forced labor from their supply chain by 2027. Their construction
+  project supplier in Southeast Asia passed a social audit but a NGO report alleges subcontractors are not compliant. The
+  supplier says the allegations are false. The retailer's next ESG report is due in 2 months.

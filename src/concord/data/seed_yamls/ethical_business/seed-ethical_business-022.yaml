@@ -32,6 +32,9 @@ seller_context:
   - quarterly_audit_costs_8500_due_to_remote_supplier_locations
   - biannual_audit_costs_4800
   - 18_month_transition_minimum_for_process_changes
+  - annual_audit_preferred_due_to_remote_supplier_locations
+  - quarterly_audit_costs_8500_including_travel_expenses
+  - willing_to_accept_quarterly_if_buyer_covers_travel_costs
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -44,7 +47,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: A coffee roaster committed to direct trade wants to secure wood
-  products from a cooperative. The cooperative's pricing reflects living-wage commitments.
-  A commodity broker offers the same grade at 35% less. The roaster's largest client
+scenario_description: A coffee roaster committed to direct trade wants to secure wood products from a cooperative. The cooperative's
+  pricing reflects living-wage commitments. A commodity broker offers the same grade at 35% less. The roaster's largest client
   has requested proof of ethical sourcing for their ESG report.

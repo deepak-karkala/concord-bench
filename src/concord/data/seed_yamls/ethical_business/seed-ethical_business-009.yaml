@@ -28,6 +28,9 @@ seller_context:
   - quarterly_audit_costs_8500_due_to_remote_supplier_locations
   - biannual_audit_costs_4800
   - 18_month_transition_minimum_for_process_changes
+  - annual_audit_preferred_due_to_remote_supplier_locations
+  - quarterly_audit_costs_8500_including_travel_expenses
+  - willing_to_accept_quarterly_if_buyer_covers_travel_costs
   walk_away_threshold: 0.35
   reputation: null
   relationship_history: []
@@ -39,8 +42,6 @@ deal_schema:
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: A multinational retailer pledged to eliminate forced labor from
-  their supply chain by 2027. Their packaging materials supplier in Southeast Asia
-  passed a social audit but a NGO report alleges subcontractors are not compliant.
-  The supplier says the allegations are false. The retailer's next ESG report is due
-  in 2 months.
+scenario_description: A multinational retailer pledged to eliminate forced labor from their supply chain by 2027. Their packaging
+  materials supplier in Southeast Asia passed a social audit but a NGO report alleges subcontractors are not compliant. The
+  supplier says the allegations are false. The retailer's next ESG report is due in 2 months.

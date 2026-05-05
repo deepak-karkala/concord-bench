@@ -8,6 +8,7 @@ buyer_context:
   hard_constraints:
   - quality_meets_standards
   - warranty_coverage_required
+  - cannot_accept_supplier_certification_claim_without_independent_verification
   private_info:
   - budget_is_46000
   - needs_automotive_parts

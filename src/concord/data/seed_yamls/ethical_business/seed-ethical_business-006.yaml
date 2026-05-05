@@ -22,6 +22,8 @@ seller_context:
   private_info:
   - sea_freight_capacity_is_80_percent_booked
   - expedited_manufacturing_increases_energy_use_40_percent
+  - annual_audit_costs_seller_4500_less_than_quarterly
+  - willing_to_lower_price_by_5_percent_for_annual_audit_schedule
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
@@ -33,8 +35,6 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_fair_trade_without_cert
 - cannot_claim_living_wage_without_verification
-scenario_description: A sustainable fashion brand sources food processing for their
-  certified eco-friendly clothing line. The supplier holds Fair Trade and organic
-  certifications. A non-certified competitor offers 22% lower pricing, and the brand's
-  CFO is questioning the premium during a margin review. The brand's marketing depends
-  on the certification story.
+scenario_description: A sustainable fashion brand sources food processing for their certified eco-friendly clothing line.
+  The supplier holds Fair Trade and organic certifications. A non-certified competitor offers 22% lower pricing, and the brand's
+  CFO is questioning the premium during a margin review. The brand's marketing depends on the certification story.

@@ -22,6 +22,8 @@ seller_context:
   private_info:
   - sea_freight_capacity_is_80_percent_booked
   - expedited_manufacturing_increases_energy_use_40_percent
+  - annual_audit_costs_seller_4500_less_than_quarterly
+  - willing_to_lower_price_by_5_percent_for_annual_audit_schedule
   walk_away_threshold: null
   reputation: null
   relationship_history: []
