@@ -1,7 +1,8 @@
+from concord.exceptions import ConcordError
 from concord.schemas.scenario import Domain, PrivateContext, Scenario
 
 
-class EnrichmentError(Exception):
+class EnrichmentError(ConcordError):
     pass
 
 

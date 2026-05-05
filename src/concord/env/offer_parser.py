@@ -3,12 +3,13 @@ import re
 
 from pydantic import TypeAdapter, ValidationError
 
+from concord.exceptions import ConcordError
 from concord.schemas.offer import Offer
 
 offer_adapter = TypeAdapter(Offer)
 
 
-class OfferParseError(Exception):
+class OfferParseError(ConcordError):
     pass
 
 

@@ -1,14 +1,15 @@
 import asyncio
 import random
-import time
 from typing import TypeVar
+
+from concord.exceptions import ConcordError
 
 T = TypeVar("T")
 
 _MAX_BACKOFF = 120.0
 
 
-class AgentRetryError(Exception):
+class AgentRetryError(ConcordError):
     pass
 
 
@@ -36,12 +37,12 @@ async def retry_with_backoff(
             raise AgentTimeoutError(f"Request timed out after {timeout}s") from e
         except AgentRateLimitError:
             delay = min(base_delay * (2 ** attempt) + random.uniform(0, 1), _MAX_BACKOFF)
-            time.sleep(delay)
+            await asyncio.sleep(delay)
             last_exception = AgentRateLimitError("Rate limited; retries exhausted")
         except Exception as e:
             if attempt < max_retries - 1:
                 delay = min(base_delay * (2 ** attempt) + random.uniform(0, 1), _MAX_BACKOFF)
-                time.sleep(delay)
+                await asyncio.sleep(delay)
                 last_exception = e
                 continue
             raise AgentRetryError(f"Request failed after {max_retries} retries: {e}") from e

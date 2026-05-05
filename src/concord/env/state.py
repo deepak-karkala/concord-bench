@@ -5,12 +5,13 @@ from typing import Any
 
 import yaml
 
+from concord.exceptions import ConcordError
 from concord.schemas.scenario import Scenario
 
 SCHEMA_VERSION = 1
 
 
-class StateError(Exception):
+class StateError(ConcordError):
     pass
 
 

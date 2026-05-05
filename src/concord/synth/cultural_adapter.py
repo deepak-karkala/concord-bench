@@ -1,8 +1,9 @@
+from concord.exceptions import ConcordError
 from concord.schemas.culture import CULTURAL_PROFILES, Culture, CulturalProfile
 from concord.schemas.scenario import Scenario
 
 
-class CulturalAdapterError(Exception):
+class CulturalAdapterError(ConcordError):
     pass
 
 

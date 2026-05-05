@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 
 from pydantic import TypeAdapter
 
+from concord.exceptions import ConcordError
 from concord.schemas.episode import ActionType, Turn
 from concord.schemas.offer import Offer
 from concord.schemas.scenario import Scenario
@@ -12,7 +13,7 @@ from concord.schemas.scenario import Scenario
 offer_adapter = TypeAdapter(Offer)
 
 
-class EnvError(Exception):
+class EnvError(ConcordError):
     pass
 
 

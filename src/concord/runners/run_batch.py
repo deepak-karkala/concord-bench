@@ -9,6 +9,8 @@ from concord.schemas.scenario import Scenario
 
 DEAD_LETTER_DIR = Path("outputs/dead_letter")
 
+ESTIMATED_COST_PER_EPISODE = 0.40
+
 
 async def run_batch(
     scenarios: list[Scenario],
@@ -18,8 +20,6 @@ async def run_batch(
     concurrency: int = 10,
     budget_cap: float | None = None,
 ) -> list[EpisodeLog]:
-    import asyncio
-
     if seeds is None:
         seeds = [42]
     if len(seeds) < len(scenarios):
@@ -32,8 +32,18 @@ async def run_batch(
 
     async def _run_one(scenario: Scenario, seed: int) -> None:
         async with semaphore:
+            if not budget.can_spend(ESTIMATED_COST_PER_EPISODE):
+                failures.append({
+                    "scenario_id": scenario.id,
+                    "seed": seed,
+                    "error": "daily budget cap reached",
+                })
+                return
+
             try:
                 episode = await run_episode(scenario, buyer_model=buyer_model, seller_model=seller_model, seed=seed)
+                actual_cost = episode.metadata.get("cost_usd", ESTIMATED_COST_PER_EPISODE)
+                budget.record_spend(actual_cost)
                 results.append(episode)
             except Exception as e:
                 failures.append({

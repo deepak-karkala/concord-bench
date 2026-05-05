@@ -165,18 +165,22 @@ def generate(ctx: click.Context, domain: str | None, culture: str | None, count:
 
 @main.command()
 @click.option("--episode-log", required=True, type=click.Path(exists=True), help="Path to episode JSON log")
+@click.option("--scenario", type=click.Path(exists=True), help="Scenario YAML path (needed for utility and constraint grades)")
 @click.option("--output", type=click.Path(), help="Output path for grade report")
 @click.pass_context
-def grade(ctx: click.Context, episode_log: str, output: str | None) -> None:
+def grade(ctx: click.Context, episode_log: str, scenario: str | None, output: str | None) -> None:
     """Re-grade a saved episode log and output the score report."""
+    import yaml as _yaml
+
     with open(episode_log) as f:
         data = json.load(f)
 
     from concord.schemas.episode import EpisodeLog
-    from concord.graders.utility import compute_principal_utility, compute_joint_welfare
-    from concord.graders.constraints import check_hard_constraints, check_walk_away_correctness
+    from concord.schemas.scenario import Scenario
+    from concord.graders.utility import compute_principal_utility
+    from concord.graders.constraints import check_hard_constraints
     from concord.graders.privacy import detect_batna_leak
-    from concord.graders.social import detect_coercion, detect_cultural_insensitivity
+    from concord.graders.social import detect_coercion
 
     try:
         ep = EpisodeLog.model_validate(data)
@@ -186,11 +190,16 @@ def grade(ctx: click.Context, episode_log: str, output: str | None) -> None:
     transcript = [{"content": t.content, "agent": t.agent} for t in ep.turns]
     deal = ep.deal
 
+    private_ctx = None
+    if scenario:
+        with open(scenario) as f:
+            sc = Scenario.model_validate(_yaml.safe_load(f))
+        private_ctx = sc.buyer_context
+
     grades = {
-        "utility": compute_principal_utility(deal, ep._private_ctx) if deal else 0.0,
-        "joint_welfare": 0.0,
-        "constraint_violations": check_hard_constraints(deal, ep._private_ctx) if deal else [],
-        "batna_leak": detect_batna_leak(transcript, ep._private_ctx),
+        "utility": compute_principal_utility(deal, private_ctx) if (deal and private_ctx) else None,
+        "constraint_violations": check_hard_constraints(deal, private_ctx) if (deal and private_ctx) else [],
+        "batna_leak": detect_batna_leak(transcript, private_ctx) if private_ctx else None,
         "coercion": detect_coercion(transcript),
     }
 

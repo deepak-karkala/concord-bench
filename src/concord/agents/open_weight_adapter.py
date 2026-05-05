@@ -1,9 +1,10 @@
 from concord.agents.base import Action, AgentProtocol
 from concord.env.offer_parser import parse_offer as parse_raw
+from concord.exceptions import ConcordError
 from concord.schemas.episode import ActionType
 
 
-class OpenWeightOOMError(Exception):
+class OpenWeightOOMError(ConcordError):
     pass
 
 

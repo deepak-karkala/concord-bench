@@ -25,6 +25,9 @@ class DailyBudget:
         self._reset_if_new_day()
         self.spent_today += amount
 
+    def record_spend(self, amount: float) -> None:
+        self.spend(amount)
+
     def remaining(self) -> float:
         self._reset_if_new_day()
         return max(0.0, self.daily_limit - self.spent_today)
