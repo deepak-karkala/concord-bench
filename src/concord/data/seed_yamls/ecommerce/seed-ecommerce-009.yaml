@@ -10,6 +10,9 @@ buyer_context:
   private_info:
   - budget_is_74000
   - needs_construction_materials
+  - delivery_within_7_days_worth_15000_premium_to_principal
+  - net_60_payment_worth_6000_to_cash_flow
+  - accept_14_day_delivery_if_price_below_85000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -22,12 +25,17 @@ seller_context:
   - cost_basis_is_19200
   - inventory_of_construction_materials_is_strong
   - end_of_quarter_must_close_deal
+  - expedited_delivery_below_7_days_costs_12000_extra
+  - net_30_payment_required_for_working_capital
+  - willing_to_offer_7_day_delivery_if_price_above_95000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
 deal_schema:
   price: float
   quantity: int
+  delivery_days: int
+  payment_terms_days: int
   shipping_terms: str
   return_policy: str
 forbidden_claims: []

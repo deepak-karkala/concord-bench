@@ -12,6 +12,9 @@ buyer_context:
   - internal_champion_left_company
   - requires_soc2_type2_compliance
   - board_mandated_20_percent_cost_reduction
+  - 12_month_contract_preferred_flexibility_worth_15_percent_premium
+  - onboarding_support_40_hours_required_valued_at_8000
+  - willing_to_accept_24_month_contract_if_price_below_75_per_seat
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -25,6 +28,9 @@ seller_context:
   - renewal_rate_for_this_account_tier_is_92_percent
   - competing_against_notion_and_clickup
   - pricing_floor_is_22_with_annual_commitment
+  - 36_month_contract_worth_20_percent_arr_commitment_bonus
+  - onboarding_support_costs_seller_2000_per_40_hours
+  - willing_to_include_onboarding_if_contract_24_months_or_longer
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -32,6 +38,7 @@ deal_schema:
   monthly_price: float
   seats: int
   contract_length_months: int
+  onboarding_support_hours: int
   sla_tier: str
 forbidden_claims:
 - cannot_claim_soc2_without_audit

@@ -12,6 +12,9 @@ buyer_context:
   - plaintiff_damages_estimate_is_150000_to_300000
   - expert_report_is_favorable_to_plaintiff
   - class_certification_hearing_in_60_days
+  - lump_sum_preferred_valued_at_20_percent_premium
+  - quick_payment_30_days_worth_10_percent_to_plaintiff
+  - accept_structured_if_total_25_percent_above_lump_sum_equivalent
   walk_away_threshold: 0.4
   reputation: null
   relationship_history:
@@ -26,13 +29,17 @@ seller_context:
   - insurance_covers_up_to_120000
   - reputational_damage_estimated_at_80000
   - internal_legal_budget_exhausted_at_50000
+  - structured_18_month_preferred_for_cash_flow_management
+  - lump_sum_cost_is_12_percent_higher_due_to_borrowing
+  - willing_to_add_10_percent_to_total_for_structure
   walk_away_threshold: 0.4
   reputation: null
   relationship_history:
   - prior_deal_compliance_settlement
 deal_schema:
   settlement_amount: float
-  payment_terms: str
+  payment_structure: str
+  payment_timeline_days: int
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []

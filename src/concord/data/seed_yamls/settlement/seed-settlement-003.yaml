@@ -12,6 +12,9 @@ buyer_context:
   - plaintiff_damages_estimate_is_200000_to_500000
   - lead_plaintiff_prefers_settlement_for_personal_reasons
   - class_certification_hearing_in_30_days
+  - lump_sum_payment_preferred_valued_20_percent_above_equivalent_structured
+  - payment_within_30_days_required_for_plaintiff_obligations
+  - willing_to_accept_structured_payment_if_total_above_120000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -25,17 +28,22 @@ seller_context:
   - insurance_covers_up_to_50000
   - admission_risk_high_if_case_goes_to_trial
   - co_defendant_negotiating_separately
+  - structured_payment_over_18_months_reduces_tax_liability_by_15_percent
+  - immediate_lump_sum_requires_liquidating_assets_at_loss
+  - willing_to_increase_total_by_10_percent_for_18_month_structure
   walk_away_threshold: null
   reputation: null
   relationship_history: []
 deal_schema:
   settlement_amount: float
-  payment_terms: str
+  payment_structure: str
+  payment_timeline_days: int
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims:
 - cannot_claim_opposing_counsel_is_under_investigation
 - cannot_claim_new_damages_evidence_was_discovered
-scenario_description: An employment dispute where a senior executive was terminated and alleges wrongful termination with
-  age discrimination. The executive seeks $850K in damages including stock options. The company claims performance-based termination
+scenario_description: An employment dispute where a senior executive was terminated
+  and alleges wrongful termination with age discrimination. The executive seeks $850K
+  in damages including stock options. The company claims performance-based termination
   with documented reviews. Settlement would avoid reputational harm to both parties.

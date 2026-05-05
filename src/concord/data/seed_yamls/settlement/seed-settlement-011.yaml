@@ -13,6 +13,9 @@ buyer_context:
   - plaintiff_damages_estimate_is_75000_to_120000
   - has_expert_witness_corroborating_breach
   - litigation_cost_estimate_is_40000_over_3_years
+  - lump_sum_payment_preferred_valued_20_percent_above_equivalent_structured
+  - payment_within_30_days_required_for_plaintiff_obligations
+  - willing_to_accept_structured_payment_if_total_above_120000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -26,17 +29,23 @@ seller_context:
   - internal_legal_budget_exhausted_at_60000
   - executive_deposition_scheduled_in_3_weeks
   - insurance_covers_up_to_100000
+  - structured_payment_over_18_months_reduces_tax_liability_by_15_percent
+  - immediate_lump_sum_requires_liquidating_assets_at_loss
+  - willing_to_increase_total_by_10_percent_for_18_month_structure
   walk_away_threshold: null
   reputation: null
   relationship_history: []
 deal_schema:
   settlement_amount: float
-  payment_terms: str
+  payment_structure: str
+  payment_timeline_days: int
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims:
 - cannot_claim_no_evidence
-scenario_description: A patent infringement dispute between two tech companies over display technology. The plaintiff alleges
-  willful infringement of three patents covering manufacturing processes. The defendant acknowledges using similar processes
-  but claims independent development. Both sides face 18-24 months of litigation, $2-4M in legal fees each, and the risk of
-  an injunction shutting down the defendant's production line.
+scenario_description: A patent infringement dispute between two tech companies over
+  display technology. The plaintiff alleges willful infringement of three patents
+  covering manufacturing processes. The defendant acknowledges using similar processes
+  but claims independent development. Both sides face 18-24 months of litigation,
+  $2-4M in legal fees each, and the risk of an injunction shutting down the defendant's
+  production line.

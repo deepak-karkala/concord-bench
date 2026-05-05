@@ -11,6 +11,9 @@ buyer_context:
   private_info:
   - budget_is_98000
   - needs_hydraulic_systems
+  - expedited_10_day_delivery_worth_10000_premium
+  - net_45_payment_worth_4500_to_cash_flow
+  - willing_to_accept_21_day_delivery_if_price_below_72000
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
@@ -23,12 +26,17 @@ seller_context:
   private_info:
   - cost_basis_is_25200
   - inventory_of_hydraulic_systems_is_strong
+  - expedited_delivery_below_10_days_costs_7500_extra
+  - net_15_payment_required_due_to_raw_material_prepayment
+  - willing_to_offer_10_day_delivery_if_price_above_82000
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 deal_schema:
   price: float
   quantity: int
+  delivery_days: int
+  payment_terms_days: int
   shipping_terms: str
   return_policy: str
 forbidden_claims: []

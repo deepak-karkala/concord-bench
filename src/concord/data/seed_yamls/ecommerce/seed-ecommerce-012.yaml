@@ -10,6 +10,9 @@ buyer_context:
   private_info:
   - budget_is_120000
   - needs_industrial_machinery
+  - delivery_within_21_days_worth_6000_premium_to_principal
+  - net_45_payment_terms_worth_4000_to_principal_cash_flow
+  - willing_to_accept_45_day_delivery_if_price_below_80000
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
@@ -22,12 +25,17 @@ seller_context:
   - cost_basis_is_34400
   - inventory_of_industrial_machinery_is_strong
   - end_of_quarter_must_close_deal
+  - expedited_delivery_below_21_days_costs_4000_extra
+  - net_30_payment_required_due_to_supplier_obligations
+  - willing_to_offer_21_day_delivery_if_price_above_80000
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
 deal_schema:
   price: float
   quantity: int
+  delivery_days: int
+  payment_terms_days: int
   shipping_terms: str
   return_policy: str
 forbidden_claims: []

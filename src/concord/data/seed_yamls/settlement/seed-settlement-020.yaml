@@ -12,6 +12,9 @@ buyer_context:
   - plaintiff_damages_estimate_is_150000_to_300000
   - expert_report_is_favorable_to_plaintiff
   - class_certification_hearing_in_60_days
+  - lump_sum_required_for_tax_treatment_valued_at_18_percent
+  - payment_within_45_days_acceptable
+  - accept_structured_if_above_threshold_with_interest
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -25,15 +28,21 @@ seller_context:
   - insurance_covers_up_to_120000
   - reputational_damage_estimated_at_80000
   - internal_legal_budget_exhausted_at_50000
+  - 12_month_structure_optimal_for_insurance_payout_schedule
+  - lump_sum_creates_tax_event_in_current_year
+  - increase_amount_by_8_percent_for_structured_terms
   walk_away_threshold: null
   reputation: null
   relationship_history: []
 deal_schema:
   settlement_amount: float
-  payment_terms: str
+  payment_structure: str
+  payment_timeline_days: int
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: A product liability case where a medical device manufacturer faces claims from 47 patients alleging
-  design defects caused injury. The manufacturer's insurance covers up to $10M. The plaintiffs' expert testimony is strong
-  but the manufacturer claims the injuries were caused by off-label use. Trial is 8 months away.
+scenario_description: A product liability case where a medical device manufacturer
+  faces claims from 47 patients alleging design defects caused injury. The manufacturer's
+  insurance covers up to $10M. The plaintiffs' expert testimony is strong but the
+  manufacturer claims the injuries were caused by off-label use. Trial is 8 months
+  away.

@@ -11,6 +11,9 @@ buyer_context:
   private_info:
   - budget_is_14400
   - needs_food_ingredients
+  - expedited_10_day_delivery_worth_10000_premium
+  - net_45_payment_worth_4500_to_cash_flow
+  - willing_to_accept_21_day_delivery_if_price_below_72000
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -24,6 +27,9 @@ seller_context:
   - cost_basis_is_4320
   - inventory_of_food_ingredients_is_strong
   - end_of_quarter_must_close_deal
+  - expedited_delivery_below_10_days_costs_7500_extra
+  - net_15_payment_required_due_to_raw_material_prepayment
+  - willing_to_offer_10_day_delivery_if_price_above_82000
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -31,6 +37,8 @@ seller_context:
 deal_schema:
   price: float
   quantity: int
+  delivery_days: int
+  payment_terms_days: int
   shipping_terms: str
   return_policy: str
 forbidden_claims: []

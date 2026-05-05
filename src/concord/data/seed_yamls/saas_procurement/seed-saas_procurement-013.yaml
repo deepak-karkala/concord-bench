@@ -12,6 +12,9 @@ buyer_context:
   - sso_integration_required_by_it_policy
   - annual_churn_risk_if_tool_not_improved
   - board_mandated_12_percent_reduction
+  - 6_month_pilot_preferred_valued_at_20_percent_flexibility_premium
+  - onboarding_support_50_hours_required_valued_at_10000
+  - willing_to_accept_12_month_if_price_below_65
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -26,6 +29,9 @@ seller_context:
   - product_roadmap_has_ai_features_in_beta
   - renewal_rate_for_this_tier_is_78_percent
   - pricing_floor_is_35_due_to_reseller
+  - 24_month_commitment_worth_15_percent_arr_bonus
+  - onboarding_costs_1800_per_30_hours
+  - onboarding_included_for_18_month_or_longer
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -34,6 +40,7 @@ deal_schema:
   monthly_price: float
   seats: int
   contract_length_months: int
+  onboarding_support_hours: int
   sla_tier: str
 forbidden_claims: []
 scenario_description: An enterprise undergoing digital transformation is consolidating

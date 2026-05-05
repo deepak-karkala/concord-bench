@@ -11,6 +11,9 @@ buyer_context:
   - cheaper_uncertified_supplier_offers_20_percent_discount
   - cfo_is_questioning_fair_trade_premium_this_quarter
   - ngo_partner_will_withdraw_endorsement_if_standards_drop
+  - quarterly_transparency_reports_required_by_investor_agreement
+  - 18_month_transition_valued_at_6_percent_premium
+  - willing_to_accept_annual_audit_if_price_below_threshold
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -22,17 +25,23 @@ seller_context:
   private_info:
   - certification_costs_represent_8_percent_of_unit_price
   - audit_cycle_costs_5000_every_6_months
+  - each_audit_cycle_costs_7000_staff_and_preparation
+  - annual_audit_would_save_12000_per_year_in_compliance_costs
+  - 24_month_transition_needed_for_certification_upgrade
   walk_away_threshold: null
   reputation: null
   relationship_history: []
 deal_schema:
   price: float
+  audit_frequency_months: int
+  transition_period_months: int
   environmental_commitments: list
   labor_standards: list
   transparency_reports: bool
 forbidden_claims:
 - cannot_claim_child_labor_free_without_verification
 - cannot_claim_carbon_neutral_without_audit
-scenario_description: An organic food company needs chemical supply from regenerative agriculture sources. The supplier transitioned
-  to regenerative practices 18 months ago and charges a 28% premium. The company's largest competitor just launched a sustainably
-  sourced line at only 8% premium, using less rigorous certification.
+scenario_description: An organic food company needs chemical supply from regenerative
+  agriculture sources. The supplier transitioned to regenerative practices 18 months
+  ago and charges a 28% premium. The company's largest competitor just launched a
+  sustainably sourced line at only 8% premium, using less rigorous certification.

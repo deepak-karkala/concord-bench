@@ -12,6 +12,9 @@ buyer_context:
   - current_tool_contract_expires_in_45_days
   - annual_churn_risk_if_tool_not_improved
   - competitor_quote_from_salesforce_is_55_per_seat
+  - annual_contract_with_opt_out_worth_18_percent_premium
+  - onboarding_support_25_hours_valued_at_5000
+  - willing_to_accept_36_month_if_price_below_60
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -26,6 +29,9 @@ seller_context:
   - enterprise_deal_requires_legal_review_taking_3_weeks
   - end_of_quarter_in_4_weeks
   - has_40_percent_discount_authority_for_multiyear
+  - multiyear_deal_worth_18_percent_arr
+  - onboarding_support_costs_1500_per_25_hours
+  - onboarding_included_for_24_month_commitment
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -34,6 +40,7 @@ deal_schema:
   monthly_price: float
   seats: int
   contract_length_months: int
+  onboarding_support_hours: int
   sla_tier: str
 forbidden_claims: []
 scenario_description: A financial services firm needs document mgmt system with specific

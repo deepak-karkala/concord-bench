@@ -12,6 +12,9 @@ buyer_context:
   - plaintiff_damages_estimate_is_30000_to_60000
   - discovery_uncovered_smoking_gun_email
   - prefers_settlement_to_avoid_public_trial
+  - immediate_payment_required_for_client_needs_valued_25_percent_premium
+  - prefer_lump_sum_valued_at_15_percent_over_structured
+  - willing_to_accept_18_month_structure_if_total_above_130000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -25,15 +28,21 @@ seller_context:
   - insurance_covers_up_to_200000
   - co_defendant_negotiating_separately
   - similar_case_settled_for_75000
+  - 24_month_structure_saves_20_percent_in_tax
+  - lump_sum_forces_asset_sale_at_8_percent_discount
+  - increase_total_12_percent_for_structured_payment
   walk_away_threshold: null
   reputation: null
   relationship_history: []
 deal_schema:
   settlement_amount: float
-  payment_terms: str
+  payment_structure: str
+  payment_timeline_days: int
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: A breach of contract claim between a manufacturer and a component supplier. The manufacturer alleges
-  the supplier delivered sub-spec parts causing a recall costing $3.2M. The supplier claims the manufacturer changed specifications
-  mid-contract without written approval. Both parties want to avoid trial publicity and industry reputation damage.
+scenario_description: A breach of contract claim between a manufacturer and a component
+  supplier. The manufacturer alleges the supplier delivered sub-spec parts causing
+  a recall costing $3.2M. The supplier claims the manufacturer changed specifications
+  mid-contract without written approval. Both parties want to avoid trial publicity
+  and industry reputation damage.

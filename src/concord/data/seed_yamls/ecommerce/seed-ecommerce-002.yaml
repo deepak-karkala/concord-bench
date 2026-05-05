@@ -10,6 +10,9 @@ buyer_context:
   private_info:
   - budget_is_12000
   - needs_office_furniture
+  - delivery_within_14_days_worth_8000_premium_to_principal
+  - net_60_payment_terms_worth_5000_to_principal_cash_flow
+  - willing_to_accept_30_day_delivery_if_price_below_75000
   walk_away_threshold: 0.3
   reputation: null
   relationship_history: []
@@ -21,12 +24,17 @@ seller_context:
   private_info:
   - cost_basis_is_3760
   - inventory_of_office_furniture_is_strong
+  - expedited_delivery_below_14_days_costs_6000_extra
+  - net_15_payment_required_due_to_supplier_obligations
+  - willing_to_offer_14_day_delivery_if_price_above_85000
   walk_away_threshold: null
   reputation: null
   relationship_history: []
 deal_schema:
   price: float
   quantity: int
+  delivery_days: int
+  payment_terms_days: int
   shipping_terms: str
   return_policy: str
 forbidden_claims:

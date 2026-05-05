@@ -12,6 +12,9 @@ buyer_context:
   - local_supplier_10_percent_premium_but_employs_200_local_workers
   - procurement_policy_prefers_lowest_cost
   - mayor_has_publicly_asked_companies_to_buy_local
+  - quarterly_audit_required_for_public_esg_reporting
+  - 12_month_transition_worth_10_percent_to_brand_value
+  - willing_to_accept_biannual_audit_if_price_20_percent_below_benchmark
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -24,15 +27,21 @@ seller_context:
   private_info:
   - 200_families_depend_on_this_factory
   - cannot_match_imported_goods_on_price_due_to_local_wages
+  - audit_costs_6000_per_quarter_for_full_supply_chain_scope
+  - biannual_audit_reduces_cost_to_3500
+  - willing_to_accept_quarterly_audit_if_3_year_contract
   walk_away_threshold: null
   reputation: null
   relationship_history: []
 deal_schema:
   price: float
+  audit_frequency_months: int
+  transition_period_months: int
   environmental_commitments: list
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: A tech company's hardware division is sourcing ceramic materials and has committed to carbon-neutral
-  supply chain by 2030. The primary supplier has partial renewable energy usage and is 3 years from full carbon neutrality.
-  A competitor supplier claims net-zero but refuses to share audit data.
+scenario_description: A tech company's hardware division is sourcing ceramic materials
+  and has committed to carbon-neutral supply chain by 2030. The primary supplier has
+  partial renewable energy usage and is 3 years from full carbon neutrality. A competitor
+  supplier claims net-zero but refuses to share audit data.

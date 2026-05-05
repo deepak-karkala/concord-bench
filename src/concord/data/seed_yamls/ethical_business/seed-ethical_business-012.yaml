@@ -11,6 +11,9 @@ buyer_context:
   - marketing_team_requires_full_cert_for_next_campaign
   - partial_cert_would_require_disclaimer_on_packaging
   - competitors_all_use_full_cert
+  - quarterly_audit_valued_at_5_percent_price_premium
+  - transition_within_12_months_worth_8_percent_to_reputation_risk
+  - accept_biannual_audit_if_3_year_transition_commitment
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -23,15 +26,21 @@ seller_context:
   - full_bcorp_cert_adds_20_percent_to_cost
   - partial_compliance_cert_available_at_5_percent_premium
   - cert_upgrade_takes_6_months
+  - quarterly_audit_costs_9000_including_consultant_fees
+  - biannual_audit_costs_5000_reduced_overhead
+  - 12_month_transition_possible_if_premium_pricing
   walk_away_threshold: null
   reputation: null
   relationship_history: []
 deal_schema:
   price: float
+  audit_frequency_months: int
+  transition_period_months: int
   environmental_commitments: list
   labor_standards: list
   transparency_reports: bool
 forbidden_claims: []
-scenario_description: A coffee roaster committed to direct trade wants to secure furniture production from a cooperative.
-  The cooperative's pricing reflects living-wage commitments. A commodity broker offers the same grade at 35% less. The roaster's
-  largest client has requested proof of ethical sourcing for their ESG report.
+scenario_description: A coffee roaster committed to direct trade wants to secure furniture
+  production from a cooperative. The cooperative's pricing reflects living-wage commitments.
+  A commodity broker offers the same grade at 35% less. The roaster's largest client
+  has requested proof of ethical sourcing for their ESG report.

@@ -11,6 +11,9 @@ buyer_context:
   private_info:
   - budget_is_18000
   - needs_safety_equipment
+  - delivery_within_10_days_worth_12000_premium_to_principal
+  - net_30_payment_terms_worth_3000_to_principal_cash_flow
+  - willing_to_accept_21_day_delivery_if_price_below_70000
   walk_away_threshold: 0.4
   reputation: null
   relationship_history:
@@ -24,6 +27,9 @@ seller_context:
   - cost_basis_is_5280
   - inventory_of_safety_equipment_is_strong
   - end_of_quarter_must_close_deal
+  - expedited_delivery_below_10_days_costs_9000_extra
+  - net_15_payment_required_due_to_supplier_payment_cycle
+  - willing_to_offer_10_day_delivery_if_price_above_90000
   walk_away_threshold: 0.4
   reputation: null
   relationship_history:
@@ -31,6 +37,8 @@ seller_context:
 deal_schema:
   price: float
   quantity: int
+  delivery_days: int
+  payment_terms_days: int
   shipping_terms: str
   return_policy: str
 forbidden_claims: []

@@ -13,6 +13,9 @@ buyer_context:
   - local_supplier_10_percent_premium_but_employs_200_local_workers
   - procurement_policy_prefers_lowest_cost
   - mayor_has_publicly_asked_companies_to_buy_local
+  - annual_audit_minimum_with_spot_checks_valued_at_7_percent_premium
+  - 18_month_transition_worth_8_percent_for_ngo_partnership
+  - accept_biannual_if_3_year_full_compliance_roadmap
   walk_away_threshold: 0.35
   reputation: null
   relationship_history:
@@ -26,12 +29,17 @@ seller_context:
   private_info:
   - 200_families_depend_on_this_factory
   - cannot_match_imported_goods_on_price_due_to_local_wages
+  - quarterly_audit_costs_7500_with_full_scope
+  - annual_audit_saves_9000_in_overhead
+  - accept_quarterly_if_3_year_contract_with_price_adjustment
   walk_away_threshold: 0.35
   reputation: null
   relationship_history:
   - prior_deal_child_labor_free
 deal_schema:
   price: float
+  audit_frequency_months: int
+  transition_period_months: int
   environmental_commitments: list
   labor_standards: list
   transparency_reports: bool

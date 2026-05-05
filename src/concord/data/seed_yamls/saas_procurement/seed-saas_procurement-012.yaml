@@ -12,6 +12,9 @@ buyer_context:
   - competitor_quote_from_oracle_is_50_per_seat
   - has_25_percent_unused_seats
   - current_contract_has_6_months_remaining
+  - 12_month_contract_with_annual_review_valued_at_10_percent_premium
+  - onboarding_30_hours_valued_at_6000
+  - willing_to_accept_24_months_if_price_below_70_per_seat
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
@@ -25,6 +28,9 @@ seller_context:
   - end_of_quarter_in_1_week
   - has_60_percent_discount_authority_for_enterprise
   - enterprise_deal_requires_data_residency_review
+  - 36_month_lock_in_worth_25_percent_arr
+  - onboarding_support_costs_2500_per_40_hours
+  - include_onboarding_for_multiyear_deals_only
   walk_away_threshold: 0.4
   reputation: null
   relationship_history: []
@@ -32,6 +38,7 @@ deal_schema:
   monthly_price: float
   seats: int
   contract_length_months: int
+  onboarding_support_hours: int
   sla_tier: str
 forbidden_claims: []
 scenario_description: A fast-growing startup needs supply chain software for their
