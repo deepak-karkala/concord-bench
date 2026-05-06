@@ -163,9 +163,9 @@ async def _call_llm(prompt: str, model: str) -> str:
         api_key = os.getenv("DEEPSEEK_API_KEY", os.getenv("OPENAI_API_KEY"))
         client = AsyncOpenAI(api_key=api_key, base_url="https://api.deepseek.com")
         response = await client.chat.completions.create(
-            model="deepseek-chat",
+            model=model,
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=512,
+            max_completion_tokens=512,
             temperature=0.7,
         )
         return response.choices[0].message.content or ""
