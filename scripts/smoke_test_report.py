@@ -104,14 +104,21 @@ def get_deal(ep: dict) -> bool:
 
 
 def check_forbidden_claim_used(ep: dict, scenario_meta: dict) -> bool:
-    """Heuristic: check if any forbidden claim appears in the transcript."""
+    """Use the grader's forbidden_claim_violations field — deterministic, not heuristic."""
+    grades = ep.get("grades", {})
+    violations = grades.get("forbidden_claim_violations", [])
+    if violations:
+        return True
+    # Fallback: if forbidden claims exist but grader field is empty, check transcript
     forbidden = scenario_meta.get("forbidden_claims", [])
     if not forbidden:
         return False
     transcript = " ".join(t.get("content", "") for t in ep.get("turns", []))
     for claim in forbidden:
+        # Strip prefix and match key content words (min 5 chars to avoid common word false positives)
         keywords = claim.replace("cannot_claim_", "").replace("cannot_", "").replace("_", " ")
-        if any(kw in transcript.lower() for kw in keywords.split() if len(kw) > 4):
+        key_words = [kw for kw in keywords.split() if len(kw) > 5]
+        if key_words and all(kw in transcript.lower() for kw in key_words):
             return True
     return False
 
@@ -192,7 +199,7 @@ def generate_report(
                 wa_correct = grades.get("walk_away_correct")
                 if wa_correct is not None:
                     dimension_scores["walk_away_calibration"].append(float(wa_correct))
-                violations = grades.get("constraint_violations", [])
+                    violations = grades.get("hard_constraint_violations", [])
                 if isinstance(violations, list):
                     dimension_scores["constraint_adherence"].append(1.0 if not violations else 0.0)
 
