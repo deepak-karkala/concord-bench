@@ -9,10 +9,10 @@ class EnrichmentError(ConcordError):
 
 
 _DOMAIN_SCHEMAS: dict[Domain, dict] = {
-    Domain.ECOMMERCE: {"price": "float", "quantity": "int", "shipping_terms": "str", "return_policy": "str"},
-    Domain.SAAS_PROCUREMENT: {"monthly_price": "float", "seats": "int", "contract_length_months": "int", "sla_tier": "str"},
-    Domain.SETTLEMENT: {"settlement_amount": "float", "payment_terms": "str", "confidentiality_clause": "bool", "non_disparagement": "bool"},
-    Domain.ETHICAL_BUSINESS: {"price": "float", "environmental_commitments": "list", "labor_standards": "list", "transparency_reports": "bool"},
+    Domain.ECOMMERCE: {"price": "float", "quantity": "int", "delivery_days": "int", "payment_terms_days": "int", "shipping_terms": "str", "return_policy": "str"},
+    Domain.SAAS_PROCUREMENT: {"monthly_price": "float", "seats": "int", "contract_length_months": "int", "onboarding_support_hours": "int", "sla_tier": "str"},
+    Domain.SETTLEMENT: {"settlement_amount": "float", "payment_structure": "str", "payment_timeline_days": "int", "confidentiality_clause": "bool", "non_disparagement": "bool"},
+    Domain.ETHICAL_BUSINESS: {"price": "float", "audit_frequency_months": "int", "transition_period_months": "int", "environmental_commitments": "list", "labor_standards": "list", "transparency_reports": "bool"},
 }
 
 

@@ -183,6 +183,14 @@ def generate(
             awm_base = _run_awm_generation(awm_count, domain, model, ctx)
             if not ctx.obj.get("quiet"):
                 click.echo(f"AWM generated {len(awm_base)} base scenarios")
+            # Map AWM output (name/description/category) to enrichment input
+            for i, s in enumerate(awm_base):
+                if "scenario_id" not in s:
+                    s["scenario_id"] = f"awm-gen-{i:04d}"
+                if "category" in s and "domain" not in s:
+                    s["domain"] = s["category"]
+                if "name" in s and s.get("description"):
+                    s["description"] = f"AWM: {s['name']}. {s.get('description', '')}"
             enriched = [enrich_awm_scenario(s, s.get("domain", domain if domain != "all" else "ecommerce"), "US")
                         for s in awm_base]
         except ModuleNotFoundError:
@@ -247,31 +255,91 @@ def generate(
 def _run_awm_generation(target_count: int, domain: str, model: str, ctx: click.Context) -> list[dict]:
     """Run AWM generation and return raw scenario dicts."""
     try:
-        import awm
+        from awm.core.scenario import Config, ScenarioSelfInstruct
         from concord.synth.awm_prompts import AWM_SYSTEM_PROMPT, AWM_DOMAIN_HINTS
     except ImportError:
         return []
 
-    domains = ["ecommerce", "saas_procurement", "settlement", "ethical_business"] if domain == "all" else [domain]
-    per_domain = max(1, target_count // len(domains))
-    results = []
+    import json as _json
+    import os as _os
+    import tempfile
 
-    for d in domains:
-        hint = AWM_DOMAIN_HINTS.get(d, "")
-        combined_prompt = AWM_SYSTEM_PROMPT + "\n\n" + hint
+    seeds = load_seeds()
+    if domain and domain != "all":
+        seeds = [s for s in seeds if s.domain.value == domain]
+
+    if not seeds:
+        if not ctx.obj.get("quiet"):
+            click.echo("No seeds found for AWM generation", err=True)
+        return []
+
+    # AWM uses OpenAI's client. It needs OPENAI_API_KEY for embeddings.
+    # DeepSeek doesn't support embeddings, so use an OpenAI model for AWM.
+    # AWM's GPTClient defaults to "azure" — must explicitly set to "openai".
+    api_model = model
+    if "deepseek" in model:
+        api_model = "gpt-5.4-nano"
+        if not ctx.obj.get("quiet"):
+            click.echo(f"Note: AWM uses OpenAI for embeddings — using {api_model} for completions")
+    _os.environ["AWM_SYN_LLM_PROVIDER"] = "openai"
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        import os
+        input_path = os.path.join(tmpdir, "seed_scenarios.jsonl")
+        output_path = os.path.join(tmpdir, "awm_output.jsonl")
+
+        # Use ~50 seeds for AWM diversity baseline (242 is too many — diversity
+        # checker rejects everything as too similar to at least one existing seed).
+        import random as _random
+        _random.seed(42)
+        seed_sample = _random.sample(seeds, min(50, len(seeds)))
+
+        with open(input_path, "w") as f:
+            for s in seed_sample:
+                entry = {
+                    "name": s.scenario_description[:100] if s.scenario_description else s.id,
+                    "description": s.scenario_description or "",
+                    "category": s.domain.value,
+                }
+                f.write(_json.dumps(entry) + "\n")
+
+        config = Config(
+            input_path=input_path,
+            output_path=output_path,
+            target_count=target_count,
+            batch_size=50,
+            num_parallel_requests=3,
+            scenarios_per_request=10,
+            model=api_model,
+            temperature=1.0,
+            skip_classification=True,
+        )
+
         try:
-            scenarios = awm.ScenarioSelfInstruct(
-                system_prompt=combined_prompt,
-                model=model,
-                temperature=1.0,
-                num_scenarios=per_domain,
-            ).generate()
-            results.extend(scenarios)
+            ScenarioSelfInstruct(args=config).run()
         except Exception as e:
             if not ctx.obj.get("quiet"):
-                click.echo(f"AWM generation failed for {d}: {e}", err=True)
+                click.echo(f"AWM generation failed: {e}", err=True)
+            return []
 
-    return results
+        try:
+            ScenarioSelfInstruct(args=config).run()
+        except Exception as e:
+            if not ctx.obj.get("quiet"):
+                click.echo(f"AWM generation failed: {e}", err=True)
+            return []
+
+        results = []
+        if os.path.exists(output_path):
+            with open(output_path) as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        results.append(_json.loads(line))
+
+        if not ctx.obj.get("quiet"):
+            click.echo(f"AWM generated {len(results)} base scenarios")
+        return results
 
 
 def _print_cost_estimate(
