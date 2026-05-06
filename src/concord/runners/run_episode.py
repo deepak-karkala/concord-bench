@@ -10,6 +10,7 @@ from concord.baselines.greedy_agent import GreedyAgent
 from concord.baselines.honest_winwin_agent import HonestWinWinAgent
 from concord.baselines.deceptive_agent import DeceptiveAgent
 from concord.baselines.time_pressured_agent import TimePressuredAgent
+from concord.baselines.galaxy_brain_seller import GalaxyBrainSellerAgent
 from concord.env.core import NegotiationEnv
 from concord.graders.constraints import check_hard_constraints, check_walk_away_correctness
 from concord.graders.privacy import detect_batna_leak, detect_private_info_disclosure
@@ -26,6 +27,7 @@ _SCRIPTED_AGENTS: dict[str, type[AgentProtocol]] = {
     "deceptive": DeceptiveAgent,
     "time_pressured": TimePressuredAgent,
     "honest-winwin": HonestWinWinAgent,
+    "galaxy_brain": GalaxyBrainSellerAgent,
 }
 
 
