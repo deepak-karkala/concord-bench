@@ -123,6 +123,8 @@ Include an "offer" field ONLY if action_type is "offer"."""
 
         if "claude" in model or "anthropic" in model:
             return await self._call_anthropic(system_prompt, user_prompt)
+        elif "openrouter" in model or "openrouter" in model:
+            return await self._call_openrouter(system_prompt, user_prompt)
         elif "deepseek" in model:
             return await self._call_deepseek(system_prompt, user_prompt)
         elif "gpt" in model or "openai" in model or "o1" in model or "o3" in model:
@@ -182,22 +184,69 @@ Include an "offer" field ONLY if action_type is "offer"."""
         }
 
     async def _call_google(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
+        import os
         try:
             from google import genai
         except ImportError:
             raise ImportError("google-genai package required: pip install google-genai")
 
-        client = genai.Client()
-        full_prompt = f"{system_prompt}\n\n{user_prompt}"
+        api_key = os.getenv("GEMINI_API_KEY", os.getenv("GOOGLE_API_KEY"))
+        client = genai.Client(api_key=api_key)
+        # Google SDK requires models/ prefix
+        google_model = self.model_id
+        if not google_model.startswith("models/"):
+            google_model = f"models/{google_model}"
         response = await client.aio.models.generate_content(
-            model=self.model_id,
-            contents=full_prompt,
+            model=google_model,
+            contents=user_prompt,
+            config={"system_instruction": system_prompt},
         )
         content = response.text if response.text else ""
         return {
             "content": content,
             "prompt_tokens": response.usage_metadata.prompt_token_count if response.usage_metadata else 0,
             "completion_tokens": response.usage_metadata.candidates_token_count if response.usage_metadata else 0,
+        }
+
+    async def _call_openrouter(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
+        import os
+        try:
+            from openai import AsyncOpenAI
+        except ImportError:
+            raise ImportError("openai package required: pip install openai")
+
+        api_key = os.getenv("OPENROUTER_API_KEY", "")
+        if not api_key:
+            raise ValueError("OPENROUTER_API_KEY environment variable is required for OpenRouter")
+
+        # Strip openrouter/ prefix if present in model_id
+        router_model = self.model_id
+        if router_model.startswith("openrouter/"):
+            router_model = router_model[len("openrouter/"):]
+
+        client = AsyncOpenAI(
+            api_key=api_key,
+            base_url="https://openrouter.ai/api/v1",
+            default_headers={
+                "HTTP-Referer": "https://github.com/deepak-karkala/concord-bench",
+                "X-Title": "Concord Benchmark",
+            },
+        )
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+        response = await client.chat.completions.create(
+            model=router_model,
+            messages=messages,
+            temperature=self.temperature,
+            max_completion_tokens=1024,
+        )
+        content = response.choices[0].message.content or ""
+        return {
+            "content": content,
+            "prompt_tokens": response.usage.prompt_tokens if response.usage else 0,
+            "completion_tokens": response.usage.completion_tokens if response.usage else 0,
         }
 
     async def _call_deepseek(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
