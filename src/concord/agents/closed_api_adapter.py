@@ -15,6 +15,7 @@ _MODEL_COSTS_PER_1M: dict[str, tuple[float, float]] = {
     "claude-opus-4-7": (15.0, 75.0),
     "gpt-5.2": (10.0, 30.0),
     "gemini-3-pro": (7.0, 21.0),
+    "deepseek-v4-pro": (0.003625, 0.87),
 }
 
 
@@ -109,6 +110,8 @@ OFFER: <JSON object or NONE>"""
 
         if "claude" in model or "anthropic" in model:
             return await self._call_anthropic(system_prompt, user_prompt)
+        elif "deepseek" in model:
+            return await self._call_deepseek(system_prompt, user_prompt)
         elif "gpt" in model or "openai" in model or "o1" in model or "o3" in model:
             return await self._call_openai(system_prompt, user_prompt)
         elif "gemini" in model or "google" in model:
@@ -182,6 +185,32 @@ OFFER: <JSON object or NONE>"""
             "content": content,
             "prompt_tokens": response.usage_metadata.prompt_token_count if response.usage_metadata else 0,
             "completion_tokens": response.usage_metadata.candidates_token_count if response.usage_metadata else 0,
+        }
+
+    async def _call_deepseek(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
+        import os
+        try:
+            from openai import AsyncOpenAI
+        except ImportError:
+            raise ImportError("openai package required: pip install openai")
+
+        api_key = os.getenv("DEEPSEEK_API_KEY", os.getenv("OPENAI_API_KEY"))
+        client = AsyncOpenAI(api_key=api_key, base_url="https://api.deepseek.com")
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+        response = await client.chat.completions.create(
+            model="deepseek-chat",
+            messages=messages,
+            temperature=self.temperature,
+            max_tokens=1024,
+        )
+        content = response.choices[0].message.content or ""
+        return {
+            "content": content,
+            "prompt_tokens": response.usage.prompt_tokens if response.usage else 0,
+            "completion_tokens": response.usage.completion_tokens if response.usage else 0,
         }
 
     def _extract_action(self, content: str, domain: str) -> tuple[ActionType, dict | None]:
