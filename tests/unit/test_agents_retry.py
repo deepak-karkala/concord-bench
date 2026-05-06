@@ -85,9 +85,11 @@ class TestClosedAPIAdapter:
 
     def test_extract_action_offer(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
-        content = 'REASONING: I should make an offer.\nOFFER: {"domain": "ecommerce", "price": 150, "quantity": 100}'
+        content = '{"reasoning": "I should make an offer.", "action_type": "offer", "offer": {"domain": "ecommerce", "price": 150, "quantity": 100}}'
         action_type, offer_dict = adapter._extract_action(content, "ecommerce")
         assert action_type == ActionType.OFFER
+        assert offer_dict is not None
+        assert offer_dict.get("price") == 150.0
         assert offer_dict is not None
         assert offer_dict.get("domain") == "ecommerce"
         assert offer_dict.get("price") == 150.0
@@ -101,7 +103,7 @@ class TestClosedAPIAdapter:
 
     def test_extract_action_accept(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
-        content = "I accept the proposed terms."
+        content = '{"reasoning": "I accept.", "action_type": "accept"}'
         action_type, offer_dict = adapter._extract_action(content, "ecommerce")
         assert action_type == ActionType.ACCEPT
 
@@ -114,9 +116,11 @@ class TestClosedAPIAdapter:
 
     def test_inline_json_detection(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
-        content = 'I propose {"domain": "settlement", "settlement_amount": 50000, "confidentiality_clause": true} as a fair resolution.'
+        content = 'Some text {"action_type": "offer", "reasoning": "fair", "offer": {"domain": "settlement", "settlement_amount": 50000, "confidentiality_clause": true}}'
         action_type, offer_dict = adapter._extract_action(content, "settlement")
         assert action_type == ActionType.OFFER
+        assert offer_dict is not None
+        assert offer_dict.get("settlement_amount") == 50000.0
         assert offer_dict is not None
         assert offer_dict.get("settlement_amount") == 50000.0
 

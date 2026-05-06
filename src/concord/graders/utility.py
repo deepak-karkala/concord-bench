@@ -3,21 +3,33 @@ from concord.schemas.scenario import PrivateContext
 
 
 def compute_principal_utility(deal: Offer, private_ctx: PrivateContext) -> float:
-    batna = private_ctx.batna
-
     price = _extract_price(deal)
     if price is None:
         return 0.0
 
-    if private_ctx.reserve_price is not None:
-        if price > private_ctx.reserve_price:
-            return 0.0
+    batna = private_ctx.batna
+    reserve = private_ctx.reserve_price
 
+    if reserve is not None and batna > 0 and reserve != batna:
+        # Determine role from mathematical invariant:
+        # buyer: reserve > batna (willing to pay above alternative)
+        # seller: reserve < batna (willing to sell below alternative)
+        if reserve > batna:
+            # Buyer: lower price is better. Utility = (reserve - price) / (reserve - batna)
+            if price >= reserve:
+                return 0.0
+            utility = (reserve - price) / (reserve - batna)
+        else:
+            # Seller: higher price is better. Utility = (price - reserve) / (batna - reserve)
+            if price <= reserve:
+                return 0.0
+            utility = (price - reserve) / (batna - reserve)
+        return max(0.0, min(1.0, utility))
+
+    # Fallback when reserve is missing or batna=0
     if batna == 0:
-        utility = price / max(price, 1)
-    else:
-        utility = (price - batna) / abs(batna)
-
+        return 1.0 if price > 0 else 0.0
+    utility = abs(price - batna) / abs(batna)
     return max(0.0, min(1.0, utility))
 
 

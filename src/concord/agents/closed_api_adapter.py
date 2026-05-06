@@ -228,51 +228,60 @@ Include an "offer" field ONLY if action_type is "offer"."""
 
     def _extract_action(self, content: str, domain: str) -> tuple[ActionType, dict | None]:
         import json as _json
-        import re
 
         offer_dict = None
         action_type = ActionType.MESSAGE
 
         # Try to parse entire content as JSON first
-        try:
-            data = _json.loads(content)
-            if isinstance(data, dict) and "action_type" in data:
-                at = data.get("action_type", "message").lower()
-                if at == "offer":
-                    action_type = ActionType.OFFER
-                    if data.get("offer"):
-                        offer_dict = parse_raw_offer(_json.dumps(data["offer"]), domain).model_dump()
-                elif at == "accept":
-                    action_type = ActionType.ACCEPT
-                elif at == "walk_away":
-                    action_type = ActionType.WALK_AWAY
-                return action_type, offer_dict
-        except (_json.JSONDecodeError, Exception):
-            pass
+        data = self._extract_json_object(content)
+        if data and isinstance(data, dict) and "action_type" in data:
+            at = data.get("action_type", "message").lower()
+            action, offer_dict = self._parse_action(data, at, domain)
+            return action, offer_dict
 
-        # Fallback: find JSON block in content
-        json_match = re.search(r'\{[^{}]*"action_type"[^{}]*\}', content, re.DOTALL)
-        if json_match:
-            try:
-                data = _json.loads(json_match.group(0))
-                if isinstance(data, dict) and "action_type" in data:
-                    at = data.get("action_type", "message").lower()
-                    if at == "offer":
-                        action_type = ActionType.OFFER
-                        if data.get("offer"):
-                            offer_dict = parse_raw_offer(_json.dumps(data["offer"]), domain).model_dump()
-                    elif at == "accept":
-                        action_type = ActionType.ACCEPT
-                    elif at == "walk_away":
-                        action_type = ActionType.WALK_AWAY
-                    return action_type, offer_dict
-            except (_json.JSONDecodeError, Exception):
-                pass
-
-        # Last resort: keyword fallback
-        if "walk away" in content.lower():
+        # Last resort: keyword fallback on first 100 chars
+        lower = content.lower()
+        if "walk away" in lower[:200]:
             action_type = ActionType.WALK_AWAY
-        elif action_type == ActionType.MESSAGE and "accept" in content.lower()[:50]:
+        elif action_type == ActionType.MESSAGE and '"action_type": "accept"' in lower:
             action_type = ActionType.ACCEPT
+
+        return action_type, offer_dict
+
+    @staticmethod
+    def _extract_json_object(text: str) -> dict | None:
+        import json as _json
+        start = text.find('{')
+        if start == -1:
+            return None
+        depth = 0
+        for i, ch in enumerate(text[start:], start):
+            if ch == '{':
+                depth += 1
+            elif ch == '}':
+                depth -= 1
+                if depth == 0:
+                    try:
+                        return _json.loads(text[start:i + 1])
+                    except _json.JSONDecodeError:
+                        return None
+        return None
+
+    def _parse_action(self, data: dict, at: str, domain: str) -> tuple[ActionType, dict | None]:
+        import json as _json
+        offer_dict = None
+        action_type = ActionType.MESSAGE
+
+        if at == "offer":
+            action_type = ActionType.OFFER
+            if data.get("offer"):
+                try:
+                    offer_dict = parse_raw_offer(_json.dumps(data["offer"]), domain).model_dump()
+                except Exception:
+                    pass
+        elif at == "accept":
+            action_type = ActionType.ACCEPT
+        elif at == "walk_away":
+            action_type = ActionType.WALK_AWAY
 
         return action_type, offer_dict

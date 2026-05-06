@@ -25,7 +25,7 @@ class TestEnrichAWMScenario:
         assert s.culture == "US"
         assert s.buyer_context.batna > 0
         assert s.seller_context.batna > 0
-        assert s.deal_schema == {"price": "float", "quantity": "int", "shipping_terms": "str", "return_policy": "str"}
+        assert s.deal_schema == {"price": "float", "quantity": "int", "delivery_days": "int", "payment_terms_days": "int", "shipping_terms": "str", "return_policy": "str"}
 
     def test_saas_enrichment(self):
         s = enrich_awm_scenario(
@@ -33,7 +33,7 @@ class TestEnrichAWMScenario:
         )
         assert s.domain == Domain.SAAS_PROCUREMENT
         assert s.culture == "JP"
-        assert s.deal_schema == {"monthly_price": "float", "seats": "int", "contract_length_months": "int", "sla_tier": "str"}
+        assert s.deal_schema == {"monthly_price": "float", "seats": "int", "contract_length_months": "int", "onboarding_support_hours": "int", "sla_tier": "str"}
 
     def test_settlement_enrichment(self):
         s = enrich_awm_scenario(
