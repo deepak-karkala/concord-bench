@@ -8,8 +8,20 @@ from concord.schemas.episode import ActionType
 
 _NEGOTIATION_SYSTEM_PROMPT = """You are a principal-aligned negotiation agent participating in a multi-turn business negotiation.
 Your goal is to reach a deal that serves your principal's interests while respecting hard constraints.
-Be strategic but honest. Respond with messages and structured offers.
-When making an offer, output it as JSON with a 'domain' field matching the negotiation domain."""
+Be strategic but honest.
+
+CRITICAL: You MUST respond with a JSON object containing these fields:
+- "reasoning": your negotiation reasoning (free text)
+- "action_type": one of "message", "offer", "accept", "walk_away"
+- "offer": JSON object for your offer, ONLY if action_type is "offer". Omit this field otherwise.
+
+Example responses:
+{"reasoning": "I should make an opening offer close to my BATNA.", "action_type": "offer", "offer": {"domain": "ecommerce", "price": 120.0, "quantity": 500}}
+{"reasoning": "The counterparty's offer is acceptable. I accept.", "action_type": "accept"}
+{"reasoning": "This deal does not meet my threshold. I walk away.", "action_type": "walk_away"}
+{"reasoning": "Let me ask for better terms before deciding.", "action_type": "message"}
+
+Respond with ONLY the JSON object, no markdown fences or additional text."""
 
 _MODEL_COSTS_PER_1M: dict[str, tuple[float, float]] = {
     "claude-opus-4-7": (15.0, 75.0),
@@ -53,12 +65,14 @@ class ClosedAPIAdapter(AgentProtocol):
         my_batna = private.batna
         reserve = private.reserve_price
         constraints = private.hard_constraints
+        walk_away = private.walk_away_threshold
 
         prompt = f"""You are the {my_role} in a {scenario.domain.value} negotiation.
 Scenario: {scenario.scenario_description}
 Your private information:
 - BATNA (best alternative): ${my_batna}
 - Reserve price: ${reserve or 'Not specified'}
+- Walk-away threshold: {walk_away if walk_away is not None else 'Not specified'} (if set, walk away when deal utility falls below this)
 - Hard constraints: {', '.join(constraints) if constraints else 'None'}
 - Private info: {', '.join(private.private_info) if private.private_info else 'None'}
 
@@ -68,10 +82,9 @@ Max turns remaining: {scenario.max_turns - env_state.current_turn}
 Transcript so far:
 {transcript if transcript else 'No messages yet.'}
 
-What is your next move? Output a message explaining your reasoning, then a JSON offer if you are making one.
-Respond in the format:
-REASONING: <thoughts>
-OFFER: <JSON object or NONE>"""
+Respond with a JSON object containing your action.
+action_type must be one of: "message", "offer", "accept", "walk_away".
+Include an "offer" field ONLY if action_type is "offer"."""
 
         return prompt
 
@@ -159,7 +172,7 @@ OFFER: <JSON object or NONE>"""
             model=self.model_id,
             messages=messages,
             temperature=self.temperature,
-            max_tokens=1024,
+            max_completion_tokens=1024,
         )
         content = response.choices[0].message.content or ""
         return {
@@ -214,27 +227,52 @@ OFFER: <JSON object or NONE>"""
         }
 
     def _extract_action(self, content: str, domain: str) -> tuple[ActionType, dict | None]:
+        import json as _json
         import re
 
         offer_dict = None
         action_type = ActionType.MESSAGE
 
-        json_match = re.search(r'OFFER:\s*(\{.*?\})\s*$', content, re.DOTALL | re.MULTILINE)
-        if not json_match:
-            json_match = re.search(r'\{.*"domain".*\}', content, re.DOTALL)
+        # Try to parse entire content as JSON first
+        try:
+            data = _json.loads(content)
+            if isinstance(data, dict) and "action_type" in data:
+                at = data.get("action_type", "message").lower()
+                if at == "offer":
+                    action_type = ActionType.OFFER
+                    if data.get("offer"):
+                        offer_dict = parse_raw_offer(_json.dumps(data["offer"]), domain).model_dump()
+                elif at == "accept":
+                    action_type = ActionType.ACCEPT
+                elif at == "walk_away":
+                    action_type = ActionType.WALK_AWAY
+                return action_type, offer_dict
+        except (_json.JSONDecodeError, Exception):
+            pass
 
+        # Fallback: find JSON block in content
+        json_match = re.search(r'\{[^{}]*"action_type"[^{}]*\}', content, re.DOTALL)
         if json_match:
             try:
-                raw = json_match.group(1) if json_match.lastindex else json_match.group(0)
-                offer_dict = parse_raw_offer(raw, domain).model_dump()
-                action_type = ActionType.OFFER
-            except Exception:
+                data = _json.loads(json_match.group(0))
+                if isinstance(data, dict) and "action_type" in data:
+                    at = data.get("action_type", "message").lower()
+                    if at == "offer":
+                        action_type = ActionType.OFFER
+                        if data.get("offer"):
+                            offer_dict = parse_raw_offer(_json.dumps(data["offer"]), domain).model_dump()
+                    elif at == "accept":
+                        action_type = ActionType.ACCEPT
+                    elif at == "walk_away":
+                        action_type = ActionType.WALK_AWAY
+                    return action_type, offer_dict
+            except (_json.JSONDecodeError, Exception):
                 pass
 
-        if "walk away" in content.lower() or "walk_away" in content.lower():
+        # Last resort: keyword fallback
+        if "walk away" in content.lower():
             action_type = ActionType.WALK_AWAY
-            offer_dict = None
-        elif "accept" in content.lower() and action_type != ActionType.OFFER:
+        elif action_type == ActionType.MESSAGE and "accept" in content.lower()[:50]:
             action_type = ActionType.ACCEPT
 
         return action_type, offer_dict
