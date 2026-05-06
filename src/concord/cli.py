@@ -1,6 +1,5 @@
 import asyncio
 import json
-import sys
 from pathlib import Path
 
 import click
@@ -56,7 +55,7 @@ def run(ctx: click.Context, model: str, scenario: str, seed: int, output: str | 
 
 @main.command(name="run-batch")
 @click.option("--models", required=True, help="Comma-separated model IDs (e.g., greedy,gpt-5.2)")
-@click.option("--scenarios", required=True, help="Domain or 'all' for all seed scenarios")
+@click.option("--scenarios", required=True, help="Path to scenarios dir, domain name, or 'all'")
 @click.option("--seeds", default="42", help="Comma-separated seeds")
 @click.option("--concurrency", type=int, default=10, help="Max concurrent episodes")
 @click.option("--budget-cap", type=float, help="Daily API budget cap in USD")
@@ -80,7 +79,10 @@ def run_batch(
     model_list = [m.strip() for m in models.split(",")]
     seed_list = [int(s.strip()) for s in seeds.split(",")]
 
-    if scenarios == "all":
+    scenarios_path = Path(scenarios)
+    if scenarios_path.exists() and scenarios_path.is_dir():
+        scenario_list = load_seeds(seed_dir=scenarios_path)
+    elif scenarios == "all":
         scenario_list = load_seeds()
     else:
         scenario_list = load_seeds(domain=scenarios)
@@ -88,8 +90,12 @@ def run_batch(
     if not scenario_list:
         raise click.ClickException("No scenarios found. Run 'concord generate' first or use seed scenarios.")
 
+    out_path = Path(output)
+    out_path.mkdir(parents=True, exist_ok=True)
+
     for model in model_list:
-        click.echo(f"Running: model={model}, {len(scenario_list)} scenarios, concurrency={concurrency}")
+        if not ctx.obj.get("quiet"):
+            click.echo(f"Running: model={model}, {len(scenario_list)} scenarios, concurrency={concurrency}")
         results = asyncio.run(
             run_batch(
                 scenario_list,
@@ -100,6 +106,12 @@ def run_batch(
                 budget_cap=budget_cap,
             )
         )
+        model_dir = out_path / model.replace("/", "_").replace(":", "_")
+        model_dir.mkdir(parents=True, exist_ok=True)
+        for ep in results:
+            ep_path = model_dir / f"{ep.scenario_id}_{ep.metadata.get('seed', 0)}.json"
+            with open(ep_path, "w") as f:
+                json.dump(ep.model_dump(), f, indent=2, default=str)
         if not ctx.obj.get("quiet"):
             click.echo(f"  Completed: {len(results)} episodes for {model}")
 
@@ -108,59 +120,191 @@ def run_batch(
 
 
 @main.command()
-@click.option("--domain", help="Domain filter (ecommerce, saas_procurement, settlement, ethical_business)")
-@click.option("--culture", help="Culture filter (US, JP, IN, BR, MENA)")
-@click.option("--count", type=int, default=100, help="Number of scenarios to generate")
+@click.option("--domain", default="all",
+    type=click.Choice(["all", "ecommerce", "saas_procurement", "settlement", "ethical_business"]),
+    help="Domain filter")
+@click.option("--culture", default="all",
+    type=click.Choice(["all", "US", "JP", "IN", "BR", "MENA"]),
+    help="Culture filter (all = 5 cultures)")
+@click.option("--count", type=int, default=6000, help="Target scenario count")
+@click.option("--awm-count", type=int, default=800, help="AWM base scenarios before enrichment")
 @click.option("--output", type=click.Path(), default="outputs/scenarios", help="Output directory")
+@click.option("--model", default="deepseek-v4-pro", help="Model for AWM generation")
+@click.option("--enrich-model", default="deepseek-v4-pro", help="Model for narrative enrichment")
+@click.option("--repeated-game/--no-repeated-game", default=True, help="Generate repeated-game sequences")
+@click.option("--repeated-count", type=int, default=40, help="Seeds to expand into 5-round sequences")
+@click.option("--dry-run", is_flag=True, help="Estimate cost without making API calls")
 @click.pass_context
-def generate(ctx: click.Context, domain: str | None, culture: str | None, count: int, output: str) -> None:
+def generate(
+    ctx: click.Context,
+    domain: str,
+    culture: str,
+    count: int,
+    awm_count: int,
+    output: str,
+    model: str,
+    enrich_model: str,
+    repeated_game: bool,
+    repeated_count: int,
+    dry_run: bool,
+) -> None:
     """Generate negotiation scenarios from seeds using the synthesis pipeline."""
+    import yaml
+
+    if dry_run:
+        _print_cost_estimate(awm_count, count, repeated_game, repeated_count, culture, enrich_model)
+        return
+
     try:
-        from concord.synth import _check_awm
-        _check_awm()
-        from concord.synth.enrichment import enrich_awm_scenario
         from concord.synth.cultural_adapter import adapt_for_culture
         from concord.synth.repeated_game import generate_repeated_sequence
         from concord.schemas.culture import Culture
-    except ModuleNotFoundError as e:
-        raise click.ClickException(
-            "Scenario generation requires the [synth] extra. "
-            "Install with: pip install concord-bench[synth]"
-        )
     except ImportError as e:
         raise click.ClickException(str(e))
 
-    seeds = load_seeds(domain=domain) if domain else load_seeds()
-    if not seeds:
+    all_seeds = load_seeds(domain=domain if domain != "all" else None)
+    if not all_seeds:
         raise click.ClickException("No seed scenarios found. Add seeds to concord/data/seed_yamls/")
+
+    t3_seeds = [s for s in all_seeds if s.metadata.get("difficulty_tier") == 3]
+    t0_t2_seeds = [s for s in all_seeds if s.metadata.get("difficulty_tier", 1) < 3]
 
     out_dir = Path(output)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     generated = 0
-    import yaml
+    cultures = ["US", "JP", "IN", "BR", "MENA"] if culture == "all" else [culture]
 
-    for seed in seeds:
-        for cult in (Culture if not culture else [Culture(culture)] if culture in list(Culture) else [seed.culture]):
-            adapted = adapt_for_culture(seed, cult) if cult != seed.culture else seed
-            path = out_dir / f"{adapted.id}.yaml"
+    if awm_count > 0:
+        try:
+            from concord.synth import _check_awm
+            _check_awm()
+            from concord.synth.enrichment import enrich_awm_scenario
+            awm_base = _run_awm_generation(awm_count, domain, model, ctx)
+            if not ctx.obj.get("quiet"):
+                click.echo(f"AWM generated {len(awm_base)} base scenarios")
+            enriched = [enrich_awm_scenario(s, s.get("domain", domain if domain != "all" else "ecommerce"), "US")
+                        for s in awm_base]
+        except ModuleNotFoundError:
+            click.echo("Warning: AWM not available — skipping AWM generation. Install [synth] extra.", err=True)
+            enriched = []
+    else:
+        enriched = []
+
+    base_scenarios = enriched + t0_t2_seeds
+    if not ctx.obj.get("quiet"):
+        click.echo(f"Cultural adaptation: {len(base_scenarios)} base × {len(cultures)} cultures")
+
+    for scenario in base_scenarios:
+        for cult in cultures:
+            try:
+                adapted = adapt_for_culture(scenario, Culture(cult)) if cult != getattr(scenario, "culture", "US") else scenario
+            except Exception:
+                adapted = scenario
+            adapted_id = f"{adapted.id}-{cult}" if cult != "US" else adapted.id
+            path = out_dir / f"{adapted_id}.yaml"
+            dump_data = adapted.model_dump(mode="json")
+            dump_data["id"] = adapted_id
             with open(path, "w") as f:
-                yaml.safe_dump(adapted.model_dump(mode="json"), f, sort_keys=False, default_flow_style=False)
+                yaml.safe_dump(dump_data, f, sort_keys=False, default_flow_style=False)
             generated += 1
-
-        if len(seeds) <= 10:
-            repeated = generate_repeated_sequence(seed, num_rounds=5)
-            for r_scenario in repeated:
-                path = out_dir / f"{r_scenario.id}.yaml"
-                with open(path, "w") as f:
-                    yaml.safe_dump(r_scenario.model_dump(mode="json"), f, sort_keys=False, default_flow_style=False)
-                generated += 1
-
+            if generated >= count:
+                break
         if generated >= count:
             break
 
+    for s in t3_seeds:
+        path = out_dir / f"{s.id}.yaml"
+        with open(path, "w") as f:
+            yaml.safe_dump(s.model_dump(mode="json"), f, sort_keys=False, default_flow_style=False)
+        generated += 1
+
+    if repeated_game:
+        repeat_seeds = [s for s in t0_t2_seeds
+                       if s.buyer_context.walk_away_threshold is not None
+                       and s.seller_context.walk_away_threshold is not None
+                       and s.buyer_context.relationship_history][:repeated_count]
+        for s in repeat_seeds:
+            for cult in cultures:
+                try:
+                    base = adapt_for_culture(s, Culture(cult)) if cult != getattr(s, "culture", "US") else s
+                except Exception:
+                    base = s
+                sequences = generate_repeated_sequence(base, num_rounds=5)
+                for r_scenario in sequences:
+                    r_id = f"{r_scenario.id}-{cult}" if cult != "US" else r_scenario.id
+                    path = out_dir / f"{r_id}.yaml"
+                    dump_data = r_scenario.model_dump(mode="json")
+                    dump_data["id"] = r_id
+                    with open(path, "w") as f:
+                        yaml.safe_dump(dump_data, f, sort_keys=False, default_flow_style=False)
+                    generated += 1
+
     if not ctx.obj.get("quiet"):
         click.echo(f"Generated {generated} scenarios in {output}")
+
+
+def _run_awm_generation(target_count: int, domain: str, model: str, ctx: click.Context) -> list[dict]:
+    """Run AWM generation and return raw scenario dicts."""
+    try:
+        import awm
+        from concord.synth.awm_prompts import AWM_SYSTEM_PROMPT, AWM_DOMAIN_HINTS
+    except ImportError:
+        return []
+
+    domains = ["ecommerce", "saas_procurement", "settlement", "ethical_business"] if domain == "all" else [domain]
+    per_domain = max(1, target_count // len(domains))
+    results = []
+
+    for d in domains:
+        hint = AWM_DOMAIN_HINTS.get(d, "")
+        combined_prompt = AWM_SYSTEM_PROMPT + "\n\n" + hint
+        try:
+            scenarios = awm.ScenarioSelfInstruct(
+                system_prompt=combined_prompt,
+                model=model,
+                temperature=1.0,
+                num_scenarios=per_domain,
+            ).generate()
+            results.extend(scenarios)
+        except Exception as e:
+            if not ctx.obj.get("quiet"):
+                click.echo(f"AWM generation failed for {d}: {e}", err=True)
+
+    return results
+
+
+def _print_cost_estimate(
+    awm_count: int,
+    count: int,
+    repeated_game: bool,
+    repeated_count: int,
+    culture: str,
+    enrich_model: str,
+) -> None:
+    cultures = 5 if culture == "all" else 1
+    base_scenarios = awm_count + 192  # AWM + T0-T2 seeds
+    cultural_calls = base_scenarios * (cultures - 1)  # US is free (no LLM call)
+    enrich_calls = awm_count
+    repeat_calls = repeated_count * cultures * 5 if repeated_game else 0
+
+    dsv4_in = 0.003625 / 1_000_000   # deepseek-v4-pro input
+    dsv4_out = 0.87 / 1_000_000      # deepseek-v4-pro output
+    awm_api_calls = awm_count / 10    # AWM generates 10 scenarios per API call
+    awm_cost = awm_api_calls * (2600 * dsv4_in + 3000 * dsv4_out)
+    enrich_cost = enrich_calls * (500 * dsv4_in + 150 * dsv4_out)
+    cultural_cost = cultural_calls * (700 * dsv4_in + 500 * dsv4_out)
+    repeat_cost = repeat_calls * (300 * dsv4_in + 200 * dsv4_out)
+    total = awm_cost + enrich_cost + cultural_cost + repeat_cost
+
+    click.echo("Cost estimate (dry run):")
+    click.echo(f"  AWM generation ({awm_count} scenarios):        ${awm_cost:.2f}")
+    click.echo(f"  Narrative enrichment ({enrich_calls} calls):   ${enrich_cost:.2f}")
+    click.echo(f"  Cultural adaptation ({cultural_calls} calls):  ${cultural_cost:.2f}")
+    click.echo(f"  Repeated-game ({repeat_calls} scenarios):      ${repeat_cost:.2f}")
+    click.echo("  ─────────────────────────────────────────────")
+    click.echo(f"  Total estimated cost:                          ${total:.2f}")
+    click.echo(f"  Target scenario count:                         ~{count}")
 
 
 @main.command()

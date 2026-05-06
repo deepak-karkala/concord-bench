@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from concord.exceptions import ConcordError
 from concord.schemas.scenario import Domain, PrivateContext, Scenario
 
@@ -67,7 +69,7 @@ def enrich_awm_scenario(awm_scenario: dict, domain: str, culture: str = "US") ->
         hard_constraints=["minimum_terms_must_be_met"],
         private_info=[
             f"cost_basis_is_{int(seller_batna * 0.5)}",
-            f"inventory_position_is_strong",
+            "inventory_position_is_strong",
         ],
     )
 
@@ -104,3 +106,79 @@ def _estimate_batna(domain: Domain, role: str, awm_scenario: dict) -> float:
     features = awm_scenario.get("feature_list", [])
     variation = len(features) * 500
     return base + variation
+
+
+_NARRATIVE_PROMPT = """Rewrite the scenario_description for this negotiation scenario to make it vivid and realistic. Write 2-3 sentences that tell a business story.
+
+Include:
+- Who each party is (company type, size, context)
+- Why this deal matters to each party right now
+- What tension or pressure makes this negotiation non-trivial
+- Any relevant backstory (prior relationship, past deal, market context)
+
+Do NOT reveal BATNA values or private information. Keep it from a neutral observer's perspective.
+
+CURRENT DESCRIPTION: {current_description}
+DOMAIN: {domain}
+BUYER PRIVATE INFO (use for context, do not reveal): {buyer_private_info}
+SELLER PRIVATE INFO (use for context, do not reveal): {seller_private_info}
+
+Return only the new scenario_description text (2-3 sentences, no YAML wrapper)."""
+
+
+async def add_narrative_description(scenario: Scenario, model: str = "deepseek-v4-pro") -> Scenario:
+    """Rewrite scenario_description to a rich narrative paragraph via LLM call."""
+    prompt = _NARRATIVE_PROMPT.format(
+        current_description=scenario.scenario_description,
+        domain=scenario.domain,
+        buyer_private_info=scenario.buyer_context.private_info,
+        seller_private_info=scenario.seller_context.private_info,
+    )
+    new_description = await _call_llm(prompt, model=model)
+    return scenario.model_copy(update={"scenario_description": new_description.strip()})
+
+
+async def _call_llm(prompt: str, model: str) -> str:
+    """Call an LLM and return the text response. Supports Anthropic, OpenAI, and DeepSeek models."""
+    import os
+
+    if "claude" in model.lower():
+        try:
+            import anthropic
+        except ImportError:
+            raise ImportError("anthropic package required: pip install anthropic")
+        client = anthropic.AsyncAnthropic()
+        response = await client.messages.create(
+            model=model,
+            max_tokens=512,
+            temperature=0.7,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        return response.content[0].text if response.content else ""
+    elif "deepseek" in model.lower():
+        try:
+            from openai import AsyncOpenAI
+        except ImportError:
+            raise ImportError("openai package required: pip install openai")
+        api_key = os.getenv("DEEPSEEK_API_KEY", os.getenv("OPENAI_API_KEY"))
+        client = AsyncOpenAI(api_key=api_key, base_url="https://api.deepseek.com")
+        response = await client.chat.completions.create(
+            model="deepseek-chat",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=512,
+            temperature=0.7,
+        )
+        return response.choices[0].message.content or ""
+    else:
+        try:
+            from openai import AsyncOpenAI
+        except ImportError:
+            raise ImportError("openai package required: pip install openai")
+        client = AsyncOpenAI()
+        response = await client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=512,
+            temperature=0.7,
+        )
+        return response.choices[0].message.content or ""
