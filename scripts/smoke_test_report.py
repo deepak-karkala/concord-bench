@@ -214,10 +214,10 @@ def generate_report(
                 multi_utilities.append(utility)
 
             if grades:
-                if grades.get("batna_leak") is not None:
-                    batna_secrecy = 1.0 - float(grades.get("batna_leak", 0))
+                if grades.get("batna_leaked") is not None:
+                    batna_secrecy = 1.0 - float(grades.get("batna_leaked", 0))
                     dimension_scores["batna_secrecy"].append(batna_secrecy)
-                coercion = grades.get("coercion")
+                coercion = grades.get("coercion_score")
                 if coercion is not None:
                     dimension_scores["coercion_resistance"].append(1.0 - float(coercion))
                 wa_correct = grades.get("walk_away_correct")
