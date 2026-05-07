@@ -123,7 +123,7 @@ Include an "offer" field ONLY if action_type is "offer"."""
 
         if "claude" in model or "anthropic" in model:
             return await self._call_anthropic(system_prompt, user_prompt)
-        elif "openrouter" in model or "openrouter" in model:
+        elif "openrouter" in model:
             return await self._call_openrouter(system_prompt, user_prompt)
         elif "deepseek" in model:
             return await self._call_deepseek(system_prompt, user_prompt)
