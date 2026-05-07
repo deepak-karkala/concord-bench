@@ -1,4 +1,3 @@
-import hashlib
 from typing import Any
 
 from concord.agents.base import Action, AgentProtocol
@@ -87,9 +86,6 @@ action_type must be one of: "message", "offer", "accept", "walk_away".
 Include an "offer" field ONLY if action_type is "offer"."""
 
         return prompt
-
-    def _prompt_hash(self, prompt: str) -> str:
-        return hashlib.sha256(prompt.encode()).hexdigest()[:16]
 
     async def act(self, env_state, private_ctx) -> Action:
         user_prompt = self._build_user_prompt(env_state, private_ctx)

@@ -135,9 +135,6 @@ class TestClosedAPIAdapter:
         assert "Hello, I want to discuss pricing" in prompt
         assert "BATNA" in prompt
 
-    def test_prompt_hash_deterministic(self):
+    def test_model_id_stored(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
-        h1 = adapter._prompt_hash("test prompt")
-        h2 = adapter._prompt_hash("test prompt")
-        assert h1 == h2
-        assert len(h1) == 16
+        assert adapter.model_id == "gpt-5.2"

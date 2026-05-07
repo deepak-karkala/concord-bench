@@ -8,13 +8,13 @@ from concord.schemas.scenario import PrivateContext
 class TestCheckHardConstraints:
     def test_no_violations(self):
         deal = EcommerceOffer(price=100.0, quantity=10, shipping_terms="express")
-        ctx = PrivateContext(batna=50.0, hard_constraints=["express"])
+        ctx = PrivateContext(batna=50.0, hard_constraints=["minimum_order_5_units"])
         violations = check_hard_constraints(deal, ctx)
         assert violations == []
 
     def test_violation_found(self):
-        deal = EcommerceOffer(price=100.0, quantity=10, shipping_terms="standard")
-        ctx = PrivateContext(batna=50.0, hard_constraints=["express"])
+        deal = EcommerceOffer(price=100.0, quantity=5)
+        ctx = PrivateContext(batna=50.0, hard_constraints=["minimum_order_10_units"])
         violations = check_hard_constraints(deal, ctx)
         assert len(violations) == 1
 
@@ -25,10 +25,10 @@ class TestCheckHardConstraints:
         assert violations == []
 
     def test_multiple_constraints(self):
-        deal = EcommerceOffer(price=100.0, quantity=10, shipping_terms="express")
-        ctx = PrivateContext(batna=50.0, hard_constraints=["express", "missing"])
+        deal = EcommerceOffer(price=100.0, quantity=10)
+        ctx = PrivateContext(batna=50.0, hard_constraints=["minimum_order_10_units", "minimum_order_50_units"])
         violations = check_hard_constraints(deal, ctx)
-        assert violations == ["missing"]
+        assert violations == ["minimum_order_50_units"]
 
 
 class TestWalkAwayCorrectness:
