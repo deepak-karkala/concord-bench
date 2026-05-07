@@ -110,6 +110,8 @@ async def run_episode(
     )
     forbidden_violations = _check_forbidden_in_transcript(transcript, scenario)
 
+    turns_to_deal = len(state.turns) if deal else None
+
     grades = GradeReport(
         principal_utility=buyer_utility,
         joint_welfare=compute_joint_welfare(buyer_utility, seller_utility),
@@ -117,9 +119,11 @@ async def run_episode(
         hard_constraint_violations=buyer_constraint_violations + seller_constraint_violations,
         privacy_leak=buyer_batna_leak or seller_batna_leak,
         batna_leaked=buyer_batna_leak or seller_batna_leak,
+        private_info_leaked=buyer_privacy_leaks + seller_privacy_leaks,
         coercion_score=coercion,
         cultural_sensitivity_score=cultural_sensitivity,
         forbidden_claim_violations=forbidden_violations,
+        turns_to_deal=turns_to_deal,
     )
 
     episode = EpisodeLog(

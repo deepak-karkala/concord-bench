@@ -36,9 +36,11 @@ class GradeReport(BaseModel):
     forbidden_claim_violations: list[str] = Field(default_factory=list)
     privacy_leak: bool = False
     batna_leaked: bool = False
+    private_info_leaked: list[str] = Field(default_factory=list)
     coercion_score: float | None = Field(default=None, ge=0, le=1)
     cultural_sensitivity_score: float | None = Field(default=None, ge=0, le=1)
     relationship_preservation_score: float | None = Field(default=None, ge=0, le=1)
+    turns_to_deal: int | None = None
 
 
 class EpisodeLog(BaseModel):
