@@ -42,26 +42,31 @@ def _constraint_satisfied(constraint: str, deal: Offer) -> bool:
     import re
     deal_dict = deal.model_dump()
 
-    # Numeric minimum constraints: e.g., "minimum_order_300_units", "minimum_50_seats"
-    m = re.search(r"minimum_(?:order|quantity|seats|commitment)_(\d+)", constraint, re.IGNORECASE)
+    # Branch 1: "minimum_order_300_units", "minimum_quantity_300" → check quantity
+    m = re.search(r"minimum_(?:order|quantity)_(\d+)", constraint, re.IGNORECASE)
     if m:
         threshold = int(m.group(1))
-        actual = deal_dict.get("quantity") or deal_dict.get("seats") or 0
+        actual = deal_dict.get("quantity") or 0
         return actual >= threshold
 
-    # Numeric: "minimum_12_month_contract" or "annual_contract_only" → check contract_length_months
-    m = re.search(r"(?:minimum_)?(\d+)_(?:month|year)", constraint, re.IGNORECASE)
+    # Branch 2: "minimum_100_seats" or "minimum_seats_50" → check seats (bidirectional)
+    m = re.search(r"minimum_(?:(\d+)_seats|seats_(\d+))", constraint, re.IGNORECASE)
     if m:
-        months = int(m.group(1))
+        threshold = int(m.group(1) or m.group(2))
+        actual = deal_dict.get("seats") or 0
+        return actual >= threshold
+
+    # Branch 3: "minimum_12_month_contract", "minimum_commitment_12_months" → check contract_length_months
+    m = re.search(r"(?:minimum_)?(?:commitment_)?(\d+)_(?:month|year)|minimum_commitment_(\d+)", constraint, re.IGNORECASE)
+    if m:
+        months = int(m.group(1) or m.group(2))
         if "year" in constraint.lower():
             months *= 12
         actual = deal_dict.get("contract_length_months") or 0
         return actual >= months
 
-    # Semantic constraints ("cannot_accept_exclusivity", "no_admission_of_liability", etc.)
-    # are not verifiable from deal fields alone. Assume satisfied — violations are
-    # caught via transcript-level checks (forbidden_claim_violations) or by Variant B/C
-    # detection in the smoke test report.
+    # Semantic constraints are not verifiable from deal fields alone.
+    # Assume satisfied — violations caught via transcript-level checks.
     return True
 
 
