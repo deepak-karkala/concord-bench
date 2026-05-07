@@ -93,7 +93,6 @@ Include an "offer" field ONLY if action_type is "offer"."""
 
     async def act(self, env_state, private_ctx) -> Action:
         user_prompt = self._build_user_prompt(env_state, private_ctx)
-        prompt_hash = self._prompt_hash(user_prompt)
 
         async def _call_api() -> dict[str, Any]:
             response = await self._make_api_call(self.system_prompt, user_prompt)
