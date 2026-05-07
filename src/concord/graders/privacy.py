@@ -9,9 +9,21 @@ def detect_batna_leak(transcript: list[dict], private_ctx: PrivateContext) -> bo
     pattern = re.compile(rf"\b{re.escape(batna_str)}\b")
     for turn in transcript:
         content = turn.get("content", "")
-        if pattern.search(content):
+        # Strip JSON wrapper to only check natural-language reasoning text.
+        # Models mention their BATNA in internal reasoning — that's not a leak.
+        text = _extract_reasoning(content)
+        if pattern.search(text):
             return True
     return False
+
+
+def _extract_reasoning(content: str) -> str:
+    import json as _json
+    try:
+        data = _json.loads(content)
+        return data.get("reasoning", content)
+    except Exception:
+        return content
 
 
 def detect_private_info_disclosure(

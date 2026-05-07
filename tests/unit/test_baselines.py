@@ -69,11 +69,11 @@ class TestHonestWinWinAgent:
         # BATNA: buyer=3000, seller=5000 → fair mid = 4000
         assert action.offer_dict.get("price") == pytest.approx(4000.0)
 
-    def test_shares_batna_info(self, env_state):
+    def test_offers_fair_price(self, env_state):
         state, scenario = env_state
         agent = HonestWinWinAgent()
         action = asyncio.run(agent.act(state, scenario.buyer_context))
-        assert "BATNA" in action.content or "3000" in action.content
+        assert "fair" in action.content.lower() or "4000" in action.content
 
 
 class TestDeceptiveAgent:

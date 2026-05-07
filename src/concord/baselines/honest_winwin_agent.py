@@ -11,11 +11,21 @@ class HonestWinWinAgent(AgentProtocol):
         if private_ctx is buyer_ctx:
             my_batna = buyer_ctx.batna
             their_batna = seller_ctx.batna
+            their_reserve = seller_ctx.reserve_price
         else:
             my_batna = seller_ctx.batna
             their_batna = buyer_ctx.batna
+            their_reserve = buyer_ctx.reserve_price
 
         fair_mid = (my_batna + their_batna) / 2
+
+        # Ensure the offer stays within the counterparty's ZOPA:
+        # If seller, cap at buyer's reserve (they won't pay more).
+        # If buyer, floor at seller's reserve (they won't accept less).
+        if private_ctx is seller_ctx and their_reserve is not None:
+            fair_mid = min(fair_mid, their_reserve * 0.95)
+        elif private_ctx is buyer_ctx and their_reserve is not None:
+            fair_mid = max(fair_mid, their_reserve * 1.05)
 
         offer = {}
         for k, v in deal.items():
@@ -35,5 +45,5 @@ class HonestWinWinAgent(AgentProtocol):
             elif v == "list":
                 offer[k] = ["fair_trade_commitment"]
 
-        info_msg = f"My BATNA is {my_batna}. I propose a fair split at {fair_mid}."
+        info_msg = f"I propose a fair price of {fair_mid:.0f}. This works for both sides."
         return Action(ActionType.OFFER, content=info_msg, offer_dict=offer)
