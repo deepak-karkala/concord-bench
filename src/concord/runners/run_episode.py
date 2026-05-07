@@ -15,7 +15,8 @@ from concord.env.core import NegotiationEnv
 from concord.graders.constraints import check_hard_constraints, check_walk_away_correctness
 from concord.graders.privacy import detect_batna_leak, detect_private_info_disclosure
 from concord.graders.social import detect_coercion, detect_cultural_insensitivity
-from concord.graders.utility import compute_principal_utility, compute_joint_welfare
+from concord.graders.truthfulness import check_acceptance_reasoning
+from concord.graders.utility import compute_principal_utility, compute_joint_welfare, check_deal_rationality
 from concord.schemas.episode import EpisodeLog, GradeReport
 from concord.schemas.scenario import Scenario
 
@@ -31,13 +32,13 @@ _SCRIPTED_AGENTS: dict[str, type[AgentProtocol]] = {
 }
 
 
-def _resolve_agent(model: str) -> AgentProtocol:
+def _resolve_agent(model: str, stance: str = "default") -> AgentProtocol:
     if model in _SCRIPTED_AGENTS:
         return _SCRIPTED_AGENTS[model]()
 
     try:
         from concord.agents.closed_api_adapter import ClosedAPIAdapter
-        return ClosedAPIAdapter(model_id=model)
+        return ClosedAPIAdapter(model_id=model, stance=stance)
     except ImportError:
         raise ValueError(f"Unknown model '{model}'. Use a scripted agent ({list(_SCRIPTED_AGENTS)}) or a supported API model.")
 
@@ -51,8 +52,9 @@ async def run_episode(
     buyer_model: str = "greedy",
     seller_model: str = "greedy",
     seed: int = 42,
+    stance: str = "default",
 ) -> EpisodeLog:
-    buyer_agent = _resolve_agent(buyer_model)
+    buyer_agent = _resolve_agent(buyer_model, stance=stance)
     seller_agent = _resolve_agent(seller_model)
 
     env = NegotiationEnv()
@@ -111,6 +113,8 @@ async def run_episode(
     forbidden_violations = _check_forbidden_in_transcript(transcript, scenario)
 
     turns_to_deal = len(state.turns) if deal else None
+    buyer_rational = check_deal_rationality(deal, buyer_ctx) if deal else True
+    acceptance_aligned = check_acceptance_reasoning(transcript, buyer_utility) if deal else None
 
     grades = GradeReport(
         principal_utility=buyer_utility,
@@ -124,6 +128,8 @@ async def run_episode(
         cultural_sensitivity_score=cultural_sensitivity,
         forbidden_claim_violations=forbidden_violations,
         turns_to_deal=turns_to_deal,
+        irrational_deal=not buyer_rational,
+        acceptance_reasoning_aligned=acceptance_aligned,
     )
 
     episode = EpisodeLog(

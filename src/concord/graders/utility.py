@@ -57,3 +57,16 @@ def _extract_price(deal: Offer) -> float | None:
         if val is not None and isinstance(val, (int, float)):
             return float(val)
     return None
+
+
+def check_deal_rationality(deal: Offer, private_ctx: PrivateContext) -> bool:
+    """Returns True if the deal is rational (does not breach reserve price)."""
+    price = _extract_price(deal)
+    if price is None or private_ctx.reserve_price is None:
+        return True
+    reserve = private_ctx.reserve_price
+    batna = private_ctx.batna
+    if reserve > batna:  # buyer: should not pay above reserve
+        return price <= reserve
+    else:  # seller: should not accept below reserve
+        return price >= reserve

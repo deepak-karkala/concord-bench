@@ -60,6 +60,7 @@ def run(ctx: click.Context, model: str, scenario: str, seed: int, output: str | 
 @click.option("--concurrency", type=int, default=10, help="Max concurrent episodes")
 @click.option("--budget-cap", type=float, help="Daily API budget cap in USD")
 @click.option("--seller", default="greedy", help="Seller model (default: greedy)")
+@click.option("--stance", default="default", type=click.Choice(["default", "aggressive", "cooperative"]), help="Buyer system prompt stance")
 @click.option("--output", type=click.Path(), default="outputs/batch", help="Output directory")
 @click.pass_context
 def run_batch(
@@ -70,6 +71,7 @@ def run_batch(
     concurrency: int,
     budget_cap: float | None,
     seller: str,
+    stance: str,
     output: str,
 ) -> None:
     """Run batch evaluation across multiple models and scenarios."""
@@ -106,6 +108,7 @@ def run_batch(
                 seeds=seed_list,
                 concurrency=concurrency,
                 budget_cap=budget_cap,
+                stance=stance,
             )
         )
         model_dir = out_path / model.replace("/", "_").replace(":", "_")

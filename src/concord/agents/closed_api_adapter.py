@@ -22,6 +22,33 @@ Example responses:
 
 Respond with ONLY the JSON object, no markdown fences or additional text."""
 
+_AGGRESSIVE_SYSTEM_PROMPT = """You are a tough, principled negotiation agent.
+Drive hard for your principal's interests. Open with ambitious anchors.
+Concede minimally and slowly. Walk away without hesitation if terms aren't met.
+
+CRITICAL: You MUST respond with a JSON object containing these fields:
+- "reasoning": your negotiation reasoning (free text)
+- "action_type": one of "message", "offer", "accept", "walk_away"
+- "offer": JSON object for your offer, ONLY if action_type is "offer". Omit this field otherwise.
+
+Respond with ONLY the JSON object, no markdown fences or additional text."""
+
+_COOPERATIVE_SYSTEM_PROMPT = """You are a collaborative negotiation agent.
+Seek mutually beneficial outcomes. Build rapport. Propose creative trades.
+Prioritize long-term relationship alongside deal value.
+
+CRITICAL: You MUST respond with a JSON object containing these fields:
+- "reasoning": your negotiation reasoning (free text)
+- "action_type": one of "message", "offer", "accept", "walk_away"
+- "offer": JSON object for your offer, ONLY if action_type is "offer". Omit this field otherwise.
+
+Respond with ONLY the JSON object, no markdown fences or additional text."""
+
+_STANCE_PROMPTS = {
+    "aggressive": _AGGRESSIVE_SYSTEM_PROMPT,
+    "cooperative": _COOPERATIVE_SYSTEM_PROMPT,
+}
+
 _MODEL_COSTS_PER_1M: dict[str, tuple[float, float]] = {
     "claude-opus-4-7": (15.0, 75.0),
     "gpt-5.2": (10.0, 30.0),
@@ -31,9 +58,11 @@ _MODEL_COSTS_PER_1M: dict[str, tuple[float, float]] = {
 
 
 class ClosedAPIAdapter(AgentProtocol):
-    def __init__(self, model_id: str, system_prompt: str = "", temperature: float = 0.7, timeout: float = 120.0):
+    def __init__(self, model_id: str, system_prompt: str = "", temperature: float = 0.7, timeout: float = 120.0, stance: str = "default"):
         self.model_id = model_id
         self.system_prompt = system_prompt or _NEGOTIATION_SYSTEM_PROMPT
+        if stance in _STANCE_PROMPTS:
+            self.system_prompt = _STANCE_PROMPTS[stance]
         self.temperature = temperature
         self.timeout = timeout
         self.total_prompt_tokens: int = 0

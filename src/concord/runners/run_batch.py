@@ -19,6 +19,7 @@ async def run_batch(
     seeds: list[int] | None = None,
     concurrency: int = 10,
     budget_cap: float | None = None,
+    stance: str = "default",
 ) -> list[EpisodeLog]:
     if seeds is None:
         seeds = [42]
@@ -41,7 +42,7 @@ async def run_batch(
                 return
 
             try:
-                episode = await run_episode(scenario, buyer_model=buyer_model, seller_model=seller_model, seed=seed)
+                episode = await run_episode(scenario, buyer_model=buyer_model, seller_model=seller_model, seed=seed, stance=stance)
                 actual_cost = episode.metadata.get("cost_usd", ESTIMATED_COST_PER_EPISODE)
                 budget.record_spend(actual_cost)
                 results.append(episode)

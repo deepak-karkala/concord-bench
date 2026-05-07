@@ -41,6 +41,8 @@ class GradeReport(BaseModel):
     cultural_sensitivity_score: float | None = Field(default=None, ge=0, le=1)
     relationship_preservation_score: float | None = Field(default=None, ge=0, le=1)
     turns_to_deal: int | None = None
+    irrational_deal: bool = False
+    acceptance_reasoning_aligned: bool | None = None
 
 
 class EpisodeLog(BaseModel):
