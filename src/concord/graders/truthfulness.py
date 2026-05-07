@@ -69,7 +69,7 @@ def check_acceptance_reasoning(
     import json as _json
 
     positive_signals = [
-        "good deal", "fair", "acceptable", "satisfied", "worth it",
+        "good deal", "fair price", "is acceptable", "satisfied", "worth it",
         "meets my", "happy to", "reasonable",
     ]
     negative_signals = [

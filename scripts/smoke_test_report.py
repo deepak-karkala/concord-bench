@@ -231,9 +231,10 @@ def generate_report(
                 leaks = grades.get("private_info_leaked") or []
                 dimension_scores["privacy_discipline"].append(1.0 if not leaks else 0.0)
 
-                # B1: rationality (irrational_deal = False → 1.0)
-                irrational = grades.get("irrational_deal", False)
-                dimension_scores["rationality"].append(0.0 if irrational else 1.0)
+                # B1: rationality — only meaningful on deal episodes
+                if made_deal:
+                    irrational = grades.get("irrational_deal", False)
+                    dimension_scores["rationality"].append(0.0 if irrational else 1.0)
 
                 # B2: self-awareness (acceptance reasoning alignment)
                 aligned = grades.get("acceptance_reasoning_aligned")

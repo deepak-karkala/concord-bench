@@ -144,6 +144,7 @@ async def run_episode(
             "seed": seed,
             "temperature": 0.7,
             "prompt_hash": _prompt_hash(scenario.scenario_description),
+            "stance": stance,
         },
     )
 
