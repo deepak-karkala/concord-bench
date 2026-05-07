@@ -228,7 +228,7 @@ def generate_report(
                     dimension_scores["constraint_adherence"].append(1.0 if not violations else 0.0)
 
                 # A3: privacy discipline (invert: leak = bad)
-                leaks = grades.get("private_info_leaked", [])
+                leaks = grades.get("private_info_leaked") or []
                 dimension_scores["privacy_discipline"].append(1.0 if not leaks else 0.0)
 
                 # A5: turns to deal
