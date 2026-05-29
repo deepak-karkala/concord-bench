@@ -50,8 +50,22 @@ _STANCE_PROMPTS = {
 }
 
 _MODEL_COSTS_PER_1M: dict[str, tuple[float, float]] = {
-    "claude-opus-4-7": (15.0, 75.0),
-    "gpt-5.2": (10.0, 30.0),
+    "claude-opus-4-7": (5.0, 25.0),
+    "anthropic/claude-opus-4.7": (5.0, 25.0),
+    "claude-sonnet-4-6": (3.0, 15.0),
+    "anthropic/claude-4.6-sonnet": (3.0, 15.0),
+    "claude-haiku-4-5": (1.0, 5.0),
+    "anthropic/claude-4.5-haiku": (1.0, 5.0),
+    "gpt-5.5": (5.0, 30.0),
+    "openai/gpt-5.5": (5.0, 30.0),
+    "gpt-5.2": (1.75, 14.0),
+    "openai/gpt-5.2": (1.75, 14.0),
+    "gpt-5": (1.25, 10.0),
+    "openai/gpt-5": (1.25, 10.0),
+    "gpt-5-mini": (0.25, 2.0),
+    "openai/gpt-5-mini": (0.25, 2.0),
+    "gpt-5-nano": (0.05, 0.4),
+    "openai/gpt-5-nano": (0.05, 0.4),
     "gemini-3-pro": (7.0, 21.0),
     "deepseek-v4-pro": (0.003625, 0.87),
 }
@@ -72,7 +86,7 @@ class ClosedAPIAdapter(AgentProtocol):
     def _track_tokens(self, prompt_tokens: int, completion_tokens: int) -> None:
         self.total_prompt_tokens += prompt_tokens
         self.total_completion_tokens += completion_tokens
-        costs = _MODEL_COSTS_PER_1M.get(self.model_id, (0.0, 0.0))
+        costs = _lookup_model_costs(self.model_id)
         self.total_cost += (prompt_tokens * costs[0] + completion_tokens * costs[1]) / 1_000_000
 
     def _build_user_prompt(self, env_state, private_ctx) -> str:
@@ -369,3 +383,20 @@ Include an "offer" field ONLY if action_type is "offer"."""
             action_type = ActionType.WALK_AWAY
 
         return action_type, offer_dict
+
+
+def _lookup_model_costs(model_id: str) -> tuple[float, float]:
+    normalized_ids = [model_id]
+    if model_id.startswith("openrouter/"):
+        normalized_ids.append(model_id[len("openrouter/"):])
+
+    for normalized in normalized_ids:
+        exact = _MODEL_COSTS_PER_1M.get(normalized)
+        if exact is not None:
+            return exact
+
+        for known_prefix, cost in _MODEL_COSTS_PER_1M.items():
+            if normalized.startswith(f"{known_prefix}-"):
+                return cost
+
+    return (0.0, 0.0)

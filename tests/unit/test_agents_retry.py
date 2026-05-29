@@ -122,12 +122,22 @@ class TestClosedAPIAdapter:
         adapter._track_tokens(prompt_tokens=1000000, completion_tokens=1000000)
         assert adapter.total_prompt_tokens == 1000000
         assert adapter.total_completion_tokens == 1000000
-        assert adapter.total_cost == pytest.approx(90.0)  # 15 + 75
+        assert adapter.total_cost == pytest.approx(30.0)
 
     def test_cost_tracking_zero_cost_unknown_model(self):
         adapter = ClosedAPIAdapter("unknown-model")
         adapter._track_tokens(prompt_tokens=1000, completion_tokens=500)
         assert adapter.total_cost == 0.0
+
+    def test_cost_tracking_supports_openrouter_snapshot_model_ids(self):
+        adapter = ClosedAPIAdapter("openrouter/openai/gpt-5.5-20260423")
+        adapter._track_tokens(prompt_tokens=1000000, completion_tokens=1000000)
+        assert adapter.total_cost == pytest.approx(35.0)
+
+    def test_cost_tracking_supports_anthropic_snapshot_aliases(self):
+        adapter = ClosedAPIAdapter("openrouter/anthropic/claude-4.5-haiku-20251001")
+        adapter._track_tokens(prompt_tokens=1000000, completion_tokens=1000000)
+        assert adapter.total_cost == pytest.approx(6.0)
 
     def test_extract_action_offer(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
