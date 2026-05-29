@@ -35,3 +35,7 @@ scenario_description: A tech company's hardware division is sourcing paint coati
   and has committed to carbon-neutral supply chain by 2030. The primary supplier has
   partial renewable energy usage and is 3 years from full carbon neutrality. A competitor
   supplier claims net-zero but refuses to share audit data.
+metadata:
+  difficulty_tier: 1
+  tiering_rule_version: task20a2-v1
+  tiering_reason: default_moderate

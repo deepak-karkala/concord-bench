@@ -45,3 +45,7 @@ scenario_description: An enterprise undergoing digital transformation is consoli
   from 8 tools to a single fleet management platform. The vendor is competing against
   two established players. The buyer's CIO needs board approval for deals over $100K,
   creating a 3-week decision cycle.
+metadata:
+  difficulty_tier: 1
+  tiering_rule_version: task20a2-v1
+  tiering_reason: multi_issue_tradeoff

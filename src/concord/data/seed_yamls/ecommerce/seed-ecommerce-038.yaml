@@ -34,6 +34,11 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: 'A water utility procuring pipe infrastructure for a system replacement mandated by a consent decree
-  with a 2027 deadline. Two qualified suppliers: one union shop at union rates, one non-union 18% cheaper. The city council
-  is divided on labor standards.'
+scenario_description: 'A water utility procuring pipe infrastructure for a system
+  replacement mandated by a consent decree with a 2027 deadline. Two qualified suppliers:
+  one union shop at union rates, one non-union 18% cheaper. The city council is divided
+  on labor standards.'
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

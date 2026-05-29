@@ -34,6 +34,11 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: A global logistics company needs to secure warehouse equipment from a supplier who recently lost their
-  second-largest customer. The buyer has been offered a 7% discount from a competitor. The supplier is willing to negotiate
-  aggressively to fill capacity.
+scenario_description: A global logistics company needs to secure warehouse equipment
+  from a supplier who recently lost their second-largest customer. The buyer has been
+  offered a 7% discount from a competitor. The supplier is willing to negotiate aggressively
+  to fill capacity.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

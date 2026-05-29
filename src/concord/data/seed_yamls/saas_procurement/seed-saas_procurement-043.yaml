@@ -36,6 +36,12 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A large hospital system needs revenue cycle management software across 12 hospitals. Each hospital uses
-  different chargemaster formats. The vendor's platform requires standardized chargemasters. Standardization will take 8 months
-  and the hospitals resist process changes. The vendor won't start deployment until standardization is complete.
+scenario_description: A large hospital system needs revenue cycle management software
+  across 12 hospitals. Each hospital uses different chargemaster formats. The vendor's
+  platform requires standardized chargemasters. Standardization will take 8 months
+  and the hospitals resist process changes. The vendor won't start deployment until
+  standardization is complete.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

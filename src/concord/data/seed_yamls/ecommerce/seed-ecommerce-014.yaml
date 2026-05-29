@@ -35,3 +35,7 @@ scenario_description: An automotive parts distributor is sourcing lab equipment 
   a new vehicle platform launch. The incumbent supplier has been reliable for 5 years
   but is 18% above market. The buyer has qualified two new suppliers but risks production
   delays during the transition.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

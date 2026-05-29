@@ -34,6 +34,11 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A nonprofit advocacy organization needs a donor management platform integrated with their advocacy CRM.
-  They have 50K donors and a $15K annual software budget. Vendors in this space start at $25K. The buyer is exploring whether
-  to compromise on features or seek grant funding for the gap.
+scenario_description: A nonprofit advocacy organization needs a donor management platform
+  integrated with their advocacy CRM. They have 50K donors and a $15K annual software
+  budget. Vendors in this space start at $25K. The buyer is exploring whether to compromise
+  on features or seek grant funding for the gap.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

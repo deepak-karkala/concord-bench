@@ -36,6 +36,11 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A media conglomerate buying a content management system to unify 4 acquired companies. Each acquisition
-  has its own CMS with 100K+ articles. The vendor says migration takes 6 months per CMS. The buyer wants all 4 done in 9 months.
+scenario_description: A media conglomerate buying a content management system to unify
+  4 acquired companies. Each acquisition has its own CMS with 100K+ articles. The
+  vendor says migration takes 6 months per CMS. The buyer wants all 4 done in 9 months.
   The vendor's roadmap doesn't support parallel migration.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

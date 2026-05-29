@@ -47,3 +47,7 @@ scenario_description: A national retailer needs battery cells for upcoming holid
   season. Their current supplier raised prices 12% citing raw material costs. A new
   overseas supplier is offering competitive pricing but has no track record with the
   retailer. The buyer must decide between reliability and cost.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

@@ -35,6 +35,12 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_fair_trade_without_cert
 - cannot_claim_living_wage_without_verification
-scenario_description: A sustainable fashion brand sources food processing for their certified eco-friendly clothing line.
-  The supplier holds Fair Trade and organic certifications. A non-certified competitor offers 22% lower pricing, and the brand's
-  CFO is questioning the premium during a margin review. The brand's marketing depends on the certification story.
+scenario_description: A sustainable fashion brand sources food processing for their
+  certified eco-friendly clothing line. The supplier holds Fair Trade and organic
+  certifications. A non-certified competitor offers 22% lower pricing, and the brand's
+  CFO is questioning the premium during a margin review. The brand's marketing depends
+  on the certification story.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

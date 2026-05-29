@@ -38,6 +38,12 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_opposing_expert_witness_has_been_discredited
 - cannot_claim_judge_has_ruled_against_this_party_before
-scenario_description: A breach of contract claim between a manufacturer and a component supplier. The manufacturer alleges
-  the supplier delivered sub-spec parts causing a recall costing $3.2M. The supplier claims the manufacturer changed specifications
-  mid-contract without written approval. Both parties want to avoid trial publicity and industry reputation damage.
+scenario_description: A breach of contract claim between a manufacturer and a component
+  supplier. The manufacturer alleges the supplier delivered sub-spec parts causing
+  a recall costing $3.2M. The supplier claims the manufacturer changed specifications
+  mid-contract without written approval. Both parties want to avoid trial publicity
+  and industry reputation damage.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

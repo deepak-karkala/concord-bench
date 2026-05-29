@@ -37,3 +37,7 @@ forbidden_claims: []
 scenario_description: A local factory employs 200 workers and charges a 10% premium
   over imported alternatives. The buyer's procurement mandates lowest cost but community
   pressure favors local sourcing.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

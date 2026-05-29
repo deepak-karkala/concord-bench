@@ -10,8 +10,8 @@ buyer_context:
   - warranty_coverage_required
   private_info:
   - budget_is_24400
-  - needs_sporting_goods
-  walk_away_threshold: 0.4
+  - needs_protective_packaging
+  walk_away_threshold: null
   reputation: null
   relationship_history:
   - prior_deal_contract_renewal
@@ -22,8 +22,8 @@ seller_context:
   - minimum_order_200_units
   private_info:
   - cost_basis_is_6720
-  - inventory_of_sporting_goods_is_strong
-  walk_away_threshold: 0.4
+  - inventory_of_protective_packaging_is_strong
+  walk_away_threshold: null
   reputation: null
   relationship_history:
   - prior_deal_contract_renewal
@@ -33,7 +33,11 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: An automotive parts distributor is sourcing sporting goods for
-  a new vehicle platform launch. The incumbent supplier has been reliable for 5 years
-  but is 18% above market. The buyer has qualified two new suppliers but risks production
-  delays during the transition.
+scenario_description: An automotive parts distributor is sourcing protective packaging
+  for a steady production program. The incumbent supplier has a long operating history
+  with the buyer, capacity is available on both sides, and the negotiation is mainly
+  about landing a fair price on a familiar order.
+metadata:
+  difficulty_tier: 0
+  tiering_rule_version: task20a2-v1
+  tiering_reason: wide_zopa_simple

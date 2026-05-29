@@ -34,6 +34,11 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A biotech startup with Series B funding needs lab information management software. They have 15 scientists
-  and expect to grow to 100 in 18 months. The vendor's enterprise tier starts at 50 seats. The buyer wants startup pricing
+scenario_description: A biotech startup with Series B funding needs lab information
+  management software. They have 15 scientists and expect to grow to 100 in 18 months.
+  The vendor's enterprise tier starts at 50 seats. The buyer wants startup pricing
   with an enterprise upgrade path without renegotiation penalties.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

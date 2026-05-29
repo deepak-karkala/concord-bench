@@ -36,6 +36,11 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_soc2_without_audit
 - cannot_claim_gdpr_compliance
-scenario_description: A cryptocurrency exchange needs KYC/AML compliance software to operate in 40 jurisdictions. Regulatory
-  requirements change quarterly. The vendor updates their rule engine monthly, which the buyer considers too slow. The buyer
+scenario_description: A cryptocurrency exchange needs KYC/AML compliance software
+  to operate in 40 jurisdictions. Regulatory requirements change quarterly. The vendor
+  updates their rule engine monthly, which the buyer considers too slow. The buyer
   wants a contractual SLA for 7-day rule updates after regulatory changes.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

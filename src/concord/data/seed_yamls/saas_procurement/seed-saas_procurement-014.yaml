@@ -38,3 +38,7 @@ scenario_description: A government agency is procuring financial planning tools 
   strict data sovereignty and FedRAMP requirements. Only three vendors qualify. The
   procurement cycle is 18 months and the current contract expires in 6 months, creating
   urgency without flexibility.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

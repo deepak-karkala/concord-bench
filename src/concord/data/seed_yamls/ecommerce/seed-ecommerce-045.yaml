@@ -32,6 +32,11 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: A defense contractor is buying classified components where only 3 suppliers hold clearance. One supplier
-  is under DoD review; another is at capacity. The remaining supplier knows the buyer has limited options but also wants to
-  expand their cleared contract base.
+scenario_description: A defense contractor is buying classified components where only
+  3 suppliers hold clearance. One supplier is under DoD review; another is at capacity.
+  The remaining supplier knows the buyer has limited options but also wants to expand
+  their cleared contract base.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

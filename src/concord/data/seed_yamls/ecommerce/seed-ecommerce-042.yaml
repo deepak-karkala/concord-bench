@@ -32,6 +32,11 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: A pharmaceutical company buying chromatography columns for a new production line awaiting FDA approval.
-  The columns have 14-week lead time and the FDA decision is in 12 weeks. If approved, delays cost $80K/day. If rejected,
+scenario_description: A pharmaceutical company buying chromatography columns for a
+  new production line awaiting FDA approval. The columns have 14-week lead time and
+  the FDA decision is in 12 weeks. If approved, delays cost $80K/day. If rejected,
   the columns are specialty inventory.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

@@ -35,6 +35,11 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: A renewable energy company buying solar panel components with IRA domestic content requirements. The
-  US supplier charges 35% more than the Chinese supplier. The tax credit requires 60% domestic content. The buyer must balance
-  per-unit cost against the credit value.
+scenario_description: A renewable energy company buying solar panel components with
+  IRA domestic content requirements. The US supplier charges 35% more than the Chinese
+  supplier. The tax credit requires 60% domestic content. The buyer must balance per-unit
+  cost against the credit value.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

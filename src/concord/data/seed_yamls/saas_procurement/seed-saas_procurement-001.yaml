@@ -42,3 +42,7 @@ scenario_description: A mid-market company is evaluating project mgmt platform t
   replace their legacy system. The current vendor's contract expires in 60 days and
   they are offering a 30% discount to retain the account. The buyer's IT team prefers
   a modern solution but the CFO favors the cheaper renewal.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

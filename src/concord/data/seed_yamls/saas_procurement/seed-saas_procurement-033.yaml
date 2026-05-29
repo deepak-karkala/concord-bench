@@ -34,6 +34,11 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A large school district purchasing student information system covering 85K students. The contract requires
-  FERPA and state-specific data residency compliance. The vendor is Soc 2 certified but has never deployed in this state.
+scenario_description: A large school district purchasing student information system
+  covering 85K students. The contract requires FERPA and state-specific data residency
+  compliance. The vendor is Soc 2 certified but has never deployed in this state.
   The district's legal team needs 8 weeks for compliance review.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

@@ -45,3 +45,7 @@ scenario_description: A government agency is procuring customer support platform
   strict data sovereignty and FedRAMP requirements. Only three vendors qualify. The
   procurement cycle is 18 months and the current contract expires in 6 months, creating
   urgency without flexibility.
+metadata:
+  difficulty_tier: 1
+  tiering_rule_version: task20a2-v1
+  tiering_reason: multi_issue_tradeoff

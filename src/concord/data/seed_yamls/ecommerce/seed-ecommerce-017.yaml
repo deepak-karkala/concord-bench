@@ -10,7 +10,7 @@ buyer_context:
   private_info:
   - budget_is_6800
   - needs_beverage_ingredients
-  walk_away_threshold: 0.4
+  walk_away_threshold: null
   reputation: null
   relationship_history: []
 seller_context:
@@ -21,7 +21,7 @@ seller_context:
   private_info:
   - cost_basis_is_1920
   - inventory_of_beverage_ingredients_is_strong
-  walk_away_threshold: 0.4
+  walk_away_threshold: null
   reputation: null
   relationship_history: []
 deal_schema:
@@ -30,7 +30,11 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: A national retailer needs beverage ingredients for upcoming
-  holiday season. Their current supplier raised prices 12% citing raw material costs.
-  A new overseas supplier is offering competitive pricing but has no track record
-  with the retailer. The buyer must decide between reliability and cost.
+scenario_description: A national retailer is placing a routine replenishment order
+  for beverage ingredients ahead of a seasonal promotion. The incumbent supplier has
+  been reliable, has available inventory, and both sides want to close quickly without
+  revisiting broader contract terms.
+metadata:
+  difficulty_tier: 0
+  tiering_rule_version: task20a2-v1
+  tiering_reason: wide_zopa_simple

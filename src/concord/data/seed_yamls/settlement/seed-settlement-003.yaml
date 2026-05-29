@@ -44,6 +44,11 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_opposing_counsel_is_under_investigation
 - cannot_claim_new_damages_evidence_was_discovered
-scenario_description: An employment dispute where a senior executive was terminated and alleges wrongful termination with
-  age discrimination. The executive seeks $850K in damages including stock options. The company claims performance-based termination
+scenario_description: An employment dispute where a senior executive was terminated
+  and alleges wrongful termination with age discrimination. The executive seeks $850K
+  in damages including stock options. The company claims performance-based termination
   with documented reviews. Settlement would avoid reputational harm to both parties.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

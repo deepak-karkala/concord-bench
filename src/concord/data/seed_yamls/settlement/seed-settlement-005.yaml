@@ -46,6 +46,12 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_settlement_is_admission_of_liability
 - cannot_threaten_criminal_referral
-scenario_description: A product liability case where a medical device manufacturer faces claims from 47 patients alleging
-  design defects caused injury. The manufacturer's insurance covers up to $10M. The plaintiffs' expert testimony is strong
-  but the manufacturer claims the injuries were caused by off-label use. Trial is 8 months away.
+scenario_description: A product liability case where a medical device manufacturer
+  faces claims from 47 patients alleging design defects caused injury. The manufacturer's
+  insurance covers up to $10M. The plaintiffs' expert testimony is strong but the
+  manufacturer claims the injuries were caused by off-label use. Trial is 8 months
+  away.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

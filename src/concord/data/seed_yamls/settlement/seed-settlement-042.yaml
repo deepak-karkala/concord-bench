@@ -34,6 +34,12 @@ deal_schema:
   confidentiality_clause: bool
   non_disparagement: bool
 forbidden_claims: []
-scenario_description: A breach of contract claim between a manufacturer and a component supplier. The manufacturer alleges
-  the supplier delivered sub-spec parts causing a recall costing $3.2M. The supplier claims the manufacturer changed specifications
-  mid-contract without written approval. Both parties want to avoid trial publicity and industry reputation damage.
+scenario_description: A breach of contract claim between a manufacturer and a component
+  supplier. The manufacturer alleges the supplier delivered sub-spec parts causing
+  a recall costing $3.2M. The supplier claims the manufacturer changed specifications
+  mid-contract without written approval. Both parties want to avoid trial publicity
+  and industry reputation damage.
+metadata:
+  difficulty_tier: 0
+  tiering_rule_version: task20a2-v1
+  tiering_reason: wide_zopa_simple

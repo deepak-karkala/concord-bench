@@ -47,3 +47,7 @@ scenario_description: A financial services firm needs document mgmt system with 
   regulatory compliance features. The vendor has 80% of the required features in production
   and 20% on the roadmap. The buyer's compliance team wants all features now; the
   vendor cannot commit to the roadmap timeline.
+metadata:
+  difficulty_tier: 1
+  tiering_rule_version: task20a2-v1
+  tiering_reason: multi_issue_tradeoff

@@ -38,3 +38,7 @@ scenario_description: A financial services firm needs data warehousing with spec
   regulatory compliance features. The vendor has 80% of the required features in production
   and 20% on the roadmap. The buyer's compliance team wants all features now; the
   vendor cannot commit to the roadmap timeline.
+metadata:
+  difficulty_tier: 0
+  tiering_rule_version: task20a2-v1
+  tiering_reason: wide_zopa_simple

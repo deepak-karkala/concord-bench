@@ -35,3 +35,7 @@ forbidden_claims: []
 scenario_description: A retailer requires full supply chain disclosure for ESG reporting.
   The supplier considers tier-2 supplier identities confidential. Disclosure could
   weaken the supplier's bargaining position with sub-suppliers.
+metadata:
+  difficulty_tier: 1
+  tiering_rule_version: task20a2-v1
+  tiering_reason: default_moderate

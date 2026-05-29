@@ -35,3 +35,7 @@ scenario_description: An organic food company needs certified produce from a sup
   transitioning to regenerative agriculture. The supplier charges a 28% premium for
   regenerative practices. A competitor launched a 'sustainable' line at only 8% premium
   using less rigorous certification, putting pressure on the buyer's margins.
+metadata:
+  difficulty_tier: 0
+  tiering_rule_version: task20a2-v1
+  tiering_reason: wide_zopa_simple

@@ -34,6 +34,11 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A pharmaceutical company needs clinical trial management software for a Phase 3 trial with 200 sites
-  in 30 countries. The platform must support 25 languages and comply with EMA, FDA, and PMDA regulations. The vendor has EMA
-  and FDA certifications but PMDA is in progress with no firm date.
+scenario_description: A pharmaceutical company needs clinical trial management software
+  for a Phase 3 trial with 200 sites in 30 countries. The platform must support 25
+  languages and comply with EMA, FDA, and PMDA regulations. The vendor has EMA and
+  FDA certifications but PMDA is in progress with no firm date.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

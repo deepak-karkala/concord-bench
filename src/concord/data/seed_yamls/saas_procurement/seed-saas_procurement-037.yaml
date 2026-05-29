@@ -36,6 +36,11 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A staffing agency with 5000 contractors needs time tracking and invoicing integrated with 12 different
-  client ERP systems. The vendor supports 8 of 12 natively. The remaining 4 need custom API development. The vendor wants
+scenario_description: A staffing agency with 5000 contractors needs time tracking
+  and invoicing integrated with 12 different client ERP systems. The vendor supports
+  8 of 12 natively. The remaining 4 need custom API development. The vendor wants
   to charge professional services fees; the buyer wants it included or discounted.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

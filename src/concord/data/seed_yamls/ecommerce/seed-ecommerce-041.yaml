@@ -33,6 +33,11 @@ deal_schema:
   return_policy: str
 forbidden_claims:
 - cannot_claim_exclusive_deal
-scenario_description: A cruise line buying food service equipment for ship refurbishment during dry dock. The dry dock window
-  is fixed at 21 days. Late delivery of galley equipment would push the ship's return to service by 3 weeks at a cost of $300K
+scenario_description: A cruise line buying food service equipment for ship refurbishment
+  during dry dock. The dry dock window is fixed at 21 days. Late delivery of galley
+  equipment would push the ship's return to service by 3 weeks at a cost of $300K
   per day in lost revenue.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

@@ -35,3 +35,7 @@ scenario_description: A pharmaceutical manufacturer needs retail merchandise for
   production line with FDA validation constraints. Changing suppliers requires a 6-month
   requalification process. The current supplier knows this and is leveraging it on
   pricing.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

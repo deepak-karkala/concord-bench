@@ -32,6 +32,11 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: A mining company needs heavy equipment with specialized safety certifications for a new site. Two suppliers
-  are certified; one offers 5-year warranty at premium, one 2-year at discount. The safety team prefers the premium supplier;
+scenario_description: A mining company needs heavy equipment with specialized safety
+  certifications for a new site. Two suppliers are certified; one offers 5-year warranty
+  at premium, one 2-year at discount. The safety team prefers the premium supplier;
   procurement wants the savings.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

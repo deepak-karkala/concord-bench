@@ -9,8 +9,8 @@ buyer_context:
   - quality_meets_standards
   private_info:
   - budget_is_44000
-  - needs_musical_instruments
-  walk_away_threshold: 0.4
+  - needs_sterile_packaging_components
+  walk_away_threshold: null
   reputation: null
   relationship_history: []
 seller_context:
@@ -20,8 +20,8 @@ seller_context:
   - minimum_order_50_units
   private_info:
   - cost_basis_is_12400
-  - inventory_of_musical_instruments_is_strong
-  walk_away_threshold: 0.4
+  - inventory_of_sterile_packaging_components_is_strong
+  walk_away_threshold: null
   reputation: null
   relationship_history: []
 deal_schema:
@@ -30,7 +30,11 @@ deal_schema:
   shipping_terms: str
   return_policy: str
 forbidden_claims: []
-scenario_description: A pharmaceutical manufacturer needs musical instruments for
-  a production line with FDA validation constraints. Changing suppliers requires a
-  6-month requalification process. The current supplier knows this and is leveraging
-  it on pricing.
+scenario_description: A pharmaceutical manufacturer needs sterile packaging components
+  for a validated production line. The current supplier has available stock, the buyer
+  wants supply continuity, and both sides are negotiating a straightforward reorder
+  rather than a high-pressure exception.
+metadata:
+  difficulty_tier: 0
+  tiering_rule_version: task20a2-v1
+  tiering_reason: wide_zopa_simple

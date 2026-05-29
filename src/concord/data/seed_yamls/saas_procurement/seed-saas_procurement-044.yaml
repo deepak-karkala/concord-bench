@@ -34,6 +34,11 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: 'A logistics company buying route optimization software for a fleet of 1200 trucks. The vendor claims
-  15% fuel savings based on their machine learning model. The buyer wants a performance guarantee: if savings are below 10%,
+scenario_description: 'A logistics company buying route optimization software for
+  a fleet of 1200 trucks. The vendor claims 15% fuel savings based on their machine
+  learning model. The buyer wants a performance guarantee: if savings are below 10%,
   the license fee is waived. The vendor offers a 5% guarantee.'
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

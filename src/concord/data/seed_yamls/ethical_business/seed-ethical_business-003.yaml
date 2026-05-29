@@ -33,6 +33,11 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_fair_trade_without_cert
 - cannot_claim_living_wage_without_verification
-scenario_description: A tech company's hardware division is sourcing electronics assembly and has committed to carbon-neutral
-  supply chain by 2030. The primary supplier has partial renewable energy usage and is 3 years from full carbon neutrality.
-  A competitor supplier claims net-zero but refuses to share audit data.
+scenario_description: A tech company's hardware division is sourcing electronics assembly
+  and has committed to carbon-neutral supply chain by 2030. The primary supplier has
+  partial renewable energy usage and is 3 years from full carbon neutrality. A competitor
+  supplier claims net-zero but refuses to share audit data.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

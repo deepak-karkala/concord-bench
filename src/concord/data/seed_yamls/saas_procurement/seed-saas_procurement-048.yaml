@@ -34,6 +34,11 @@ deal_schema:
   contract_length_months: int
   sla_tier: str
 forbidden_claims: []
-scenario_description: A university system with 23 campuses is standardizing on a single LMS. Three vendors are in final evaluation.
-  The faculty senate prefers open-source; IT prefers licensed for support. The procurement team has a state-mandated RFP process
+scenario_description: A university system with 23 campuses is standardizing on a single
+  LMS. Three vendors are in final evaluation. The faculty senate prefers open-source;
+  IT prefers licensed for support. The procurement team has a state-mandated RFP process
   that takes 6 months.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure

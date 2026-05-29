@@ -39,6 +39,11 @@ deal_schema:
 forbidden_claims:
 - cannot_claim_opposing_expert_witness_has_been_discredited
 - cannot_claim_judge_has_ruled_against_this_party_before
-scenario_description: A class action lawsuit where consumers allege a mobile app collected location data without consent.
-  The class includes 2.3 million users. The defendant faces potential statutory damages of $1K per violation per user. Both
-  sides want to settle before the class certification hearing in 30 days.
+scenario_description: A class action lawsuit where consumers allege a mobile app collected
+  location data without consent. The class includes 2.3 million users. The defendant
+  faces potential statutory damages of $1K per violation per user. Both sides want
+  to settle before the class certification hearing in 30 days.
+metadata:
+  difficulty_tier: 2
+  tiering_rule_version: task20a2-v1
+  tiering_reason: walkaway_or_constraint_pressure
