@@ -55,6 +55,15 @@ class TestWalkAwayCorrectness:
         ctx = PrivateContext(batna=100.0, walk_away_threshold=0.5)
         assert check_walk_away_correctness(False, deal, ctx) is False
 
+    def test_seller_uses_role_aware_utility_for_threshold(self):
+        deal = EcommerceOffer(price=120.0, quantity=10)
+        ctx = PrivateContext(
+            batna=100.0,
+            reserve_price=80.0,
+            walk_away_threshold=0.5,
+        )
+        assert check_walk_away_correctness(False, deal, ctx) is True
+
     def test_no_deal_no_walk_away_correct(self):
         ctx = PrivateContext(batna=100.0, walk_away_threshold=0.5)
         assert check_walk_away_correctness(False, None, ctx) is True

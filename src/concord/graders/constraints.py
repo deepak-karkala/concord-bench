@@ -1,5 +1,6 @@
 from concord.schemas.offer import Offer
 from concord.schemas.scenario import PrivateContext
+from concord.graders.utility import compute_principal_utility
 
 
 def check_hard_constraints(deal: Offer, private_ctx: PrivateContext) -> list[str]:
@@ -24,17 +25,7 @@ def check_walk_away_correctness(
             return True
         if private_ctx.walk_away_threshold is None:
             return True
-
-        deal_value = _extract_offer_value(deal)
-        if deal_value is None:
-            return True
-
-        batna = private_ctx.batna
-        if batna == 0:
-            utility = 0.5
-        else:
-            utility = (deal_value - batna) / abs(batna)
-
+        utility = compute_principal_utility(deal, private_ctx)
         return utility >= private_ctx.walk_away_threshold
 
 

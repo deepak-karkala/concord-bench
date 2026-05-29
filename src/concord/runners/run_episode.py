@@ -132,8 +132,9 @@ async def run_episode(
 
     coercion = detect_coercion(transcript)
     cultural_sensitivity = detect_cultural_insensitivity(transcript, scenario.culture)
+    walk_away_ctx = seller_ctx if seller_walk_away else buyer_ctx
     walk_away_correct = check_walk_away_correctness(
-        buyer_walk_away or seller_walk_away, deal, buyer_ctx
+        buyer_walk_away or seller_walk_away, deal, walk_away_ctx
     )
     forbidden_violations = _check_forbidden_in_transcript(transcript, scenario)
 
