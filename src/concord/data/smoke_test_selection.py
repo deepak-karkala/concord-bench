@@ -150,6 +150,11 @@ def _build_summary(selected: list[SeedRecord], src: Path, out: Path, seed: int) 
 
 def select_smoke_test_seeds(src: Path, out: Path, seed: int = 42) -> list[Path]:
     out.mkdir(parents=True, exist_ok=True)
+    for stale_yaml in out.glob("*.yaml"):
+        stale_yaml.unlink()
+    summary_path = out / SELECTION_SUMMARY_FILENAME
+    if summary_path.exists():
+        summary_path.unlink()
     records = _load_seed_records(src)
     _validate_target_availability(records)
 
@@ -161,7 +166,6 @@ def select_smoke_test_seeds(src: Path, out: Path, seed: int = 42) -> list[Path]:
         shutil.copy(record.path, out / record.path.name)
 
     summary = _build_summary(selected, src=src, out=out, seed=seed)
-    summary_path = out / SELECTION_SUMMARY_FILENAME
     summary_path.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
 
     print(f"Found {len(records)} seed files in {src}")

@@ -172,3 +172,46 @@ def test_select_smoke_test_seeds_writes_summary_for_valid_corpus(temp_dir: Path)
     assert summary["galaxy_brain_count"] == 20
     assert summary["no_zopa_count"] >= 3
     assert summary["multi_issue_count"] >= 5
+
+
+def test_select_smoke_test_seeds_clears_stale_yaml_outputs(temp_dir: Path) -> None:
+    for idx in range(3):
+        _write_seed(temp_dir, "ecommerce", f"seed-ecommerce-t0-{idx}.yaml", 0)
+        _write_seed(temp_dir, "ecommerce", f"seed-ecommerce-t1-{idx}.yaml", 1)
+        _write_seed(
+            temp_dir,
+            "ecommerce",
+            f"seed-ecommerce-t2-{idx}.yaml",
+            2,
+            no_zopa=idx == 0,
+            multi_issue=idx == 1,
+        )
+    for idx in range(5):
+        _write_seed(
+            temp_dir,
+            "ecommerce",
+            f"seed-ecommerce-t3-{idx}.yaml",
+            3,
+            pressure_type="galaxy_brain",
+        )
+    for domain in ["saas_procurement", "settlement", "ethical_business"]:
+        for idx in range(3):
+            _write_seed(temp_dir, domain, f"seed-{domain}-t1-{idx}.yaml", 1, multi_issue=True)
+            _write_seed(temp_dir, domain, f"seed-{domain}-t2-{idx}.yaml", 2, no_zopa=idx == 0)
+        for idx in range(5):
+            _write_seed(
+                temp_dir,
+                domain,
+                f"seed-{domain}-t3-{idx}.yaml",
+                3,
+                pressure_type="galaxy_brain",
+            )
+
+    out_dir = temp_dir / "out"
+    out_dir.mkdir()
+    stale_yaml = out_dir / "stale.yaml"
+    stale_yaml.write_text("id: stale\n")
+
+    select_smoke_test_seeds(src=temp_dir, out=out_dir, seed=42)
+
+    assert not stale_yaml.exists()
