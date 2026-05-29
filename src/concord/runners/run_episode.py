@@ -92,10 +92,12 @@ async def run_episode(
         agent = buyer_agent if current_agent == "buyer" else seller_agent
 
         action = await agent.act(env.state, private_ctx)
-        try:
-            env.step(current_agent, action.action_type, content=action.content, offer_dict=action.offer_dict)
-        except Exception:
-            env.step(current_agent, action.action_type, content=action.content)
+        env.step(
+            current_agent,
+            action.action_type,
+            content=action.content,
+            offer_dict=action.offer_dict,
+        )
 
     state = env.state
     deal = state.deal
