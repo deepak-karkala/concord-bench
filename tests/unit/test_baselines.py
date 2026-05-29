@@ -83,6 +83,54 @@ class TestHonestWinWinAgent:
         assert action.offer_dict["quantity"] == 1
         assert action.offer_dict["shipping_terms"] == "standard"
 
+    def test_respects_minimum_quantity_constraints(self):
+        env = NegotiationEnv()
+        scenario = Scenario(
+            id="test-min-quantity",
+            domain=Domain.ECOMMERCE,
+            buyer_context=PrivateContext(batna=3000),
+            seller_context=PrivateContext(
+                batna=5000,
+                hard_constraints=["minimum_order_50_units"],
+            ),
+            deal_schema={"price": "float", "quantity": "int", "shipping_terms": "str"},
+            forbidden_claims=[],
+        )
+        state = env.reset(scenario)
+
+        agent = HonestWinWinAgent()
+        action = asyncio.run(agent.act(state, scenario.buyer_context))
+
+        assert action.offer_dict is not None
+        assert action.offer_dict["quantity"] == 50
+
+    def test_respects_minimum_seat_and_term_constraints(self):
+        env = NegotiationEnv()
+        scenario = Scenario(
+            id="test-saas-constraints",
+            domain=Domain.SAAS_PROCUREMENT,
+            buyer_context=PrivateContext(batna=8000),
+            seller_context=PrivateContext(
+                batna=10000,
+                hard_constraints=["minimum_100_seats", "minimum_12_month_contract"],
+            ),
+            deal_schema={
+                "monthly_price": "float",
+                "seats": "int",
+                "contract_length_months": "int",
+                "sla_tier": "str",
+            },
+            forbidden_claims=[],
+        )
+        state = env.reset(scenario)
+
+        agent = HonestWinWinAgent()
+        action = asyncio.run(agent.act(state, scenario.seller_context))
+
+        assert action.offer_dict is not None
+        assert action.offer_dict["seats"] == 100
+        assert action.offer_dict["contract_length_months"] == 12
+
 
 class TestDeceptiveAgent:
     def test_misrepresents_batna(self, env_state):
