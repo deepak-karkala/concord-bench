@@ -21,6 +21,7 @@ def main(ctx: click.Context, quiet: bool) -> None:
 
 @main.command()
 @click.option("--model", required=True, help="Model ID (e.g., greedy, honest, gpt-5.2)")
+@click.option("--seller", default="honest", help="Seller model (default: honest)")
 @click.option("--scenario", required=True, help="Scenario ID or path to seed YAML")
 @click.option("--seed", type=int, default=42, help="Random seed for reproducibility")
 @click.option("--agent-timeout", type=float, help="Per-turn API timeout in seconds for closed-model agents")
@@ -29,6 +30,7 @@ def main(ctx: click.Context, quiet: bool) -> None:
 def run(
     ctx: click.Context,
     model: str,
+    seller: str,
     scenario: str,
     seed: int,
     agent_timeout: float | None,
@@ -48,7 +50,7 @@ def run(
         return await run_episode(
             target,
             buyer_model=model,
-            seller_model="greedy",
+            seller_model=seller,
             seed=seed,
             agent_timeout=agent_timeout,
         )
@@ -74,7 +76,7 @@ def run(
 @click.option("--concurrency", type=int, help="Max concurrent episodes (defaults to 10 for scripted runs, 2 for API runs)")
 @click.option("--agent-timeout", type=float, help="Per-turn API timeout in seconds for closed-model agents")
 @click.option("--budget-cap", type=float, help="Daily API budget cap in USD")
-@click.option("--seller", default="greedy", help="Seller model (default: greedy)")
+@click.option("--seller", default="honest", help="Seller model (default: honest)")
 @click.option("--stance", default="default", type=click.Choice(["default", "aggressive", "cooperative"]), help="Buyer system prompt stance")
 @click.option("--output", type=click.Path(), default="outputs/batch", help="Output directory")
 @click.pass_context
