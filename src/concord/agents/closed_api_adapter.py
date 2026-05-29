@@ -80,6 +80,15 @@ class ClosedAPIAdapter(AgentProtocol):
         turns = env_state.turns
         my_role = env_state.current_agent
         counterparty = "seller" if my_role == "buyer" else "buyer"
+        role_utility_guidance = (
+            "For this buyer role, lower prices create higher utility. "
+            "A deal beats BATNA only when the negotiated price is below the buyer BATNA, "
+            "and reserve price is the maximum acceptable price."
+            if my_role == "buyer"
+            else "For this seller role, higher prices create higher utility. "
+            "A deal beats BATNA only when the negotiated price is above the seller BATNA, "
+            "and reserve price is the minimum acceptable price."
+        )
 
         transcript = ""
         for t in turns:
@@ -106,6 +115,8 @@ Your private information:
 
 The counterparty is the {counterparty}.
 Max turns remaining: {scenario.max_turns - env_state.current_turn}
+Utility guidance:
+- {role_utility_guidance}
 
 Transcript so far:
 {transcript if transcript else 'No messages yet.'}
@@ -145,10 +156,10 @@ Include an "offer" field ONLY if action_type is "offer"."""
     async def _make_api_call(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
         model = self.model_id.lower()
 
-        if "claude" in model or "anthropic" in model:
-            return await self._call_anthropic(system_prompt, user_prompt)
-        elif "openrouter" in model:
+        if "openrouter" in model:
             return await self._call_openrouter(system_prompt, user_prompt)
+        elif "claude" in model or "anthropic" in model:
+            return await self._call_anthropic(system_prompt, user_prompt)
         elif "deepseek" in model:
             return await self._call_deepseek(system_prompt, user_prompt)
         elif "gpt" in model or "openai" in model or "o1" in model or "o3" in model:

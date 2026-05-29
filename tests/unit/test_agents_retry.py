@@ -60,6 +60,26 @@ class TestRetryWithBackoff:
 
 
 class TestClosedAPIAdapter:
+    @pytest.mark.asyncio
+    async def test_openrouter_models_route_to_openrouter_before_provider_family(self, monkeypatch):
+        adapter = ClosedAPIAdapter("openrouter/anthropic/claude-4.5-haiku-20251001")
+
+        async def _unexpected(*args, **kwargs):
+            raise AssertionError("wrong provider path")
+
+        async def _openrouter(*args, **kwargs):
+            return {"content": "ok", "prompt_tokens": 1, "completion_tokens": 1}
+
+        monkeypatch.setattr(adapter, "_call_anthropic", _unexpected)
+        monkeypatch.setattr(adapter, "_call_openai", _unexpected)
+        monkeypatch.setattr(adapter, "_call_google", _unexpected)
+        monkeypatch.setattr(adapter, "_call_deepseek", _unexpected)
+        monkeypatch.setattr(adapter, "_call_openrouter", _openrouter)
+
+        response = await adapter._make_api_call("system", "user")
+
+        assert response["content"] == "ok"
+
     def test_recommended_timeout_for_api_models(self):
         assert run_episode_module._effective_agent_timeout("greedy", None) is None
         assert run_episode_module._effective_agent_timeout("deepseek-v4-pro", None) == 240.0
@@ -160,6 +180,7 @@ class TestClosedAPIAdapter:
         assert "ecommerce" in prompt
         assert "Hello, I want to discuss pricing" in prompt
         assert "BATNA" in prompt
+        assert "higher prices create higher utility" in prompt
 
     def test_model_id_stored(self):
         adapter = ClosedAPIAdapter("gpt-5.2")

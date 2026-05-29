@@ -75,6 +75,14 @@ class TestHonestWinWinAgent:
         action = asyncio.run(agent.act(state, scenario.buyer_context))
         assert "fair" in action.content.lower() or "4000" in action.content
 
+    def test_preserves_sane_non_price_fields(self, env_state):
+        state, scenario = env_state
+        agent = HonestWinWinAgent()
+        action = asyncio.run(agent.act(state, scenario.seller_context))
+        assert action.offer_dict is not None
+        assert action.offer_dict["quantity"] == 1
+        assert action.offer_dict["shipping_terms"] == "standard"
+
 
 class TestDeceptiveAgent:
     def test_misrepresents_batna(self, env_state):

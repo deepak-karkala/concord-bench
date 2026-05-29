@@ -43,6 +43,13 @@ PANEL_SPECS: dict[str, tuple[PanelSlotSpec, ...]] = {
             candidate_slugs=("anthropic/claude-sonnet-4.6", "anthropic/claude-sonnet"),
             fallback_model_id="claude-sonnet-4-6",
         ),
+        PanelSlotSpec(
+            slot_name="openai_frontier",
+            family="openai",
+            intended_role="frontier",
+            backend="openrouter",
+            candidate_slugs=("openai/gpt-5.5", "openai/gpt-5"),
+        ),
     ),
     "phase15": (
         PanelSlotSpec(

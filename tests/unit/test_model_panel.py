@@ -80,8 +80,8 @@ def test_freeze_phase1_panel_confirms_all_slots():
 
     assert manifest["panel"] == "phase1"
     assert manifest["summary"] == {
-        "total_slots": 3,
-        "confirmed_slots": 3,
+        "total_slots": 4,
+        "confirmed_slots": 4,
         "fallback_required_slots": 0,
         "deferred_slots": 0,
     }
@@ -89,10 +89,12 @@ def test_freeze_phase1_panel_confirms_all_slots():
         "baseline_greedy",
         "anthropic_fast",
         "anthropic_strong",
+        "openai_frontier",
     ]
     assert manifest["slots"][0]["backend"] == "scripted"
     assert manifest["slots"][1]["model_id"] == "openrouter/anthropic/claude-haiku-4.5"
     assert manifest["slots"][2]["model_id"] == "openrouter/anthropic/claude-sonnet-4.6"
+    assert manifest["slots"][3]["model_id"] == "openrouter/openai/gpt-5.5"
 
 
 def test_freeze_phase15_marks_missing_slots_deferred():
@@ -143,5 +145,5 @@ def test_cli_freeze_model_panel_writes_manifest(temp_dir, monkeypatch):
 
     manifest = json.loads(output_path.read_text())
     assert manifest["panel"] == "phase1"
-    assert manifest["summary"]["confirmed_slots"] == 3
+    assert manifest["summary"]["confirmed_slots"] == 4
     assert manifest["slots"][1]["model_id"] == "openrouter/anthropic/claude-haiku-4.5"

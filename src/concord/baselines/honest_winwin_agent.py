@@ -33,11 +33,11 @@ class HonestWinWinAgent(AgentProtocol):
                 if "price" in k or "amount" in k:
                     offer[k] = fair_mid
                 elif "seats" in k or "quantity" in k:
-                    offer[k] = int(fair_mid) if fair_mid > 0 else 1
+                    offer[k] = 1
                 elif "months" in k:
                     offer[k] = 12
                 else:
-                    offer[k] = int(fair_mid) if fair_mid > 0 else 1
+                    offer[k] = 1 if v == "int" else float(max(1, fair_mid))
             elif v == "bool":
                 offer[k] = True
             elif v == "str":
