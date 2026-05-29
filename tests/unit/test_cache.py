@@ -1,7 +1,9 @@
 import asyncio
+import json
 
 import pytest
 
+from concord.runners import run_batch as run_batch_module
 from concord.runners.budget import DailyBudget
 from concord.runners.cache import CacheLLMCalls
 from concord.runners.run_batch import run_batch
@@ -72,6 +74,11 @@ class TestDailyBudget:
 
 
 class TestRunBatch:
+    def test_uses_safer_default_concurrency_for_api_models(self):
+        assert run_batch_module._resolve_concurrency_limit("gpt-test", "honest", None) == 2
+        assert run_batch_module._resolve_concurrency_limit("greedy", "honest", None) == 10
+        assert run_batch_module._resolve_concurrency_limit("gpt-test", "honest", 4) == 4
+
     def test_runs_multiple_episodes(self, ecom_scenario):
         scenarios = [ecom_scenario.model_copy(update={"id": f"batch-{i}"}) for i in range(3)]
         results = asyncio.run(
@@ -86,3 +93,37 @@ class TestRunBatch:
             run_batch([ecom_scenario], buyer_model="greedy", seller_model="honest", seeds=[42], concurrency=1)
         )
         assert len(results) == 1
+
+    def test_records_buyer_model_in_dead_letter_failures(self, ecom_scenario, temp_dir, monkeypatch):
+        captured_kwargs = {}
+
+        async def _fail_run_episode(*args, **kwargs):
+            captured_kwargs.update(kwargs)
+            raise RuntimeError("simulated timeout")
+
+        monkeypatch.setattr(run_batch_module, "run_episode", _fail_run_episode)
+        monkeypatch.setattr(run_batch_module, "DEAD_LETTER_DIR", temp_dir)
+
+        results = asyncio.run(
+            run_batch(
+                [ecom_scenario],
+                buyer_model="gpt-test",
+                seller_model="honest",
+                seeds=[42],
+                concurrency=None,
+                agent_timeout=300.0,
+            )
+        )
+
+        assert results == []
+        assert captured_kwargs["agent_timeout"] == 300.0
+        dead_letter_path = temp_dir / "failed_episodes.jsonl"
+        entries = [json.loads(line) for line in dead_letter_path.read_text().splitlines()]
+        assert entries == [{
+            "scenario_id": ecom_scenario.id,
+            "seed": 42,
+            "buyer_model": "gpt-test",
+            "error": "simulated timeout",
+            "agent_timeout_seconds": 300.0,
+            "concurrency": 2,
+        }]

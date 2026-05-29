@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import yaml
@@ -55,6 +55,18 @@ def load_scenario_metadata(scenarios_dir: Path) -> dict[str, dict]:
         except Exception:
             pass
     return meta
+
+
+def load_dead_letter_failures(dead_letter_path: Path | None) -> list[dict]:
+    if dead_letter_path is None or not dead_letter_path.exists():
+        return []
+    failures = []
+    for line in dead_letter_path.read_text().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        failures.append(json.loads(line))
+    return failures
 
 
 def get_tier(d: dict) -> int:
@@ -137,6 +149,7 @@ def generate_report(
     results_dir: Path,
     scenarios_dir: Path,
     output_dir: Path,
+    dead_letter_path: Path | None = None,
 ) -> None:
     try:
         import matplotlib
@@ -153,6 +166,7 @@ def generate_report(
 
     episodes = load_episodes(results_dir)
     scenario_meta = load_scenario_metadata(scenarios_dir)
+    failures = load_dead_letter_failures(dead_letter_path)
 
     if not episodes:
         print("No episodes found.")
@@ -160,10 +174,18 @@ def generate_report(
 
     models = sorted(episodes.keys())
     total_eps = sum(len(v) for v in episodes.values())
+    selected_scenarios = sorted(scenario_meta.keys())
+    selected_set = set(selected_scenarios)
     print(f"\nSmoke test report — {len(models)} models, {total_eps} total episodes")
     print(f"Models: {models}")
 
-    summary: dict[str, dict] = {}
+    summary: dict[str, dict] = {
+        "__meta__": {
+            "selected_scenarios": len(selected_scenarios),
+            "dead_letter_path": str(dead_letter_path) if dead_letter_path else None,
+        }
+    }
+    incomplete_models: list[str] = []
     for model, eps in episodes.items():
         by_tier: dict[int, list[float]] = defaultdict(list)
         gb_pass = gb_fail = 0
@@ -171,9 +193,11 @@ def generate_report(
         multi_utilities = []
         dimension_scores: dict[str, list[float]] = defaultdict(list)
         deal_count = 0
+        completed_ids: set[str] = set()
 
         for ep in eps:
             sid = ep.get("scenario_id", "")
+            completed_ids.add(sid)
             meta = scenario_meta.get(sid, {})
             tier = get_tier(meta)
             utility = get_utility(ep, meta)
@@ -249,8 +273,27 @@ def generate_report(
         tier_means = {t: (sum(v) / len(v) if v else 0.0) for t, v in by_tier.items()}
         gb_total = gb_pass + gb_fail
         walk_total = walk_correct + walk_wrong
+        model_failures = [
+            failure
+            for failure in failures
+            if failure.get("buyer_model") == model and failure.get("scenario_id") in selected_set
+        ]
+        missing_scenarios = sorted(selected_set - completed_ids)
+        coverage_status = "complete" if len(completed_ids) == len(selected_set) else "incomplete"
+        if coverage_status == "incomplete":
+            incomplete_models.append(model)
+        error_counts = Counter(failure.get("error", "unknown") for failure in model_failures)
 
         summary[model] = {
+            "coverage": {
+                "selected": len(selected_set),
+                "completed": len(completed_ids),
+                "failed": len(model_failures),
+                "missing": len(missing_scenarios),
+                "status": coverage_status,
+                "missing_scenarios": missing_scenarios,
+                "failure_error_counts": dict(sorted(error_counts.items())),
+            },
             "by_tier": {
                 t: {"mean": tier_means.get(t, 0.0), "n": len(by_tier.get(t, []))}
                 for t in [0, 1, 2, 3]
@@ -275,6 +318,12 @@ def generate_report(
         tier_str = {t: f"{d['mean']:.2f} (n={d['n']})"
                     for t, d in summary[model]["by_tier"].items()}
         print(f"\n  {model}:")
+        coverage = summary[model]["coverage"]
+        print(
+            "    Coverage: "
+            f"{coverage['completed']}/{coverage['selected']} complete, "
+            f"{coverage['failed']} failed, status={coverage['status']}"
+        )
         print(f"    Tier scores: {tier_str}")
         gb = summary[model]["galaxy_brain"]
         if gb["violation_rate"] is not None:
@@ -291,6 +340,16 @@ def generate_report(
         dr = summary[model].get("deal_rate")
         if dr is not None:
             print(f"    Deal rate: {dr:.1%} ({deal_count}/{len(eps)})")
+        if coverage["failure_error_counts"]:
+            print(f"    Dead-letter errors: {coverage['failure_error_counts']}")
+
+    summary["__meta__"]["pipeline_health"] = {
+        "status": "failed" if incomplete_models else "passed",
+        "incomplete_models": incomplete_models,
+    }
+    summary["__meta__"]["dead_letter_error_counts"] = dict(
+        sorted(Counter(failure.get("error", "unknown") for failure in failures).items())
+    )
 
     with open(output_dir / "summary.json", "w") as f:
         json.dump(summary, f, indent=2, default=str)
@@ -445,10 +504,21 @@ def _print_checklist(summary: dict, models: list[str]) -> None:
     print("GO / NO-GO CHECKLIST")
     print("=" * 60)
 
+    meta = summary.get("__meta__", {})
+    pipeline_health = meta.get("pipeline_health", {})
+    status = pipeline_health.get("status", "unknown")
+    incomplete_models = pipeline_health.get("incomplete_models", [])
+
     print("\n[Pipeline health — hard gates]")
-    print("  Check: all episodes complete without exceptions")
+    if status == "passed":
+        print("  [PASS] all selected scenarios have results for every model")
+    else:
+        print(f"  [FAIL] incomplete models: {incomplete_models}")
     print("  Check: all graders return scores in [0.0, 1.0]")
     print("  Check: grade files contain expected keys")
+    dead_letter_errors = meta.get("dead_letter_error_counts", {})
+    if dead_letter_errors:
+        print(f"  Dead-letter errors by type: {dead_letter_errors}")
 
     print("\n[Score sanity — soft checks]")
     for model in models:
@@ -484,12 +554,15 @@ def main() -> None:
                         help="Directory containing scenario YAML files")
     parser.add_argument("--output", default="outputs/smoke_test/report",
                         help="Output directory for report and plots")
+    parser.add_argument("--dead-letter", default="outputs/dead_letter/failed_episodes.jsonl",
+                        help="Dead-letter JSONL file from run-batch failures")
     args = parser.parse_args()
 
     generate_report(
         results_dir=Path(args.results_dir),
         scenarios_dir=Path(args.scenarios_dir),
         output_dir=Path(args.output),
+        dead_letter_path=Path(args.dead_letter),
     )
 
 

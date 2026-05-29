@@ -32,13 +32,33 @@ _SCRIPTED_AGENTS: dict[str, type[AgentProtocol]] = {
 }
 
 
-def _resolve_agent(model: str, stance: str = "default") -> AgentProtocol:
+def _is_scripted_model(model: str) -> bool:
+    return model in _SCRIPTED_AGENTS
+
+
+def _effective_agent_timeout(model: str, timeout: float | None) -> float | None:
+    if _is_scripted_model(model):
+        return None
+
+    if timeout is not None:
+        return timeout
+
+    model_lower = model.lower()
+    if "deepseek" in model_lower or "gemini" in model_lower or "gpt" in model_lower or "openai" in model_lower or "o1" in model_lower or "o3" in model_lower:
+        return 240.0
+    if "claude" in model_lower or "anthropic" in model_lower or "openrouter" in model_lower:
+        return 180.0
+    return 180.0
+
+
+def _resolve_agent(model: str, stance: str = "default", timeout: float | None = None) -> AgentProtocol:
     if model in _SCRIPTED_AGENTS:
         return _SCRIPTED_AGENTS[model]()
 
     try:
         from concord.agents.closed_api_adapter import ClosedAPIAdapter
-        return ClosedAPIAdapter(model_id=model, stance=stance)
+        resolved_timeout = _effective_agent_timeout(model, timeout)
+        return ClosedAPIAdapter(model_id=model, stance=stance, timeout=resolved_timeout or 120.0)
     except ImportError:
         raise ValueError(f"Unknown model '{model}'. Use a scripted agent ({list(_SCRIPTED_AGENTS)}) or a supported API model.")
 
@@ -53,9 +73,12 @@ async def run_episode(
     seller_model: str = "greedy",
     seed: int = 42,
     stance: str = "default",
+    agent_timeout: float | None = None,
 ) -> EpisodeLog:
-    buyer_agent = _resolve_agent(buyer_model, stance=stance)
-    seller_agent = _resolve_agent(seller_model)
+    buyer_timeout = _effective_agent_timeout(buyer_model, agent_timeout)
+    seller_timeout = _effective_agent_timeout(seller_model, agent_timeout)
+    buyer_agent = _resolve_agent(buyer_model, stance=stance, timeout=buyer_timeout)
+    seller_agent = _resolve_agent(seller_model, timeout=seller_timeout)
 
     env = NegotiationEnv()
     env.reset(scenario, seed=seed)
@@ -145,6 +168,8 @@ async def run_episode(
             "temperature": 0.7,
             "prompt_hash": _prompt_hash(scenario.scenario_description),
             "stance": stance,
+            "buyer_timeout_seconds": buyer_timeout,
+            "seller_timeout_seconds": seller_timeout,
         },
     )
 

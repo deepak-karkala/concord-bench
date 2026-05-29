@@ -23,9 +23,17 @@ def main(ctx: click.Context, quiet: bool) -> None:
 @click.option("--model", required=True, help="Model ID (e.g., greedy, honest, gpt-5.2)")
 @click.option("--scenario", required=True, help="Scenario ID or path to seed YAML")
 @click.option("--seed", type=int, default=42, help="Random seed for reproducibility")
+@click.option("--agent-timeout", type=float, help="Per-turn API timeout in seconds for closed-model agents")
 @click.option("--output", type=click.Path(), help="Output directory for episode log")
 @click.pass_context
-def run(ctx: click.Context, model: str, scenario: str, seed: int, output: str | None) -> None:
+def run(
+    ctx: click.Context,
+    model: str,
+    scenario: str,
+    seed: int,
+    agent_timeout: float | None,
+    output: str | None,
+) -> None:
     """Run a single negotiation episode between two scripted or API agents."""
     try:
         from concord.runners.run_episode import run_episode
@@ -37,7 +45,13 @@ def run(ctx: click.Context, model: str, scenario: str, seed: int, output: str | 
         raise click.ClickException(f"Scenario not found: {scenario}")
 
     async def _run():
-        return await run_episode(target, buyer_model=model, seller_model="greedy", seed=seed)
+        return await run_episode(
+            target,
+            buyer_model=model,
+            seller_model="greedy",
+            seed=seed,
+            agent_timeout=agent_timeout,
+        )
 
     episode = asyncio.run(_run())
     if not ctx.obj.get("quiet"):
@@ -57,7 +71,8 @@ def run(ctx: click.Context, model: str, scenario: str, seed: int, output: str | 
 @click.option("--models", required=True, help="Comma-separated model IDs (e.g., greedy,gpt-5.2)")
 @click.option("--scenarios", required=True, help="Path to scenarios dir, domain name, or 'all'")
 @click.option("--seeds", default="42", help="Comma-separated seeds")
-@click.option("--concurrency", type=int, default=10, help="Max concurrent episodes")
+@click.option("--concurrency", type=int, help="Max concurrent episodes (defaults to 10 for scripted runs, 2 for API runs)")
+@click.option("--agent-timeout", type=float, help="Per-turn API timeout in seconds for closed-model agents")
 @click.option("--budget-cap", type=float, help="Daily API budget cap in USD")
 @click.option("--seller", default="greedy", help="Seller model (default: greedy)")
 @click.option("--stance", default="default", type=click.Choice(["default", "aggressive", "cooperative"]), help="Buyer system prompt stance")
@@ -68,7 +83,8 @@ def run_batch(
     models: str,
     scenarios: str,
     seeds: str,
-    concurrency: int,
+    concurrency: int | None,
+    agent_timeout: float | None,
     budget_cap: float | None,
     seller: str,
     stance: str,
@@ -76,7 +92,7 @@ def run_batch(
 ) -> None:
     """Run batch evaluation across multiple models and scenarios."""
     try:
-        from concord.runners.run_batch import run_batch
+        from concord.runners.run_batch import _resolve_concurrency_limit, run_batch
     except ImportError as e:
         raise click.ClickException(f"Failed to import batch runner: {e}")
 
@@ -98,8 +114,16 @@ def run_batch(
     out_path.mkdir(parents=True, exist_ok=True)
 
     for model in model_list:
+        effective_concurrency = _resolve_concurrency_limit(
+            buyer_model=model,
+            seller_model=seller,
+            concurrency=concurrency,
+        )
         if not ctx.obj.get("quiet"):
-            click.echo(f"Running: model={model}, {len(scenario_list)} scenarios, concurrency={concurrency}")
+            click.echo(
+                f"Running: model={model}, {len(scenario_list)} scenarios, "
+                f"concurrency={effective_concurrency}, agent_timeout={agent_timeout or 'auto'}"
+            )
         results = asyncio.run(
             run_batch(
                 scenario_list,
@@ -107,6 +131,7 @@ def run_batch(
                 seller_model=seller,
                 seeds=seed_list,
                 concurrency=concurrency,
+                agent_timeout=agent_timeout,
                 budget_cap=budget_cap,
                 stance=stance,
             )
@@ -122,6 +147,60 @@ def run_batch(
 
     if not ctx.obj.get("quiet"):
         click.echo(f"Results saved to {output}")
+
+
+@main.command(name="freeze-model-panel")
+@click.option("--panel", "panel_name", required=True, type=click.Choice(["phase1", "phase15"]), help="Built-in model panel to resolve")
+@click.option("--output", required=True, type=click.Path(), help="Path to write the frozen panel manifest JSON")
+@click.option("--catalog", "catalog_path", type=click.Path(exists=True, dir_okay=False, path_type=Path), help="Optional local OpenRouter models JSON to resolve from instead of fetching live")
+@click.option("--api-key", help="OpenRouter API key; defaults to OPENROUTER_API_KEY")
+@click.option("--allow-unresolved", is_flag=True, help="Write manifest even if some slots require fallback or remain deferred")
+@click.pass_context
+def freeze_model_panel_command(
+    ctx: click.Context,
+    panel_name: str,
+    output: str,
+    catalog_path: Path | None,
+    api_key: str | None,
+    allow_unresolved: bool,
+) -> None:
+    """Resolve a built-in evaluation panel against the OpenRouter Models API and write a frozen manifest."""
+    try:
+        from concord.data.model_panel import (
+            fetch_openrouter_models,
+            freeze_model_panel,
+            get_openrouter_api_key,
+            load_catalog,
+            manifest_has_unresolved_slots,
+            write_manifest,
+        )
+    except ImportError as e:
+        raise click.ClickException(f"Failed to import model panel utilities: {e}")
+
+    if catalog_path is not None:
+        catalog = load_catalog(catalog_path)
+    else:
+        resolved_api_key = get_openrouter_api_key(api_key)
+        catalog = fetch_openrouter_models(resolved_api_key)
+
+    manifest = freeze_model_panel(panel_name, catalog)
+    output_path = Path(output)
+    write_manifest(manifest, output_path)
+
+    summary = manifest["summary"]
+    if not ctx.obj.get("quiet"):
+        click.echo(
+            f"Frozen {panel_name} manifest to {output_path} "
+            f"(confirmed={summary['confirmed_slots']}, "
+            f"fallback_required={summary['fallback_required_slots']}, "
+            f"deferred={summary['deferred_slots']})"
+        )
+
+    if manifest_has_unresolved_slots(manifest) and not allow_unresolved:
+        raise click.ClickException(
+            "Manifest contains unresolved slots. Re-run with --allow-unresolved to inspect it, "
+            "or update the panel/fallback choices before proceeding."
+        )
 
 
 @main.command()

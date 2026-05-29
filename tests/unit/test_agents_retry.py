@@ -2,9 +2,11 @@ import asyncio
 
 import pytest
 
+from concord.agents import closed_api_adapter as closed_api_adapter_module
 from concord.agents.base import Action
 from concord.agents.closed_api_adapter import ClosedAPIAdapter
 from concord.agents.retry import AgentRetryError, AgentTimeoutError, retry_with_backoff
+from concord.runners import run_episode as run_episode_module
 from concord.schemas.episode import ActionType
 
 
@@ -58,6 +60,30 @@ class TestRetryWithBackoff:
 
 
 class TestClosedAPIAdapter:
+    def test_recommended_timeout_for_api_models(self):
+        assert run_episode_module._effective_agent_timeout("greedy", None) is None
+        assert run_episode_module._effective_agent_timeout("deepseek-v4-pro", None) == 240.0
+        assert run_episode_module._effective_agent_timeout("gpt-5.4-nano", None) == 240.0
+        assert run_episode_module._effective_agent_timeout("claude-opus-4-7", None) == 180.0
+        assert run_episode_module._effective_agent_timeout("gpt-5.4-nano", 300.0) == 300.0
+
+    def test_resolve_agent_passes_timeout_to_closed_api_adapter(self, monkeypatch):
+        captured = {}
+
+        class FakeClosedAPIAdapter:
+            def __init__(self, **kwargs):
+                captured.update(kwargs)
+
+        monkeypatch.setattr(closed_api_adapter_module, "ClosedAPIAdapter", FakeClosedAPIAdapter)
+
+        run_episode_module._resolve_agent("gpt-5.4-nano", stance="cooperative", timeout=300.0)
+
+        assert captured == {
+            "model_id": "gpt-5.4-nano",
+            "stance": "cooperative",
+            "timeout": 300.0,
+        }
+
     def test_init_defaults(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
         assert adapter.model_id == "gpt-5.2"
