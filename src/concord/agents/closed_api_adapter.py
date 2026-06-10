@@ -1,4 +1,5 @@
 from typing import Any
+import hashlib
 
 from concord.agents.base import Action, AgentProtocol
 from concord.agents.retry import AgentRateLimitError, retry_with_backoff
@@ -72,16 +73,27 @@ _MODEL_COSTS_PER_1M: dict[str, tuple[float, float]] = {
 
 
 class ClosedAPIAdapter(AgentProtocol):
-    def __init__(self, model_id: str, system_prompt: str = "", temperature: float = 0.7, timeout: float = 120.0, stance: str = "default"):
+    def __init__(
+        self,
+        model_id: str,
+        system_prompt: str = "",
+        temperature: float = 0.7,
+        timeout: float = 120.0,
+        stance: str = "default",
+        max_completion_tokens: int = 1024,
+    ):
         self.model_id = model_id
         self.system_prompt = system_prompt or _NEGOTIATION_SYSTEM_PROMPT
         if stance in _STANCE_PROMPTS:
             self.system_prompt = _STANCE_PROMPTS[stance]
         self.temperature = temperature
         self.timeout = timeout
+        self.stance = stance
+        self.max_completion_tokens = max_completion_tokens
         self.total_prompt_tokens: int = 0
         self.total_completion_tokens: int = 0
         self.total_cost: float = 0.0
+        self.last_call_metadata: dict[str, Any] = {}
 
     def _track_tokens(self, prompt_tokens: int, completion_tokens: int) -> None:
         self.total_prompt_tokens += prompt_tokens
@@ -143,8 +155,25 @@ Include an "offer" field ONLY if action_type is "offer"."""
 
     async def act(self, env_state, private_ctx) -> Action:
         user_prompt = self._build_user_prompt(env_state, private_ctx)
+        attempt_counter = {"count": 0}
+        self.last_call_metadata = {
+            "requested_model_id": self.model_id,
+            "backend": _infer_backend(self.model_id),
+            "route": _infer_route(self.model_id),
+            "system_prompt_hash": _hash_text(self.system_prompt),
+            "user_prompt_hash": _hash_text(user_prompt),
+            "prompt_version": "closed_api_adapter_v1",
+            "temperature": self.temperature,
+            "timeout_seconds": self.timeout,
+            "retry_policy": {
+                "max_retries": 3,
+                "base_delay_seconds": 1.0,
+            },
+            "max_completion_tokens": self.max_completion_tokens,
+        }
 
         async def _call_api() -> dict[str, Any]:
+            attempt_counter["count"] += 1
             response = await self._make_api_call(self.system_prompt, user_prompt)
             return response
 
@@ -158,14 +187,57 @@ Include an "offer" field ONLY if action_type is "offer"."""
         prompt_tokens = response.get("prompt_tokens", 0)
         completion_tokens = response.get("completion_tokens", 0)
         self._track_tokens(prompt_tokens, completion_tokens)
+        self.last_call_metadata.update(
+            {
+                "attempt_count": attempt_counter["count"],
+                "retries_used": max(0, attempt_counter["count"] - 1),
+                "resolved_model_id": response.get("resolved_model_id", self.model_id),
+                "provider_route": response.get("provider_route"),
+                "provider_route_status": response.get("provider_route_status", "unknown"),
+                "base_url": response.get("base_url"),
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": completion_tokens,
+                "cost_usd": self.total_cost,
+                "finish_reason": response.get("finish_reason"),
+                "stop_reason": response.get("stop_reason"),
+            }
+        )
 
-        action_type, offer_dict = self._extract_action(content, env_state.scenario.domain.value)
+        action_type, offer_dict, protocol_metadata = self._extract_action(
+            content,
+            env_state.scenario.domain.value,
+        )
 
         return Action(
             action_type=action_type,
             content=content,
             offer_dict=offer_dict,
+            metadata={
+                "protocol": {
+                    **protocol_metadata,
+                    "attempt_count": self.last_call_metadata.get("attempt_count"),
+                    "retries_used": self.last_call_metadata.get("retries_used"),
+                    "finish_reason": self.last_call_metadata.get("finish_reason"),
+                    "stop_reason": self.last_call_metadata.get("stop_reason"),
+                    "content_empty": not bool(content.strip()),
+                    "max_tokens_reached": (
+                        self.last_call_metadata.get("finish_reason") in {"length", "max_tokens"}
+                        or self.last_call_metadata.get("stop_reason") == "max_tokens"
+                    ),
+                }
+            },
         )
+
+    def get_runtime_metadata(self) -> dict[str, Any]:
+        return {
+            "requested_model_id": self.model_id,
+            "backend": _infer_backend(self.model_id),
+            "route": _infer_route(self.model_id),
+            "stance": self.stance,
+            "temperature": self.temperature,
+            "timeout_seconds": self.timeout,
+            **self.last_call_metadata,
+        }
 
     async def _make_api_call(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
         model = self.model_id.lower()
@@ -192,7 +264,7 @@ Include an "offer" field ONLY if action_type is "offer"."""
         client = anthropic.AsyncAnthropic()
         response = await client.messages.create(
             model=self.model_id,
-            max_tokens=1024,
+            max_tokens=self.max_completion_tokens,
             temperature=self.temperature,
             system=system_prompt,
             messages=[{"role": "user", "content": user_prompt}],
@@ -206,6 +278,11 @@ Include an "offer" field ONLY if action_type is "offer"."""
             "content": content,
             "prompt_tokens": response.usage.input_tokens if response.usage else 0,
             "completion_tokens": response.usage.output_tokens if response.usage else 0,
+            "resolved_model_id": getattr(response, "model", None) or self.model_id,
+            "provider_route": "anthropic_direct",
+            "provider_route_status": "resolved_direct",
+            "base_url": "https://api.anthropic.com",
+            "stop_reason": getattr(response, "stop_reason", None),
         }
 
     async def _call_openai(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
@@ -223,13 +300,18 @@ Include an "offer" field ONLY if action_type is "offer"."""
             model=self.model_id,
             messages=messages,
             temperature=self.temperature,
-            max_completion_tokens=1024,
+            max_completion_tokens=self.max_completion_tokens,
         )
         content = response.choices[0].message.content or ""
         return {
             "content": content,
             "prompt_tokens": response.usage.prompt_tokens if response.usage else 0,
             "completion_tokens": response.usage.completion_tokens if response.usage else 0,
+            "resolved_model_id": getattr(response, "model", None) or self.model_id,
+            "provider_route": "openai_direct",
+            "provider_route_status": "resolved_direct",
+            "base_url": "https://api.openai.com/v1",
+            "finish_reason": response.choices[0].finish_reason if response.choices else None,
         }
 
     async def _call_google(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
@@ -255,6 +337,15 @@ Include an "offer" field ONLY if action_type is "offer"."""
             "content": content,
             "prompt_tokens": response.usage_metadata.prompt_token_count if response.usage_metadata else 0,
             "completion_tokens": response.usage_metadata.candidates_token_count if response.usage_metadata else 0,
+            "resolved_model_id": google_model,
+            "provider_route": "google_direct",
+            "provider_route_status": "resolved_direct",
+            "base_url": "https://generativelanguage.googleapis.com",
+            "finish_reason": (
+                getattr(response.candidates[0], "finish_reason", None)
+                if getattr(response, "candidates", None)
+                else None
+            ),
         }
 
     async def _call_openrouter(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
@@ -289,13 +380,20 @@ Include an "offer" field ONLY if action_type is "offer"."""
             model=router_model,
             messages=messages,
             temperature=self.temperature,
-            max_completion_tokens=1024,
+            max_completion_tokens=self.max_completion_tokens,
         )
         content = response.choices[0].message.content or ""
         return {
             "content": content,
             "prompt_tokens": response.usage.prompt_tokens if response.usage else 0,
             "completion_tokens": response.usage.completion_tokens if response.usage else 0,
+            "resolved_model_id": router_model,
+            "provider_route": getattr(response, "provider", None),
+            "provider_route_status": (
+                "resolved_provider" if getattr(response, "provider", None) else "requested_via_openrouter"
+            ),
+            "base_url": "https://openrouter.ai/api/v1",
+            "finish_reason": response.choices[0].finish_reason if response.choices else None,
         }
 
     async def _call_deepseek(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
@@ -315,27 +413,40 @@ Include an "offer" field ONLY if action_type is "offer"."""
             model=self.model_id,
             messages=messages,
             temperature=self.temperature,
-            max_completion_tokens=1024,
+            max_completion_tokens=self.max_completion_tokens,
         )
         content = response.choices[0].message.content or ""
         return {
             "content": content,
             "prompt_tokens": response.usage.prompt_tokens if response.usage else 0,
             "completion_tokens": response.usage.completion_tokens if response.usage else 0,
+            "resolved_model_id": getattr(response, "model", None) or self.model_id,
+            "provider_route": "deepseek_direct",
+            "provider_route_status": "resolved_direct",
+            "base_url": "https://api.deepseek.com",
+            "finish_reason": response.choices[0].finish_reason if response.choices else None,
         }
 
-    def _extract_action(self, content: str, domain: str) -> tuple[ActionType, dict | None]:
-        import json as _json
-
+    def _extract_action(self, content: str, domain: str) -> tuple[ActionType, dict | None, dict[str, Any]]:
         offer_dict = None
         action_type = ActionType.MESSAGE
+        protocol_metadata: dict[str, Any] = {
+            "json_object_detected": False,
+            "action_parse_success": False,
+            "requested_offer_action": False,
+            "structured_offer_valid": False,
+            "max_tokens_reached": False,
+        }
 
         # Try to parse entire content as JSON first
         data = self._extract_json_object(content)
         if data and isinstance(data, dict) and "action_type" in data:
+            protocol_metadata["json_object_detected"] = True
             at = data.get("action_type", "message").lower()
-            action, offer_dict = self._parse_action(data, at, domain)
-            return action, offer_dict
+            action, offer_dict, action_metadata = self._parse_action(data, at, domain)
+            protocol_metadata.update(action_metadata)
+            protocol_metadata["action_parse_success"] = True
+            return action, offer_dict, protocol_metadata
 
         # Last resort: keyword fallback on first 100 chars
         lower = content.lower()
@@ -344,7 +455,7 @@ Include an "offer" field ONLY if action_type is "offer"."""
         elif action_type == ActionType.MESSAGE and '"action_type": "accept"' in lower:
             action_type = ActionType.ACCEPT
 
-        return action_type, offer_dict
+        return action_type, offer_dict, protocol_metadata
 
     @staticmethod
     def _extract_json_object(text: str) -> dict | None:
@@ -365,16 +476,21 @@ Include an "offer" field ONLY if action_type is "offer"."""
                         return None
         return None
 
-    def _parse_action(self, data: dict, at: str, domain: str) -> tuple[ActionType, dict | None]:
+    def _parse_action(self, data: dict, at: str, domain: str) -> tuple[ActionType, dict | None, dict[str, Any]]:
         import json as _json
         offer_dict = None
         action_type = ActionType.MESSAGE
+        protocol_metadata = {
+            "requested_offer_action": at == "offer",
+            "structured_offer_valid": False,
+        }
 
         if at == "offer":
             action_type = ActionType.OFFER
             if data.get("offer"):
                 try:
                     offer_dict = parse_raw_offer(_json.dumps(data["offer"]), domain).model_dump()
+                    protocol_metadata["structured_offer_valid"] = True
                 except Exception:
                     pass
         elif at == "accept":
@@ -382,7 +498,7 @@ Include an "offer" field ONLY if action_type is "offer"."""
         elif at == "walk_away":
             action_type = ActionType.WALK_AWAY
 
-        return action_type, offer_dict
+        return action_type, offer_dict, protocol_metadata
 
 
 def _lookup_model_costs(model_id: str) -> tuple[float, float]:
@@ -400,3 +516,28 @@ def _lookup_model_costs(model_id: str) -> tuple[float, float]:
                 return cost
 
     return (0.0, 0.0)
+
+
+def _hash_text(text: str) -> str:
+    return hashlib.sha256(text.encode()).hexdigest()[:16]
+
+
+def _infer_backend(model_id: str) -> str:
+    normalized = model_id.lower()
+    if normalized.startswith("openrouter/"):
+        return "openrouter"
+    if "anthropic" in normalized or "claude" in normalized:
+        return "anthropic"
+    if "openai" in normalized or "gpt" in normalized or "o1" in normalized or "o3" in normalized:
+        return "openai"
+    if "google" in normalized or "gemini" in normalized:
+        return "google"
+    if "deepseek" in normalized:
+        return "deepseek"
+    return "unknown"
+
+
+def _infer_route(model_id: str) -> str:
+    if model_id.startswith("openrouter/"):
+        return model_id[len("openrouter/"):]
+    return model_id

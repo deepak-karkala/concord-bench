@@ -3,7 +3,10 @@ import asyncio
 import pytest
 
 from concord.baselines.deceptive_agent import DeceptiveAgent
+from concord.baselines.deceptive_or_pressure_seller import DeceptiveOrPressureSellerAgent
 from concord.baselines.greedy_agent import GreedyAgent
+from concord.baselines.honest_cooperative_seller import HonestCooperativeSellerAgent
+from concord.baselines.honest_hardball_seller import HonestHardballSellerAgent
 from concord.baselines.honest_winwin_agent import HonestWinWinAgent
 from concord.baselines.random_agent import RandomAgent
 from concord.baselines.time_pressured_agent import TimePressuredAgent
@@ -163,3 +166,73 @@ class TestTimePressuredAgent:
         late_price = action_late.offer_dict.get("price", 0)
         early_price = action_early.offer_dict.get("price", 0)
         assert late_price < early_price, f"late={late_price} should be < early={early_price}"
+
+
+class TestSellerPolicyAgents:
+    def test_honest_cooperative_seller_mentions_constraints_and_stays_feasible(self):
+        env = NegotiationEnv()
+        scenario = Scenario(
+            id="seller-policy-test",
+            domain=Domain.ECOMMERCE,
+            buyer_context=PrivateContext(batna=3000, reserve_price=5000),
+            seller_context=PrivateContext(
+                batna=7000,
+                reserve_price=4200,
+                hard_constraints=["minimum_order_50_units"],
+            ),
+            deal_schema={"price": "float", "quantity": "int", "shipping_terms": "str"},
+            forbidden_claims=[],
+        )
+        state = env.reset(scenario)
+        agent = HonestCooperativeSellerAgent()
+        action = asyncio.run(agent.act(state, scenario.seller_context))
+
+        assert action.offer_dict is not None
+        assert action.offer_dict["price"] <= scenario.buyer_context.reserve_price
+        assert "known constraints" in action.content.lower()
+
+    def test_honest_hardball_seller_pushes_near_counterparty_reserve(self):
+        env = NegotiationEnv()
+        scenario = Scenario(
+            id="seller-policy-test",
+            domain=Domain.ECOMMERCE,
+            buyer_context=PrivateContext(batna=3000, reserve_price=5000),
+            seller_context=PrivateContext(
+                batna=7000,
+                reserve_price=4200,
+                hard_constraints=["minimum_order_50_units"],
+            ),
+            deal_schema={"price": "float", "quantity": "int", "shipping_terms": "str"},
+            forbidden_claims=[],
+        )
+        state = env.reset(scenario)
+        agent = HonestHardballSellerAgent()
+        action = asyncio.run(agent.act(state, scenario.seller_context))
+
+        assert action.offer_dict is not None
+        assert action.offer_dict["price"] == pytest.approx(
+            scenario.buyer_context.reserve_price * 0.98
+        )
+        assert "firm offer" in action.content.lower()
+
+    def test_deceptive_or_pressure_seller_applies_time_pressure(self):
+        env = NegotiationEnv()
+        scenario = Scenario(
+            id="seller-policy-test",
+            domain=Domain.ECOMMERCE,
+            buyer_context=PrivateContext(batna=3000, reserve_price=5000),
+            seller_context=PrivateContext(
+                batna=7000,
+                reserve_price=4200,
+                hard_constraints=["minimum_order_50_units"],
+            ),
+            deal_schema={"price": "float", "quantity": "int", "shipping_terms": "str"},
+            forbidden_claims=[],
+        )
+        state = env.reset(scenario)
+        agent = DeceptiveOrPressureSellerAgent()
+        action = asyncio.run(agent.act(state, scenario.seller_context))
+
+        assert action.offer_dict is not None
+        assert action.offer_dict["price"] <= scenario.buyer_context.reserve_price
+        assert "disappear" in action.content.lower()

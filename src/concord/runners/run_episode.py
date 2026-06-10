@@ -1,6 +1,7 @@
 import asyncio
 import hashlib
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 from concord import __version__ as concord_version
@@ -8,6 +9,9 @@ from concord.agents.base import AgentProtocol
 from concord.baselines.random_agent import RandomAgent
 from concord.baselines.greedy_agent import GreedyAgent
 from concord.baselines.honest_winwin_agent import HonestWinWinAgent
+from concord.baselines.honest_cooperative_seller import HonestCooperativeSellerAgent
+from concord.baselines.honest_hardball_seller import HonestHardballSellerAgent
+from concord.baselines.deceptive_or_pressure_seller import DeceptiveOrPressureSellerAgent
 from concord.baselines.deceptive_agent import DeceptiveAgent
 from concord.baselines.time_pressured_agent import TimePressuredAgent
 from concord.baselines.galaxy_brain_seller import GalaxyBrainSellerAgent
@@ -16,7 +20,12 @@ from concord.graders.constraints import check_hard_constraints, check_walk_away_
 from concord.graders.privacy import detect_batna_leak, detect_private_info_disclosure
 from concord.graders.social import detect_coercion, detect_cultural_insensitivity
 from concord.graders.truthfulness import check_acceptance_reasoning
-from concord.graders.utility import compute_principal_utility, compute_joint_welfare, check_deal_rationality
+from concord.graders.utility import (
+    check_deal_rationality,
+    compute_issue_bundle_quality,
+    compute_joint_welfare,
+    compute_principal_utility,
+)
 from concord.schemas.episode import EpisodeLog, GradeReport
 from concord.schemas.scenario import Scenario
 
@@ -25,6 +34,9 @@ _SCRIPTED_AGENTS: dict[str, type[AgentProtocol]] = {
     "random": RandomAgent,
     "greedy": GreedyAgent,
     "honest": HonestWinWinAgent,
+    "honest_cooperative": HonestCooperativeSellerAgent,
+    "honest_hardball": HonestHardballSellerAgent,
+    "deceptive_or_pressure": DeceptiveOrPressureSellerAgent,
     "deceptive": DeceptiveAgent,
     "time_pressured": TimePressuredAgent,
     "honest-winwin": HonestWinWinAgent,
@@ -51,20 +63,57 @@ def _effective_agent_timeout(model: str, timeout: float | None) -> float | None:
     return 180.0
 
 
-def _resolve_agent(model: str, stance: str = "default", timeout: float | None = None) -> AgentProtocol:
+def _resolve_agent(
+    model: str,
+    stance: str = "default",
+    timeout: float | None = None,
+    system_prompt: str = "",
+    max_completion_tokens: int = 1024,
+) -> AgentProtocol:
     if model in _SCRIPTED_AGENTS:
         return _SCRIPTED_AGENTS[model]()
 
     try:
         from concord.agents.closed_api_adapter import ClosedAPIAdapter
         resolved_timeout = _effective_agent_timeout(model, timeout)
-        return ClosedAPIAdapter(model_id=model, stance=stance, timeout=resolved_timeout or 120.0)
+        return ClosedAPIAdapter(
+            model_id=model,
+            stance=stance,
+            timeout=resolved_timeout or 120.0,
+            system_prompt=system_prompt,
+            max_completion_tokens=max_completion_tokens,
+        )
     except ImportError:
         raise ValueError(f"Unknown model '{model}'. Use a scripted agent ({list(_SCRIPTED_AGENTS)}) or a supported API model.")
 
 
 def _prompt_hash(prompt: str) -> str:
     return hashlib.sha256(prompt.encode()).hexdigest()[:16]
+
+
+def _file_hash(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()[:16]
+
+
+def _scripted_agent_metadata(model: str, timeout: float | None) -> dict:
+    return {
+        "requested_model_id": model,
+        "resolved_model_id": model,
+        "backend": "scripted",
+        "route": "scripted",
+        "provider_route": "scripted",
+        "provider_route_status": "resolved_direct",
+        "timeout_seconds": timeout,
+        "retry_policy": None,
+        "prompt_version": "scripted_agent",
+    }
+
+
+def _agent_runtime_metadata(agent, model: str, timeout: float | None) -> dict:
+    if hasattr(agent, "get_runtime_metadata"):
+        metadata = agent.get_runtime_metadata()
+        return {**_scripted_agent_metadata(model, timeout), **metadata}
+    return _scripted_agent_metadata(model, timeout)
 
 
 async def run_episode(
@@ -74,10 +123,20 @@ async def run_episode(
     seed: int = 42,
     stance: str = "default",
     agent_timeout: float | None = None,
+    model_panel_manifest_path: str | None = None,
+    buyer_system_prompt: str = "",
+    buyer_max_completion_tokens: int = 1024,
 ) -> EpisodeLog:
+    started_at = datetime.now(timezone.utc).isoformat()
     buyer_timeout = _effective_agent_timeout(buyer_model, agent_timeout)
     seller_timeout = _effective_agent_timeout(seller_model, agent_timeout)
-    buyer_agent = _resolve_agent(buyer_model, stance=stance, timeout=buyer_timeout)
+    buyer_agent = _resolve_agent(
+        buyer_model,
+        stance=stance,
+        timeout=buyer_timeout,
+        system_prompt=buyer_system_prompt,
+        max_completion_tokens=buyer_max_completion_tokens,
+    )
     seller_agent = _resolve_agent(seller_model, timeout=seller_timeout)
 
     env = NegotiationEnv()
@@ -97,6 +156,7 @@ async def run_episode(
             action.action_type,
             content=action.content,
             offer_dict=action.offer_dict,
+            metadata=action.metadata,
         )
 
     state = env.state
@@ -120,6 +180,7 @@ async def run_episode(
 
     buyer_utility = compute_principal_utility(deal, buyer_ctx) if deal else 0.0
     seller_utility = compute_principal_utility(deal, seller_ctx) if deal else 0.0
+    buyer_bundle_quality = compute_issue_bundle_quality(deal, buyer_ctx) if deal else None
 
     buyer_constraint_violations = check_hard_constraints(deal, buyer_ctx) if deal else []
     seller_constraint_violations = check_hard_constraints(deal, seller_ctx) if deal else []
@@ -145,6 +206,7 @@ async def run_episode(
     grades = GradeReport(
         principal_utility=buyer_utility,
         joint_welfare=compute_joint_welfare(buyer_utility, seller_utility),
+        bundle_quality=buyer_bundle_quality,
         walk_away_correct=walk_away_correct,
         hard_constraint_violations=buyer_constraint_violations + seller_constraint_violations,
         privacy_leak=buyer_batna_leak or seller_batna_leak,
@@ -158,6 +220,16 @@ async def run_episode(
         acceptance_reasoning_aligned=acceptance_aligned,
     )
 
+    buyer_runtime = _agent_runtime_metadata(buyer_agent, buyer_model, buyer_timeout)
+    seller_runtime = _agent_runtime_metadata(seller_agent, seller_model, seller_timeout)
+    manifest_metadata = None
+    if model_panel_manifest_path:
+        manifest_path = Path(model_panel_manifest_path)
+        manifest_metadata = {
+            "path": str(manifest_path),
+            "hash": _file_hash(manifest_path),
+        }
+
     episode = EpisodeLog(
         scenario_id=scenario.id,
         turns=state.turns,
@@ -170,9 +242,16 @@ async def run_episode(
             "seed": seed,
             "temperature": 0.7,
             "prompt_hash": _prompt_hash(scenario.scenario_description),
+            "prompt_version": "scenario_description_v1",
             "stance": stance,
             "buyer_timeout_seconds": buyer_timeout,
             "seller_timeout_seconds": seller_timeout,
+            "buyer_max_completion_tokens": buyer_max_completion_tokens,
+            "episode_started_at": started_at,
+            "episode_completed_at": datetime.now(timezone.utc).isoformat(),
+            "buyer_runtime": buyer_runtime,
+            "seller_runtime": seller_runtime,
+            "model_panel_manifest": manifest_metadata,
         },
     )
 

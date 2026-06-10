@@ -1,5 +1,6 @@
 import asyncio
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 import click
@@ -25,6 +26,9 @@ def main(ctx: click.Context, quiet: bool) -> None:
 @click.option("--scenario", required=True, help="Scenario ID or path to seed YAML")
 @click.option("--seed", type=int, default=42, help="Random seed for reproducibility")
 @click.option("--agent-timeout", type=float, help="Per-turn API timeout in seconds for closed-model agents")
+@click.option("--buyer-max-completion-tokens", type=int, default=1024, show_default=True, help="Buyer completion token cap for closed-model agents")
+@click.option("--buyer-system-prompt-path", type=click.Path(exists=True), help="Optional file path to override the buyer system prompt")
+@click.option("--model-panel-manifest", type=click.Path(exists=True), help="Optional frozen model panel manifest to attach to episode metadata")
 @click.option("--output", type=click.Path(), help="Output directory for episode log")
 @click.pass_context
 def run(
@@ -34,6 +38,9 @@ def run(
     scenario: str,
     seed: int,
     agent_timeout: float | None,
+    buyer_max_completion_tokens: int,
+    buyer_system_prompt_path: str | None,
+    model_panel_manifest: str | None,
     output: str | None,
 ) -> None:
     """Run a single negotiation episode between two scripted or API agents."""
@@ -46,6 +53,8 @@ def run(
     if target is None:
         raise click.ClickException(f"Scenario not found: {scenario}")
 
+    buyer_system_prompt = Path(buyer_system_prompt_path).read_text() if buyer_system_prompt_path else ""
+
     async def _run():
         return await run_episode(
             target,
@@ -53,6 +62,9 @@ def run(
             seller_model=seller,
             seed=seed,
             agent_timeout=agent_timeout,
+            model_panel_manifest_path=model_panel_manifest,
+            buyer_system_prompt=buyer_system_prompt,
+            buyer_max_completion_tokens=buyer_max_completion_tokens,
         )
 
     episode = asyncio.run(_run())
@@ -78,6 +90,7 @@ def run(
 @click.option("--budget-cap", type=float, help="Daily API budget cap in USD")
 @click.option("--seller", default="honest", help="Seller model (default: honest)")
 @click.option("--stance", default="default", type=click.Choice(["default", "aggressive", "cooperative"]), help="Buyer system prompt stance")
+@click.option("--model-panel-manifest", type=click.Path(exists=True), help="Optional frozen model panel manifest to archive with the batch run")
 @click.option("--output", type=click.Path(), default="outputs/batch", help="Output directory")
 @click.pass_context
 def run_batch(
@@ -90,6 +103,7 @@ def run_batch(
     budget_cap: float | None,
     seller: str,
     stance: str,
+    model_panel_manifest: str | None,
     output: str,
 ) -> None:
     """Run batch evaluation across multiple models and scenarios."""
@@ -114,6 +128,11 @@ def run_batch(
 
     out_path = Path(output)
     out_path.mkdir(parents=True, exist_ok=True)
+    artifacts_dir = out_path / "_artifacts"
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+    panel_run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
+    panel_failure_log_path = artifacts_dir / "failed_episodes.jsonl"
+    per_model_status: dict[str, dict[str, object]] = {}
 
     for model in model_list:
         effective_concurrency = _resolve_concurrency_limit(
@@ -126,7 +145,7 @@ def run_batch(
                 f"Running: model={model}, {len(scenario_list)} scenarios, "
                 f"concurrency={effective_concurrency}, agent_timeout={agent_timeout or 'auto'}"
             )
-        results = asyncio.run(
+        batch_result = asyncio.run(
             run_batch(
                 scenario_list,
                 buyer_model=model,
@@ -136,16 +155,48 @@ def run_batch(
                 agent_timeout=agent_timeout,
                 budget_cap=budget_cap,
                 stance=stance,
+                output_dir=out_path,
+                model_panel_manifest_path=Path(model_panel_manifest) if model_panel_manifest else None,
+                dead_letter_path=panel_failure_log_path,
             )
         )
         model_dir = out_path / model.replace("/", "_").replace(":", "_")
         model_dir.mkdir(parents=True, exist_ok=True)
-        for ep in results:
+        for ep in batch_result.episodes:
             ep_path = model_dir / f"{ep.scenario_id}_{ep.metadata.get('seed', 0)}.json"
             with open(ep_path, "w") as f:
                 json.dump(ep.model_dump(), f, indent=2, default=str)
+        per_model_status[model] = {
+            "completed_episode_count": len(batch_result.episodes),
+            "final_failure_count": len(batch_result.failures),
+            "scenario_count": len(scenario_list),
+            "coverage_complete": len(batch_result.episodes) == len(scenario_list),
+            "buyer_backend": "scripted" if model in {"greedy", "honest", "honest_cooperative", "honest_hardball", "deceptive_or_pressure"} else "api",
+            "run_id": batch_result.run_id,
+            "run_metadata_path": str(batch_result.run_metadata_path) if batch_result.run_metadata_path else None,
+        }
         if not ctx.obj.get("quiet"):
-            click.echo(f"  Completed: {len(results)} episodes for {model}")
+            click.echo(f"  Completed: {len(batch_result.episodes)} episodes for {model}")
+
+    panel_metadata = {
+        "run_id": panel_run_id,
+        "buyer_models": model_list,
+        "seller_model": seller,
+        "seller_backend": "scripted" if seller in {"greedy", "honest", "honest_cooperative", "honest_hardball", "deceptive_or_pressure"} else "api",
+        "buyer_model_count": len(model_list),
+        "scenario_count": len(scenario_list),
+        "input_seed_count": len(seed_list),
+        "expanded_seed_count": max(len(seed_list), len(scenario_list)) if seed_list else 0,
+        "stance": stance,
+        "concurrency": concurrency,
+        "agent_timeout_seconds": agent_timeout,
+        "budget_cap": budget_cap,
+        "model_panel_manifest_path": model_panel_manifest,
+        "failure_log_path": str(panel_failure_log_path),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "per_model_status": per_model_status,
+    }
+    (out_path / "run_metadata.json").write_text(json.dumps(panel_metadata, indent=2) + "\n")
 
     if not ctx.obj.get("quiet"):
         click.echo(f"Results saved to {output}")
@@ -244,6 +295,7 @@ def generate(
     try:
         from concord.synth.cultural_adapter import adapt_for_culture
         from concord.synth.repeated_game import generate_repeated_sequence
+        from concord.synth.audit import audit_generated_scenarios
         from concord.schemas.culture import Culture
     except ImportError as e:
         raise click.ClickException(str(e))
@@ -333,6 +385,15 @@ def generate(
                     with open(path, "w") as f:
                         yaml.safe_dump(dump_data, f, sort_keys=False, default_flow_style=False)
                     generated += 1
+
+    semantic_audit = audit_generated_scenarios(out_dir)
+    semantic_audit_path = out_dir / "semantic_audit_report.json"
+    semantic_audit_path.write_text(json.dumps(semantic_audit, indent=2) + "\n")
+
+    if semantic_audit["findings"]["blocking_failures_present"]:
+        raise click.ClickException(
+            f"Semantic audit failed; see {semantic_audit_path} for blocking issues."
+        )
 
     if not ctx.obj.get("quiet"):
         click.echo(f"Generated {generated} scenarios in {output}")

@@ -96,12 +96,20 @@ class TestClosedAPIAdapter:
 
         monkeypatch.setattr(closed_api_adapter_module, "ClosedAPIAdapter", FakeClosedAPIAdapter)
 
-        run_episode_module._resolve_agent("gpt-5.4-nano", stance="cooperative", timeout=300.0)
+        run_episode_module._resolve_agent(
+            "gpt-5.4-nano",
+            stance="cooperative",
+            timeout=300.0,
+            system_prompt="custom prompt",
+            max_completion_tokens=4096,
+        )
 
         assert captured == {
             "model_id": "gpt-5.4-nano",
             "stance": "cooperative",
             "timeout": 300.0,
+            "system_prompt": "custom prompt",
+            "max_completion_tokens": 4096,
         }
 
     def test_init_defaults(self):
@@ -113,9 +121,15 @@ class TestClosedAPIAdapter:
         assert adapter.total_cost == 0.0
 
     def test_custom_params(self):
-        adapter = ClosedAPIAdapter("claude-opus-4-7", temperature=0.3, timeout=60.0)
+        adapter = ClosedAPIAdapter(
+            "claude-opus-4-7",
+            temperature=0.3,
+            timeout=60.0,
+            max_completion_tokens=4096,
+        )
         assert adapter.temperature == 0.3
         assert adapter.timeout == 60.0
+        assert adapter.max_completion_tokens == 4096
 
     def test_cost_tracking(self):
         adapter = ClosedAPIAdapter("claude-opus-4-7")
@@ -142,43 +156,49 @@ class TestClosedAPIAdapter:
     def test_extract_action_offer(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
         content = '{"reasoning": "I should make an offer.", "action_type": "offer", "offer": {"domain": "ecommerce", "price": 150, "quantity": 100}}'
-        action_type, offer_dict = adapter._extract_action(content, "ecommerce")
+        action_type, offer_dict, protocol_metadata = adapter._extract_action(content, "ecommerce")
         assert action_type == ActionType.OFFER
         assert offer_dict is not None
         assert offer_dict.get("price") == 150.0
         assert offer_dict is not None
         assert offer_dict.get("domain") == "ecommerce"
         assert offer_dict.get("price") == 150.0
+        assert protocol_metadata["json_object_detected"] is True
+        assert protocol_metadata["structured_offer_valid"] is True
 
     def test_extract_action_walk_away(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
         content = "I cannot reach an acceptable deal. I will walk away."
-        action_type, offer_dict = adapter._extract_action(content, "ecommerce")
+        action_type, offer_dict, protocol_metadata = adapter._extract_action(content, "ecommerce")
         assert action_type == ActionType.WALK_AWAY
         assert offer_dict is None
+        assert protocol_metadata["action_parse_success"] is False
 
     def test_extract_action_accept(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
         content = '{"reasoning": "I accept.", "action_type": "accept"}'
-        action_type, offer_dict = adapter._extract_action(content, "ecommerce")
+        action_type, offer_dict, protocol_metadata = adapter._extract_action(content, "ecommerce")
         assert action_type == ActionType.ACCEPT
+        assert protocol_metadata["action_parse_success"] is True
 
     def test_extract_action_message_default(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
         content = "Let me think about this counter-offer."
-        action_type, offer_dict = adapter._extract_action(content, "ecommerce")
+        action_type, offer_dict, protocol_metadata = adapter._extract_action(content, "ecommerce")
         assert action_type == ActionType.MESSAGE
         assert offer_dict is None
+        assert protocol_metadata["json_object_detected"] is False
 
     def test_inline_json_detection(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
         content = 'Some text {"action_type": "offer", "reasoning": "fair", "offer": {"domain": "settlement", "settlement_amount": 50000, "confidentiality_clause": true}}'
-        action_type, offer_dict = adapter._extract_action(content, "settlement")
+        action_type, offer_dict, protocol_metadata = adapter._extract_action(content, "settlement")
         assert action_type == ActionType.OFFER
         assert offer_dict is not None
         assert offer_dict.get("settlement_amount") == 50000.0
         assert offer_dict is not None
         assert offer_dict.get("settlement_amount") == 50000.0
+        assert protocol_metadata["json_object_detected"] is True
 
     def test_build_user_prompt(self, sample_scenario):
         from concord.env.core import NegotiationEnv
