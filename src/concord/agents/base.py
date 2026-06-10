@@ -8,6 +8,7 @@ class Action:
     action_type: ActionType
     content: str = ""
     offer_dict: dict | None = None
+    metadata: dict | None = None
 
 
 class AgentProtocol:

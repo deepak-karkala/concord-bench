@@ -51,7 +51,14 @@ class NegotiationEnv:
         self.state = EnvState(scenario=scenario, seed=seed)
         return self.state
 
-    def step(self, agent: str, action_type: ActionType, content: str = "", offer_dict: dict | None = None) -> EnvState:
+    def step(
+        self,
+        agent: str,
+        action_type: ActionType,
+        content: str = "",
+        offer_dict: dict | None = None,
+        metadata: dict | None = None,
+    ) -> EnvState:
         if self.state is None:
             raise EnvError("Environment not reset. Call reset() first.")
         if self.state.terminal:
@@ -70,6 +77,7 @@ class NegotiationEnv:
             action_type=action_type,
             content=content,
             offer=offer,
+            metadata=metadata or {},
         )
         self.state.turns.append(turn)
         self.state.current_turn = len(self.state.turns)

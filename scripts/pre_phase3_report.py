@@ -40,9 +40,9 @@ MODEL_SHORT = {
 random.seed(42)
 
 
-def bootstrap_ci(values: list[float], n_iter=1000, ci=0.95) -> tuple[float, float]:
-    if len(values) < 2:
-        return (0.0, 0.0) if not values else (values[0], values[0])
+def bootstrap_ci(values: list[float], n_iter=1000, ci=0.95) -> tuple[float, float] | None:
+    if len(values) < 3:
+        return None
     n = len(values)
     means = []
     for _ in range(n_iter):
@@ -124,9 +124,7 @@ def load_stance_data() -> dict[str, dict[str, list[float]]]:
             for epf in sorted(model_dir.glob("*.json")):
                 ep = json.loads(epf.read_text())
                 u = ep.get("grades", {}).get("principal_utility")
-                if u is not None and ep.get("deal"):
-                    stance_utils[stance][model].append(u)
-                elif u is not None:
+                if u is not None:
                     stance_utils[stance][model].append(u)
     return {s: dict(m) for s, m in stance_utils.items()}
 
@@ -245,8 +243,9 @@ def generate() -> None:
         for d in all_dimensions:
             vals = dims.get(d, [])
             if vals:
-                lo, hi = bootstrap_ci(vals)
-                dim_means[d] = {"mean": sum(vals) / len(vals), "ci95": [lo, hi], "n": len(vals)}
+                ci = bootstrap_ci(vals)
+                mean_val = sum(vals) / len(vals)
+                dim_means[d] = {"mean": mean_val, "ci95": list(ci) if ci else None, "n": len(vals)}
 
         gb_lo, gb_hi = wilson_ci(gb_fail, gb_total) if gb_total > 0 else (0.0, 0.0)
         nz_lo, nz_hi = wilson_ci(walk_correct, nz_total) if nz_total > 0 else (0.0, 0.0)
@@ -273,12 +272,12 @@ def generate() -> None:
             stance_means[stance][model] = sum(utils) / len(utils) if utils else 0
 
     for model in models:
-        deltas = []
-        for stance in ["aggressive", "cooperative"]:
-            base = stance_means.get("default", {}).get(model, 0)
-            st = stance_means.get(stance, {}).get(model, 0)
-            deltas.append(abs(st - base))
-        summary[model]["stance_robustness_delta"] = max(deltas) if deltas else 0
+        base = stance_means.get("default", {}).get(model, 0)
+        aggressive_delta = base - stance_means.get("aggressive", {}).get(model, 0)
+        cooperative_delta = base - stance_means.get("cooperative", {}).get(model, 0)
+        summary[model]["stance_robustness_delta"] = max(abs(aggressive_delta), abs(cooperative_delta))
+        summary[model]["aggressive_delta"] = aggressive_delta
+        summary[model]["cooperative_delta"] = cooperative_delta
         summary[model]["stance_utility"] = {s: stance_means.get(s, {}).get(model, 0) for s in ["default", "aggressive", "cooperative"]}
 
     # ===== Write summary.json =====
@@ -346,6 +345,9 @@ def generate() -> None:
 
     # ===== PLOT 4: Deal rate by tier =====
     fig, ax = plt.subplots(figsize=(8, 5))
+    tiers = ["1", "3"]
+    x = np.arange(len(tiers))
+    width = 0.25
     for i, model in enumerate(models):
         t1 = summary[model]["tier_deal_rates"]["t1"]
         t3 = summary[model]["tier_deal_rates"]["t3"]
@@ -362,6 +364,8 @@ def generate() -> None:
     # ===== PLOT 5: Turns to deal =====
     fig, ax = plt.subplots(figsize=(8, 5))
     box_data = []
+    box_labels = []
+    box_colors = []
     for model in models:
         ttds = []
         for ep in episodes[model]:
@@ -369,10 +373,13 @@ def generate() -> None:
             if made_deal:
                 ttd = ep.get("grades", {}).get("turns_to_deal") or len(ep.get("turns", []))
                 ttds.append(ttd)
-        box_data.append(ttds if ttds else [0])
-    bp = ax.boxplot(box_data, tick_labels=[MODEL_SHORT.get(m, m) for m in models], patch_artist=True)
-    for patch, model in zip(bp["boxes"], models):
-        patch.set_facecolor(MODEL_COLORS.get(model, "#333"))
+        if ttds:
+            box_data.append(ttds)
+            box_labels.append(MODEL_SHORT.get(model, model))
+            box_colors.append(MODEL_COLORS.get(model, "#333"))
+    bp = ax.boxplot(box_data, tick_labels=box_labels, patch_artist=True)
+    for patch, color in zip(bp["boxes"], box_colors):
+        patch.set_facecolor(color)
         patch.set_alpha(0.5)
     ax.set_ylabel("Turns to Deal")
     ax.set_title("Negotiation Efficiency (deal episodes only)")
@@ -440,7 +447,10 @@ def generate() -> None:
     # ===== PLOT 9: Self-awareness =====
     fig, ax = plt.subplots(figsize=(8, 5))
     sa_means = [summary[m]["dimensions"].get("self_awareness", {}).get("mean", 0) for m in models]
+    sa_ns = [summary[m]["dimensions"].get("self_awareness", {}).get("n", 0) for m in models]
     ax.bar(range(len(models)), sa_means, color=[MODEL_COLORS.get(m, "#333") for m in models])
+    for i, (mean, n) in enumerate(zip(sa_means, sa_ns)):
+        ax.text(i, min(mean + 0.03, 0.95), f"n={n}", ha="center", fontsize=8, color="gray")
     ax.set_xticks(range(len(models)))
     ax.set_xticklabels([MODEL_SHORT.get(m, m) for m in models])
     ax.set_ylabel("Self-Awareness Rate")

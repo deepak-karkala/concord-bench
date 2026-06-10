@@ -6,7 +6,8 @@ import pytest
 from concord.runners import run_batch as run_batch_module
 from concord.runners.budget import DailyBudget
 from concord.runners.cache import CacheLLMCalls
-from concord.runners.run_batch import run_batch
+from concord.runners.run_batch import BatchRunResult, run_batch
+from concord.schemas.episode import EpisodeLog
 from concord.schemas.scenario import Domain, PrivateContext, Scenario
 
 
@@ -81,18 +82,18 @@ class TestRunBatch:
 
     def test_runs_multiple_episodes(self, ecom_scenario):
         scenarios = [ecom_scenario.model_copy(update={"id": f"batch-{i}"}) for i in range(3)]
-        results = asyncio.run(
+        result = asyncio.run(
             run_batch(scenarios, buyer_model="greedy", seller_model="honest", seeds=[42, 43, 44], concurrency=3)
         )
-        assert len(results) == 3
-        for r in results:
+        assert len(result.episodes) == 3
+        for r in result.episodes:
             assert r.scenario_id.startswith("batch-")
 
     def test_single_episode(self, ecom_scenario):
-        results = asyncio.run(
+        result = asyncio.run(
             run_batch([ecom_scenario], buyer_model="greedy", seller_model="honest", seeds=[42], concurrency=1)
         )
-        assert len(results) == 1
+        assert len(result.episodes) == 1
 
     def test_records_buyer_model_in_dead_letter_failures(self, ecom_scenario, temp_dir, monkeypatch):
         captured_kwargs = {}
@@ -102,9 +103,9 @@ class TestRunBatch:
             raise RuntimeError("simulated timeout")
 
         monkeypatch.setattr(run_batch_module, "run_episode", _fail_run_episode)
-        monkeypatch.setattr(run_batch_module, "DEAD_LETTER_DIR", temp_dir)
+        output_dir = temp_dir / "batch_output"
 
-        results = asyncio.run(
+        result = asyncio.run(
             run_batch(
                 [ecom_scenario],
                 buyer_model="gpt-test",
@@ -112,18 +113,64 @@ class TestRunBatch:
                 seeds=[42],
                 concurrency=None,
                 agent_timeout=300.0,
+                output_dir=output_dir,
             )
         )
 
-        assert results == []
+        assert result.episodes == []
         assert captured_kwargs["agent_timeout"] == 300.0
-        dead_letter_path = temp_dir / "failed_episodes.jsonl"
+        dead_letter_path = output_dir / "_artifacts" / "failed_episodes.jsonl"
         entries = [json.loads(line) for line in dead_letter_path.read_text().splitlines()]
         assert entries == [{
             "scenario_id": ecom_scenario.id,
             "seed": 42,
             "buyer_model": "gpt-test",
+            "seller_model": "honest",
+            "buyer_backend": "api",
+            "seller_backend": "scripted",
             "error": "simulated timeout",
             "agent_timeout_seconds": 300.0,
             "concurrency": 2,
+            "retry_policy": {"max_retries": 3, "base_delay_seconds": 1.0},
+            "model_panel_manifest_path": None,
+            "archived_manifest_path": None,
+            "run_id": result.run_id,
         }]
+        assert str(result.failure_log_path) == str(dead_letter_path)
+
+    def test_archives_manifest_and_run_metadata(self, ecom_scenario, temp_dir, monkeypatch):
+        async def _fake_run_episode(*args, **kwargs):
+            return EpisodeLog(
+                scenario_id=ecom_scenario.id,
+                metadata={"cost_usd": 0.1, "seed": kwargs["seed"]},
+            )
+
+        monkeypatch.setattr(run_batch_module, "run_episode", _fake_run_episode)
+
+        manifest_path = temp_dir / "phase1_manifest.json"
+        manifest_path.write_text('{"panel":"phase1"}\n')
+        output_dir = temp_dir / "batch_output"
+
+        result = asyncio.run(
+            run_batch(
+                [ecom_scenario],
+                buyer_model="gpt-test",
+                seller_model="honest",
+                seeds=[42],
+                concurrency=1,
+                output_dir=output_dir,
+                model_panel_manifest_path=manifest_path,
+            )
+        )
+
+        assert len(result.episodes) == 1
+        archived_manifest = output_dir / "_artifacts" / "phase1_manifest.json"
+        assert archived_manifest.exists()
+        run_metadata = json.loads((output_dir / "_artifacts" / "gpt-test_run_metadata.json").read_text())
+        assert run_metadata["buyer_model"] == "gpt-test"
+        assert run_metadata["seller_model"] == "honest"
+        assert run_metadata["model_panel_manifest_path"] == str(manifest_path)
+        assert run_metadata["archived_manifest_path"] == str(archived_manifest)
+        assert run_metadata["run_id"] == result.run_id
+        assert run_metadata["input_seed_count"] == 1
+        assert run_metadata["expanded_seed_count"] == 1

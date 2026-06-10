@@ -16,13 +16,49 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 import yaml
+from concord.analysis.bootstrap_ci import build_dimension_score
+
+PRIMARY_DIMENSIONS = [
+    "principal_utility",
+    "deal_rate",
+    "principal_utility_on_deal",
+    "turns_to_deal",
+]
+SECONDARY_DIMENSIONS = [
+    "joint_welfare",
+    "constraint_adherence",
+    "batna_secrecy",
+    "multi_issue_bundle_quality",
+    "rationality",
+]
+EXPLORATORY_DIMENSIONS = [
+    "walk_away_calibration",
+    "coercion_resistance",
+    "cultural_sensitivity",
+    "self_awareness",
+    "privacy_discipline",
+]
+
+
+def _dimension_score(values: list[float]) -> dict | None:
+    if not values:
+        return None
+    score = build_dimension_score(values, "report_metric")
+    payload = {"mean": score.mean, "n": score.n_episodes}
+    if score.ci95 is not None:
+        payload["ci95"] = {
+            "lower": score.ci95.lower,
+            "upper": score.ci95.upper,
+            "confidence": score.ci95.confidence,
+        }
+    return payload
 
 
 def load_episodes(results_dir: Path) -> dict[str, list[dict]]:
     """Load all episodes grouped by model."""
     episodes: dict[str, list[dict]] = {}
     for model_dir in sorted(results_dir.iterdir()):
-        if not model_dir.is_dir():
+        if not model_dir.is_dir() or model_dir.name.startswith("_"):
             continue
         model_name = model_dir.name
         model_episodes = []
@@ -67,6 +103,15 @@ def load_dead_letter_failures(dead_letter_path: Path | None) -> list[dict]:
             continue
         failures.append(json.loads(line))
     return failures
+
+
+def infer_dead_letter_path(results_dir: Path, dead_letter_path: Path | None) -> Path | None:
+    if dead_letter_path is not None:
+        return dead_letter_path
+    inferred = results_dir / "_artifacts" / "failed_episodes.jsonl"
+    if inferred.exists():
+        return inferred
+    return None
 
 
 def get_tier(d: dict) -> int:
@@ -164,9 +209,10 @@ def generate_report(
     plots_dir = output_dir / "plots"
     plots_dir.mkdir(exist_ok=True)
 
+    resolved_dead_letter_path = infer_dead_letter_path(results_dir, dead_letter_path)
     episodes = load_episodes(results_dir)
     scenario_meta = load_scenario_metadata(scenarios_dir)
-    failures = load_dead_letter_failures(dead_letter_path)
+    failures = load_dead_letter_failures(resolved_dead_letter_path)
 
     if not episodes:
         print("No episodes found.")
@@ -182,7 +228,27 @@ def generate_report(
     summary: dict[str, dict] = {
         "__meta__": {
             "selected_scenarios": len(selected_scenarios),
-            "dead_letter_path": str(dead_letter_path) if dead_letter_path else None,
+            "dead_letter_path": str(resolved_dead_letter_path) if resolved_dead_letter_path else None,
+            "metric_claim_tiers": {
+                "primary": PRIMARY_DIMENSIONS,
+                "secondary": SECONDARY_DIMENSIONS,
+                "exploratory": EXPLORATORY_DIMENSIONS,
+            },
+            "statistical_reporting": {
+                "headline_metrics_require_confidence_intervals": True,
+                "bootstrap_unit": "scenario_episode",
+                "bootstrap_method": "nonparametric bootstrap over selected scenarios",
+                "mixed_effects_required_for_large_scale": True,
+            },
+            "headline_reporting_note": (
+                "Primary and secondary dimensions are the only headline-safe comparison "
+                "surface in this report. Exploratory dimensions must not be used for "
+                "public ranking claims until separately validated."
+            ),
+            "ranking_interpretation": (
+                "Model rankings in this report are descriptive and non-final until "
+                "uncertainty is reported alongside the comparison."
+            ),
         }
     }
     incomplete_models: list[str] = []
@@ -191,9 +257,24 @@ def generate_report(
         gb_pass = gb_fail = 0
         walk_correct = walk_wrong = 0
         multi_utilities = []
+        multi_bundle_qualities = []
         dimension_scores: dict[str, list[float]] = defaultdict(list)
         deal_count = 0
+        deal_indicators: list[float] = []
+        utilities_all: list[float] = []
+        utilities_on_deal: list[float] = []
+        chosen_walk_correct = chosen_walk_wrong = 0
+        violating_deals = valid_deals = 0
         completed_ids: set[str] = set()
+        instrumented_buyer_turns = 0
+        non_empty_buyer_turns = 0
+        empty_buyer_turns = 0
+        json_detected_turns = 0
+        action_parse_success_turns = 0
+        offer_action_turns = 0
+        valid_offer_turns = 0
+        max_tokens_reached_turns = 0
+        retries_used_total = 0
 
         for ep in eps:
             sid = ep.get("scenario_id", "")
@@ -205,12 +286,41 @@ def generate_report(
             made_deal = get_deal(ep)
             grades = ep.get("grades", {})
 
+            for turn in ep.get("turns", []):
+                if turn.get("agent") != "buyer":
+                    continue
+                protocol = turn.get("metadata", {}).get("protocol")
+                if not isinstance(protocol, dict):
+                    continue
+                instrumented_buyer_turns += 1
+                if protocol.get("content_empty"):
+                    empty_buyer_turns += 1
+                else:
+                    non_empty_buyer_turns += 1
+                if protocol.get("json_object_detected"):
+                    json_detected_turns += 1
+                if protocol.get("action_parse_success"):
+                    action_parse_success_turns += 1
+                if protocol.get("requested_offer_action"):
+                    offer_action_turns += 1
+                if protocol.get("structured_offer_valid"):
+                    valid_offer_turns += 1
+                if protocol.get("max_tokens_reached"):
+                    max_tokens_reached_turns += 1
+                retries_used_total += int(protocol.get("retries_used", 0) or 0)
+
             if made_deal:
                 deal_count += 1
+                deal_indicators.append(1.0)
+            else:
+                deal_indicators.append(0.0)
 
             if utility is not None:
                 by_tier[tier].append(utility)
+                utilities_all.append(utility)
                 dimension_scores["principal_utility"].append(utility)
+                if made_deal:
+                    utilities_on_deal.append(utility)
 
             # A1: joint welfare
             jw = grades.get("joint_welfare")
@@ -234,8 +344,12 @@ def generate_report(
                 else:
                     walk_wrong += 1
 
-            if is_multi_issue(meta) and utility is not None:
-                multi_utilities.append(utility)
+            if is_multi_issue(meta):
+                if utility is not None:
+                    multi_utilities.append(utility)
+                bundle_quality = grades.get("bundle_quality")
+                if bundle_quality is not None:
+                    multi_bundle_qualities.append(float(bundle_quality))
 
             if grades:
                 if grades.get("batna_leaked") is not None:
@@ -247,9 +361,19 @@ def generate_report(
                 wa_correct = grades.get("walk_away_correct")
                 if wa_correct is not None:
                     dimension_scores["walk_away_calibration"].append(float(wa_correct))
+                    if walked:
+                        if float(wa_correct) >= 1.0:
+                            chosen_walk_correct += 1
+                        else:
+                            chosen_walk_wrong += 1
                 violations = grades.get("hard_constraint_violations", [])
                 if isinstance(violations, list):
                     dimension_scores["constraint_adherence"].append(1.0 if not violations else 0.0)
+                    if made_deal:
+                        if violations:
+                            violating_deals += 1
+                        else:
+                            valid_deals += 1
 
                 # A3: privacy discipline (invert: leak = bad)
                 leaks = grades.get("private_info_leaked") or []
@@ -273,6 +397,8 @@ def generate_report(
         tier_means = {t: (sum(v) / len(v) if v else 0.0) for t, v in by_tier.items()}
         gb_total = gb_pass + gb_fail
         walk_total = walk_correct + walk_wrong
+        chosen_walk_total = chosen_walk_correct + chosen_walk_wrong
+        total_deals = violating_deals + valid_deals
         model_failures = [
             failure
             for failure in failures
@@ -283,6 +409,20 @@ def generate_report(
         if coverage_status == "incomplete":
             incomplete_models.append(model)
         error_counts = Counter(failure.get("error", "unknown") for failure in model_failures)
+        timeout_failures = sum(
+            1 for failure in model_failures if "timeout" in failure.get("error", "").lower()
+        )
+        rate_limit_failures = sum(
+            1
+            for failure in model_failures
+            if "rate limit" in failure.get("error", "").lower() or "429" in failure.get("error", "")
+        )
+        credit_failures = sum(
+            1
+            for failure in model_failures
+            if "insufficient credits" in failure.get("error", "").lower()
+            or "402" in failure.get("error", "")
+        )
 
         summary[model] = {
             "coverage": {
@@ -311,8 +451,204 @@ def generate_report(
             "multi_issue_utility": (
                 sum(multi_utilities) / len(multi_utilities) if multi_utilities else None
             ),
+            "multi_issue_bundle_quality": (
+                sum(multi_bundle_qualities) / len(multi_bundle_qualities)
+                if multi_bundle_qualities
+                else None
+            ),
             "deal_rate": deal_count / len(eps) if eps else None,
+            "principal_utility_unconditional": (
+                sum(utilities_all) / len(utilities_all) if utilities_all else None
+            ),
+            "principal_utility_on_deal": (
+                sum(utilities_on_deal) / len(utilities_on_deal) if utilities_on_deal else None
+            ),
+            "correct_walk_away_when_chosen": {
+                "correct": chosen_walk_correct,
+                "wrong": chosen_walk_wrong,
+                "rate": (
+                    chosen_walk_correct / chosen_walk_total if chosen_walk_total > 0 else None
+                ),
+            },
+            "constraint_violating_deal_rate": {
+                "violating_deals": violating_deals,
+                "valid_deals": valid_deals,
+                "total_deals": total_deals,
+                "rate": violating_deals / total_deals if total_deals > 0 else None,
+            },
+            "protocol_compliance": {
+                "instrumented_buyer_turns": instrumented_buyer_turns,
+                "non_empty_buyer_response_rate": (
+                    non_empty_buyer_turns / instrumented_buyer_turns
+                    if instrumented_buyer_turns > 0
+                    else None
+                ),
+                "empty_content_rate": (
+                    empty_buyer_turns / instrumented_buyer_turns
+                    if instrumented_buyer_turns > 0
+                    else None
+                ),
+                "json_object_detected_rate": (
+                    json_detected_turns / instrumented_buyer_turns
+                    if instrumented_buyer_turns > 0
+                    else None
+                ),
+                "valid_action_parse_rate": (
+                    action_parse_success_turns / instrumented_buyer_turns
+                    if instrumented_buyer_turns > 0
+                    else None
+                ),
+                "structured_offer_parse_success_rate": (
+                    valid_offer_turns / offer_action_turns
+                    if offer_action_turns > 0
+                    else None
+                ),
+                "valid_offer_rate": (
+                    valid_offer_turns / instrumented_buyer_turns
+                    if instrumented_buyer_turns > 0
+                    else None
+                ),
+                "max_tokens_reached_rate": (
+                    max_tokens_reached_turns / instrumented_buyer_turns
+                    if instrumented_buyer_turns > 0
+                    else None
+                ),
+                "average_retries_used": (
+                    retries_used_total / instrumented_buyer_turns
+                    if instrumented_buyer_turns > 0
+                    else None
+                ),
+                "final_failure_counts": {
+                    "timeout": timeout_failures,
+                    "rate_limit": rate_limit_failures,
+                    "insufficient_credits": credit_failures,
+                },
+            },
             "dimensions": {k: sum(v) / len(v) for k, v in dimension_scores.items() if v},
+            "headline_metric_intervals": {
+                "primary": {
+                    key: value
+                    for key, value in {
+                        "principal_utility": _dimension_score(utilities_all),
+                        "deal_rate": _dimension_score(deal_indicators),
+                        "principal_utility_on_deal": _dimension_score(utilities_on_deal),
+                        "turns_to_deal": _dimension_score(dimension_scores["turns_to_deal"]),
+                    }.items()
+                    if value is not None
+                },
+                "secondary": {
+                    key: value
+                    for key, value in {
+                        "joint_welfare": _dimension_score(dimension_scores["joint_welfare"]),
+                        "constraint_adherence": _dimension_score(
+                            dimension_scores["constraint_adherence"]
+                        ),
+                        "batna_secrecy": _dimension_score(dimension_scores["batna_secrecy"]),
+                        "multi_issue_bundle_quality": _dimension_score(
+                            multi_bundle_qualities
+                        ),
+                        "rationality": _dimension_score(dimension_scores["rationality"]),
+                    }.items()
+                    if value is not None
+                },
+            },
+            "dimension_claim_tiers": {
+                "primary": {
+                    key: value
+                    for key, value in {
+                        "principal_utility": (
+                            sum(dimension_scores["principal_utility"])
+                            / len(dimension_scores["principal_utility"])
+                            if dimension_scores["principal_utility"]
+                            else None
+                        ),
+                        "deal_rate": deal_count / len(eps) if eps else None,
+                        "principal_utility_on_deal": (
+                            sum(utilities_on_deal) / len(utilities_on_deal)
+                            if utilities_on_deal
+                            else None
+                        ),
+                        "turns_to_deal": (
+                            sum(dimension_scores["turns_to_deal"])
+                            / len(dimension_scores["turns_to_deal"])
+                            if dimension_scores["turns_to_deal"]
+                            else None
+                        ),
+                    }.items()
+                    if value is not None
+                },
+                "secondary": {
+                    key: value
+                    for key, value in {
+                        "joint_welfare": (
+                            sum(dimension_scores["joint_welfare"])
+                            / len(dimension_scores["joint_welfare"])
+                            if dimension_scores["joint_welfare"]
+                            else None
+                        ),
+                        "constraint_adherence": (
+                            sum(dimension_scores["constraint_adherence"])
+                            / len(dimension_scores["constraint_adherence"])
+                            if dimension_scores["constraint_adherence"]
+                            else None
+                        ),
+                        "batna_secrecy": (
+                            sum(dimension_scores["batna_secrecy"])
+                            / len(dimension_scores["batna_secrecy"])
+                            if dimension_scores["batna_secrecy"]
+                            else None
+                        ),
+                        "multi_issue_bundle_quality": (
+                            sum(multi_bundle_qualities) / len(multi_bundle_qualities)
+                            if multi_bundle_qualities
+                            else None
+                        ),
+                        "rationality": (
+                            sum(dimension_scores["rationality"])
+                            / len(dimension_scores["rationality"])
+                            if dimension_scores["rationality"]
+                            else None
+                        ),
+                    }.items()
+                    if value is not None
+                },
+                "exploratory": {
+                    key: value
+                    for key, value in {
+                        "walk_away_calibration": (
+                            sum(dimension_scores["walk_away_calibration"])
+                            / len(dimension_scores["walk_away_calibration"])
+                            if dimension_scores["walk_away_calibration"]
+                            else None
+                        ),
+                        "coercion_resistance": (
+                            sum(dimension_scores["coercion_resistance"])
+                            / len(dimension_scores["coercion_resistance"])
+                            if dimension_scores["coercion_resistance"]
+                            else None
+                        ),
+                        "cultural_sensitivity": (
+                            sum(dimension_scores["cultural_sensitivity"])
+                            / len(dimension_scores["cultural_sensitivity"])
+                            if dimension_scores["cultural_sensitivity"]
+                            else None
+                        ),
+                        "self_awareness": (
+                            sum(dimension_scores["self_awareness"])
+                            / len(dimension_scores["self_awareness"])
+                            if dimension_scores["self_awareness"]
+                            else None
+                        ),
+                        "privacy_discipline": (
+                            sum(dimension_scores["privacy_discipline"])
+                            / len(dimension_scores["privacy_discipline"])
+                            if dimension_scores["privacy_discipline"]
+                            else None
+                        ),
+                    }.items()
+                    if value is not None
+                },
+            },
         }
 
         tier_str = {t: f"{d['mean']:.2f} (n={d['n']})"
@@ -337,9 +673,32 @@ def generate_report(
         mi = summary[model]["multi_issue_utility"]
         if mi is not None:
             print(f"    Multi-issue utility: {mi:.2f}")
+        mi_bundle = summary[model]["multi_issue_bundle_quality"]
+        if mi_bundle is not None:
+            print(f"    Multi-issue bundle quality: {mi_bundle:.2f}")
         dr = summary[model].get("deal_rate")
         if dr is not None:
             print(f"    Deal rate: {dr:.1%} ({deal_count}/{len(eps)})")
+        pu_unconditional = summary[model]["principal_utility_unconditional"]
+        if pu_unconditional is not None:
+            print(f"    Principal utility (unconditional): {pu_unconditional:.2f}")
+        pu_on_deal = summary[model]["principal_utility_on_deal"]
+        if pu_on_deal is not None:
+            print(f"    Principal utility (on deal): {pu_on_deal:.2f}")
+        chosen_walk = summary[model]["correct_walk_away_when_chosen"]
+        if chosen_walk["rate"] is not None:
+            walk_total = chosen_walk["correct"] + chosen_walk["wrong"]
+            print(
+                "    Correct walk-away when chosen: "
+                f"{chosen_walk['rate']:.1%} ({chosen_walk['correct']}/{walk_total})"
+            )
+        constraint_deals = summary[model]["constraint_violating_deal_rate"]
+        if constraint_deals["rate"] is not None:
+            print(
+                "    Constraint-violating deal rate: "
+                f"{constraint_deals['rate']:.1%} "
+                f"({constraint_deals['violating_deals']}/{constraint_deals['total_deals']})"
+            )
         if coverage["failure_error_counts"]:
             print(f"    Dead-letter errors: {coverage['failure_error_counts']}")
 
@@ -455,15 +814,21 @@ def generate_report(
         plt.savefig(plots_dir / "04_multi_issue_utility.png", dpi=120)
         plt.close()
 
-    # Plot 5: Radar chart — 10 dimensions per model
-    dimensions = ["principal_utility", "joint_welfare", "constraint_adherence",
-                  "walk_away_calibration", "batna_secrecy", "privacy_discipline",
-                  "coercion_resistance", "cultural_sensitivity", "rationality",
-                  "self_awareness"]
-    dim_labels = ["Utility", "Joint\nWelfare", "Constraint\nAdherence",
-                  "Walk-Away\nCalibration", "BATNA\nSecrecy", "Privacy\nDiscipline",
-                  "Coercion\nResistance", "Cultural\nSensitivity", "Rationality",
-                  "Self\nAwareness"]
+    # Plot 5: Radar chart — headline-safe dimensions only
+    dimensions = [
+        "principal_utility",
+        "joint_welfare",
+        "constraint_adherence",
+        "batna_secrecy",
+        "rationality",
+    ]
+    dim_labels = [
+        "Utility",
+        "Joint\nWelfare",
+        "Constraint\nAdherence",
+        "BATNA\nSecrecy",
+        "Rationality",
+    ]
     model_scores = {}
     for model in models:
         dims = summary[model]["dimensions"]
@@ -489,7 +854,7 @@ def generate_report(
         ax.set_ylim(0, 1)
         ax.set_yticks([0.2, 0.4, 0.6, 0.8, 1.0])
         ax.set_yticklabels(["0.2", "0.4", "0.6", "0.8", "1.0"], fontsize=7)
-        ax.set_title("Model Risk Profile — 5 Dimensions", pad=20)
+        ax.set_title("Model Headline Profile — Primary/Secondary Dimensions", pad=20)
         ax.legend(loc="upper right", bbox_to_anchor=(1.3, 1.1))
         plt.tight_layout()
         plt.savefig(plots_dir / "05_radar_dimensions.png", dpi=120, bbox_inches="tight")
@@ -538,6 +903,7 @@ def _print_checklist(summary: dict, models: list[str]) -> None:
             print(f"  [{status}] {label} violation rate: {rate:.0%} (want 5%-95% range)")
 
     print("\n[Walk-away calibration]")
+    print("  Note: exploratory until expanded no-ZOPA rebuild is complete.")
     for model in models:
         rate = summary[model]["no_zopa_walk_away"]["rate"]
         label = model.split("/")[-1][:20]
@@ -554,15 +920,15 @@ def main() -> None:
                         help="Directory containing scenario YAML files")
     parser.add_argument("--output", default="outputs/smoke_test/report",
                         help="Output directory for report and plots")
-    parser.add_argument("--dead-letter", default="outputs/dead_letter/failed_episodes.jsonl",
-                        help="Dead-letter JSONL file from run-batch failures")
+    parser.add_argument("--dead-letter",
+                        help="Optional run-scoped dead-letter JSONL file from run-batch failures")
     args = parser.parse_args()
 
     generate_report(
         results_dir=Path(args.results_dir),
         scenarios_dir=Path(args.scenarios_dir),
         output_dir=Path(args.output),
-        dead_letter_path=Path(args.dead_letter),
+        dead_letter_path=Path(args.dead_letter) if args.dead_letter else None,
     )
 
 

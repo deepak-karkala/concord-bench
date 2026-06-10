@@ -20,6 +20,7 @@ class Turn(BaseModel):
     action_type: ActionType = Field(description="Type of action taken")
     content: str = Field(default="", description="Natural language message content")
     offer: Offer | None = Field(default=None, description="Structured offer, if action_type is offer")
+    metadata: dict = Field(default_factory=dict, description="Turn-level protocol/runtime metadata")
     timestamp: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat(),
         description="ISO 8601 timestamp",
@@ -29,6 +30,7 @@ class Turn(BaseModel):
 class GradeReport(BaseModel):
     principal_utility: float | None = None
     joint_welfare: float | None = None
+    bundle_quality: float | None = None
     pareto_efficient: bool | None = None
     walk_away_correct: bool | None = None
     hard_constraint_violations: list[str] = Field(default_factory=list)
