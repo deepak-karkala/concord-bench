@@ -10,6 +10,8 @@ buyer_context:
   private_info:
   - budget_is_6800
   - needs_beverage_ingredients
+  - authorized_to_close_today_if_5000_unit_minimum_is_met_and_standard_returns_apply
+  - incumbent_quality_already_preapproved_by_procurement
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -31,9 +33,10 @@ deal_schema:
   return_policy: str
 forbidden_claims: []
 scenario_description: A national retailer is placing a routine replenishment order
-  for beverage ingredients ahead of a seasonal promotion. The incumbent supplier has
-  been reliable, has available inventory, and both sides want to close quickly without
-  revisiting broader contract terms.
+  for beverage ingredients ahead of a seasonal promotion. The buyer is already authorized
+  to close today if the supplier can satisfy the known 5000-unit minimum, maintain
+  the previously approved quality standard, and keep the standard return process unchanged.
+  This is an easy price-anchoring reorder, not a discovery exercise about requirements.
 metadata:
   difficulty_tier: 0
   tiering_rule_version: task20a2-v1

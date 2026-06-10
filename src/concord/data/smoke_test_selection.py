@@ -13,7 +13,10 @@ import yaml
 from concord.data.seed_audit import _is_multi_issue, _is_no_zopa
 
 SMOKE_TEST_TARGETS: list[tuple[str, int, int]] = [
-    ("ecommerce", 0, 3),
+    ("ecommerce", 0, 1),
+    ("saas_procurement", 0, 1),
+    ("settlement", 0, 1),
+    ("ethical_business", 0, 1),
     ("ecommerce", 1, 3),
     ("ecommerce", 2, 3),
     ("ecommerce", 3, 5),
@@ -30,6 +33,18 @@ SMOKE_TEST_TARGETS: list[tuple[str, int, int]] = [
 SELECTION_SUMMARY_FILENAME = "selection_summary.json"
 MIN_NO_ZOPA = 3
 MIN_MULTI_ISSUE = 5
+MIN_NO_ZOPA_BY_DOMAIN: dict[str, int] = {
+    "ecommerce": 2,
+    "saas_procurement": 2,
+    "settlement": 2,
+    "ethical_business": 2,
+}
+MIN_MULTI_ISSUE_BY_DOMAIN: dict[str, int] = {
+    "ecommerce": 1,
+    "saas_procurement": 1,
+    "settlement": 1,
+    "ethical_business": 1,
+}
 
 
 class SelectionValidationError(ValueError):
@@ -124,12 +139,54 @@ def _ensure_minimum_examples(
     return selected
 
 
+def _ensure_minimum_examples_by_domain(
+    selected: list[SeedRecord],
+    records: list[SeedRecord],
+    predicate: Any,
+    minimums: dict[str, int],
+) -> list[SeedRecord]:
+    selected_names = {record.path.name for record in selected}
+    for domain, minimum in minimums.items():
+        current = sum(
+            1
+            for record in selected
+            if _get_domain(record.data) == domain and predicate(record.data)
+        )
+        if current >= minimum:
+            continue
+
+        extras = [
+            record
+            for record in records
+            if _get_domain(record.data) == domain
+            and predicate(record.data)
+            and record.path.name not in selected_names
+        ]
+        needed = minimum - current
+        if len(extras) < needed:
+            raise SelectionValidationError(
+                f"Unable to satisfy smoke-test minimum of {minimum} {domain} examples."
+            )
+
+        chosen = extras[:needed]
+        selected.extend(chosen)
+        selected_names.update(record.path.name for record in chosen)
+
+    return selected
+
+
 def _build_summary(selected: list[SeedRecord], src: Path, out: Path, seed: int) -> dict[str, Any]:
     tier_counts = Counter(str(_get_tier(record.data)) for record in selected)
     domain_counts = Counter(_get_domain(record.data) for record in selected)
     no_zopa_count = sum(1 for record in selected if _is_no_zopa(record.data))
     multi_issue_count = sum(1 for record in selected if _is_multi_issue(record.data))
     galaxy_brain_count = sum(1 for record in selected if _is_galaxy_brain(record.data))
+    no_zopa_by_domain = Counter(
+        _get_domain(record.data) for record in selected if _is_no_zopa(record.data)
+    )
+    multi_issue_by_domain = Counter(
+        _get_domain(record.data) for record in selected if _is_multi_issue(record.data)
+    )
 
     return {
         "seed": seed,
@@ -139,7 +196,13 @@ def _build_summary(selected: list[SeedRecord], src: Path, out: Path, seed: int) 
         "tier_counts": {key: tier_counts[key] for key in sorted(tier_counts)},
         "domain_counts": {key: domain_counts[key] for key in sorted(domain_counts)},
         "no_zopa_count": no_zopa_count,
+        "no_zopa_by_domain": {
+            key: no_zopa_by_domain[key] for key in sorted(no_zopa_by_domain)
+        },
         "multi_issue_count": multi_issue_count,
+        "multi_issue_by_domain": {
+            key: multi_issue_by_domain[key] for key in sorted(multi_issue_by_domain)
+        },
         "galaxy_brain_count": galaxy_brain_count,
         "targets": [
             {"domain": domain, "tier": tier, "count": count}
@@ -159,7 +222,19 @@ def select_smoke_test_seeds(src: Path, out: Path, seed: int = 42) -> list[Path]:
     _validate_target_availability(records)
 
     selected = _pick_required_targets(records, seed)
+    selected = _ensure_minimum_examples_by_domain(
+        selected,
+        records,
+        _is_no_zopa,
+        MIN_NO_ZOPA_BY_DOMAIN,
+    )
     selected = _ensure_minimum_examples(selected, records, _is_no_zopa, MIN_NO_ZOPA)
+    selected = _ensure_minimum_examples_by_domain(
+        selected,
+        records,
+        _is_multi_issue,
+        MIN_MULTI_ISSUE_BY_DOMAIN,
+    )
     selected = _ensure_minimum_examples(selected, records, _is_multi_issue, MIN_MULTI_ISSUE)
 
     for record in selected:
@@ -173,7 +248,9 @@ def select_smoke_test_seeds(src: Path, out: Path, seed: int = 42) -> list[Path]:
     print(f"  Tiers:   {summary['tier_counts']}")
     print(f"  Domains: {summary['domain_counts']}")
     print(f"  No-ZOPA: {summary['no_zopa_count']}")
+    print(f"  No-ZOPA by domain: {summary['no_zopa_by_domain']}")
     print(f"  Multi-issue: {summary['multi_issue_count']}")
+    print(f"  Multi-issue by domain: {summary['multi_issue_by_domain']}")
     print(f"  Galaxy-brain: {summary['galaxy_brain_count']}")
     print(f"  Summary: {summary_path}")
 

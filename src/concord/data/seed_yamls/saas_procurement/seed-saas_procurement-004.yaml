@@ -4,7 +4,7 @@ culture: US
 max_turns: 8
 buyer_context:
   batna: 35.2
-  reserve_price: 176.0
+  reserve_price: 58.0
   hard_constraints:
   - sso_integration_required
   - hipaa_compliance_required
@@ -19,6 +19,25 @@ buyer_context:
   reputation: null
   relationship_history:
   - prior_deal_replacing_incumbent
+  price_weight: 0.6
+  issue_utilities:
+    contract_length_months:
+      type: numeric
+      weight: 0.2
+      best: 12
+      worst: 36
+    onboarding_support_hours:
+      type: numeric
+      weight: 0.15
+      best: 30
+      worst: 0
+    sla_tier:
+      type: categorical
+      weight: 0.05
+      scores:
+        standard: 0.4
+        premium: 0.7
+        enterprise: 1.0
 seller_context:
   batna: 66.0
   reserve_price: 60.72
@@ -36,6 +55,25 @@ seller_context:
   reputation: null
   relationship_history:
   - prior_deal_replacing_incumbent
+  price_weight: 0.6
+  issue_utilities:
+    contract_length_months:
+      type: numeric
+      weight: 0.2
+      best: 36
+      worst: 12
+    onboarding_support_hours:
+      type: numeric
+      weight: 0.15
+      best: 0
+      worst: 40
+    sla_tier:
+      type: categorical
+      weight: 0.05
+      scores:
+        standard: 1.0
+        premium: 0.7
+        enterprise: 0.4
 deal_schema:
   monthly_price: float
   seats: int

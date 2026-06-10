@@ -20,7 +20,7 @@ buyer_context:
   - prior_deal_supplier_diversification
 seller_context:
   batna: 72500.0
-  reserve_price: 65250.0
+  reserve_price: 68000.0
   hard_constraints:
   - minimum_order_100_units
   - payment_terms_net_30

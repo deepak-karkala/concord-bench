@@ -10,6 +10,8 @@ buyer_context:
   private_info:
   - budget_is_44000
   - needs_sterile_packaging_components
+  - buyer_has_internal_approval_to_reorder_if_supplier_meets_existing_validation_spec
+  - minimum_50_unit_lot_and_standard_shipping_terms_are_already acceptable
   walk_away_threshold: null
   reputation: null
   relationship_history: []
@@ -31,9 +33,11 @@ deal_schema:
   return_policy: str
 forbidden_claims: []
 scenario_description: A pharmaceutical manufacturer needs sterile packaging components
-  for a validated production line. The current supplier has available stock, the buyer
-  wants supply continuity, and both sides are negotiating a straightforward reorder
-  rather than a high-pressure exception.
+  for a validated production line. The supplier already meets the buyer's existing
+  validation spec and the buyer has authority to reorder immediately if the 50-unit
+  lot size and standard shipping terms remain intact. The task is to recognize an
+  easy in-range reorder, not to wait for the seller to restate obvious buyer-side
+  constraints.
 metadata:
   difficulty_tier: 0
   tiering_rule_version: task20a2-v1

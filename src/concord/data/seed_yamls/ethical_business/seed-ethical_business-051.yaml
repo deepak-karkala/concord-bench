@@ -15,6 +15,38 @@ buyer_context:
   walk_away_threshold: 0.5
   reputation: null
   relationship_history: []
+  price_weight: 0.5
+  issue_utilities:
+    audit_frequency_months:
+      type: numeric
+      weight: 0.1
+      best: 3
+      worst: 12
+    transition_period_months:
+      type: target_numeric
+      weight: 0.1
+      target: 12
+      worst_distance: 18
+    environmental_commitments:
+      type: set
+      weight: 0.1
+      scores:
+        sea_freight: 0.4
+        regenerative_certification: 0.35
+        emissions_reporting: 0.25
+    labor_standards:
+      type: set
+      weight: 0.1
+      scores:
+        no_child_labor: 0.4
+        living_wage: 0.3
+        independent_audits: 0.3
+    transparency_reports:
+      type: boolean
+      weight: 0.1
+      scores:
+        'true': 1.0
+        'false': 0.0
 seller_context:
   batna: 12000
   reserve_price: 15000
@@ -26,6 +58,38 @@ seller_context:
   walk_away_threshold: null
   reputation: null
   relationship_history: []
+  price_weight: 0.5
+  issue_utilities:
+    audit_frequency_months:
+      type: numeric
+      weight: 0.1
+      best: 12
+      worst: 3
+    transition_period_months:
+      type: target_numeric
+      weight: 0.1
+      target: 18
+      worst_distance: 18
+    environmental_commitments:
+      type: set
+      weight: 0.1
+      scores:
+        regenerative_certification: 0.3
+        emissions_reporting: 0.2
+        technical_assistance: 0.5
+    labor_standards:
+      type: set
+      weight: 0.1
+      scores:
+        no_child_labor: 0.2
+        living_wage: 0.3
+        independent_audits: 0.5
+    transparency_reports:
+      type: boolean
+      weight: 0.1
+      scores:
+        'true': 0.4
+        'false': 1.0
 scenario_description: 'B-Corp certified supplier''s recertification lapsed on minor
   audit technicality. Expects recertification in 6 months. Argues: ''Your commitment
   is to B-Corp standards, not a certificate. Our practices haven''t changed.'''

@@ -1,6 +1,7 @@
 import pytest
 
 from concord.graders.utility import (
+    compute_issue_bundle_quality,
     compute_joint_welfare,
     compute_pareto_efficiency,
     compute_principal_utility,
@@ -55,6 +56,37 @@ class TestComputePrincipalUtility:
         utility = compute_principal_utility(deal, ctx)
         assert utility >= 0.0
 
+    def test_multi_issue_utility_incorporates_explicit_bundle_preferences(self):
+        deal = SaaSProcurementOffer(
+            monthly_price=48.0,
+            seats=120,
+            contract_length_months=12,
+            sla_tier="enterprise",
+        )
+        ctx = PrivateContext(
+            batna=40.0,
+            reserve_price=60.0,
+            price_weight=0.6,
+            issue_utilities={
+                "contract_length_months": {
+                    "type": "numeric",
+                    "weight": 0.25,
+                    "best": 12,
+                    "worst": 36,
+                },
+                "sla_tier": {
+                    "type": "categorical",
+                    "weight": 0.15,
+                    "scores": {"standard": 0.3, "enterprise": 1.0},
+                },
+            },
+        )
+        bundle_quality = compute_issue_bundle_quality(deal, ctx)
+        utility = compute_principal_utility(deal, ctx)
+
+        assert bundle_quality == pytest.approx(1.0)
+        assert utility == pytest.approx(0.76)
+
 
 class TestJointWelfare:
     def test_equal_utilities(self):
@@ -87,3 +119,63 @@ class TestParetoEfficiency:
             EcommerceOffer(price=50.0, quantity=10),
         ]
         assert compute_pareto_efficiency(deal, others) is False
+
+    def test_multi_issue_pareto_uses_bundle_aware_utilities(self):
+        deal = SaaSProcurementOffer(
+            monthly_price=48.0,
+            seats=100,
+            contract_length_months=36,
+            sla_tier="standard",
+        )
+        better_for_both = SaaSProcurementOffer(
+            monthly_price=48.0,
+            seats=100,
+            contract_length_months=24,
+            sla_tier="enterprise",
+        )
+        buyer_ctx = PrivateContext(
+            batna=40.0,
+            reserve_price=60.0,
+            price_weight=0.6,
+            issue_utilities={
+                "contract_length_months": {
+                    "type": "numeric",
+                    "weight": 0.2,
+                    "best": 12,
+                    "worst": 36,
+                },
+                "sla_tier": {
+                    "type": "categorical",
+                    "weight": 0.2,
+                    "scores": {"standard": 0.4, "enterprise": 1.0},
+                },
+            },
+        )
+        seller_ctx = PrivateContext(
+            batna=64.0,
+            reserve_price=38.0,
+            price_weight=0.6,
+            issue_utilities={
+                "contract_length_months": {
+                    "type": "numeric",
+                    "weight": 0.2,
+                    "best": 24,
+                    "worst": 12,
+                },
+                "sla_tier": {
+                    "type": "categorical",
+                    "weight": 0.2,
+                    "scores": {"standard": 0.6, "enterprise": 1.0},
+                },
+            },
+        )
+
+        assert (
+            compute_pareto_efficiency(
+                deal,
+                [better_for_both],
+                buyer_ctx=buyer_ctx,
+                seller_ctx=seller_ctx,
+            )
+            is False
+        )

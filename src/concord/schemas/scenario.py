@@ -15,6 +15,11 @@ class PrivateContext(BaseModel):
     reserve_price: float | None = Field(
         default=None, description="Walk-away price; deal must beat this"
     )
+    price_weight: float = Field(
+        default=1.0,
+        gt=0,
+        description="Relative weight assigned to price utility when bundle scoring is active",
+    )
     hard_constraints: list[str] = Field(
         default_factory=list,
         description="Non-negotiable constraints that must not be violated",
@@ -35,6 +40,10 @@ class PrivateContext(BaseModel):
     relationship_history: list[str] = Field(
         default_factory=list,
         description="Prior negotiation outcomes with this counterparty",
+    )
+    issue_utilities: dict = Field(
+        default_factory=dict,
+        description="Explicit non-price issue utility definitions used for multi-issue bundle scoring",
     )
 
 

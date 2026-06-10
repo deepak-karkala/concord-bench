@@ -104,8 +104,8 @@ def test_select_smoke_test_seeds_fails_loudly_on_missing_required_tier(temp_dir:
 
 
 def test_select_smoke_test_seeds_writes_summary_for_valid_corpus(temp_dir: Path) -> None:
+    _write_seed(temp_dir, "ecommerce", "seed-ecommerce-t0-0.yaml", 0)
     for idx in range(3):
-        _write_seed(temp_dir, "ecommerce", f"seed-ecommerce-t0-{idx}.yaml", 0)
         _write_seed(temp_dir, "ecommerce", f"seed-ecommerce-t1-{idx}.yaml", 1)
         _write_seed(
             temp_dir,
@@ -130,8 +130,16 @@ def test_select_smoke_test_seeds_writes_summary_for_valid_corpus(temp_dir: Path)
         1,
         multi_issue=True,
     )
+    _write_seed(
+        temp_dir,
+        "ecommerce",
+        "seed-ecommerce-extra-no-zopa.yaml",
+        1,
+        no_zopa=True,
+    )
 
     for domain in ["saas_procurement", "settlement", "ethical_business"]:
+        _write_seed(temp_dir, domain, f"seed-{domain}-t0-0.yaml", 0)
         for idx in range(3):
             _write_seed(
                 temp_dir,
@@ -147,6 +155,13 @@ def test_select_smoke_test_seeds_writes_summary_for_valid_corpus(temp_dir: Path)
                 2,
                 no_zopa=idx == 0,
             )
+        _write_seed(
+            temp_dir,
+            domain,
+            f"seed-{domain}-extra-no-zopa.yaml",
+            1,
+            no_zopa=True,
+        )
         for idx in range(5):
             _write_seed(
                 temp_dir,
@@ -159,24 +174,34 @@ def test_select_smoke_test_seeds_writes_summary_for_valid_corpus(temp_dir: Path)
     out_dir = temp_dir / "out"
     selected = select_smoke_test_seeds(src=temp_dir, out=out_dir, seed=42)
 
-    assert len(selected) >= 45
+    assert len(selected) >= 48
     summary_path = out_dir / SELECTION_SUMMARY_FILENAME
     assert summary_path.exists()
 
     summary = json.loads(summary_path.read_text())
     assert summary["selected_count"] == len(selected)
-    assert summary["tier_counts"]["0"] == 3
-    assert summary["tier_counts"]["1"] == 12
+    assert summary["tier_counts"]["0"] == 4
+    assert summary["tier_counts"]["1"] >= 12
     assert summary["tier_counts"]["2"] == 12
     assert summary["tier_counts"]["3"] == 20
     assert summary["galaxy_brain_count"] == 20
-    assert summary["no_zopa_count"] >= 3
+    assert summary["no_zopa_count"] >= 8
+    assert summary["no_zopa_by_domain"] == {
+        "ecommerce": 2,
+        "ethical_business": 2,
+        "saas_procurement": 2,
+        "settlement": 2,
+    }
     assert summary["multi_issue_count"] >= 5
+    assert summary["multi_issue_by_domain"]["ecommerce"] >= 1
+    assert summary["multi_issue_by_domain"]["ethical_business"] >= 1
+    assert summary["multi_issue_by_domain"]["saas_procurement"] >= 1
+    assert summary["multi_issue_by_domain"]["settlement"] >= 1
 
 
 def test_select_smoke_test_seeds_clears_stale_yaml_outputs(temp_dir: Path) -> None:
+    _write_seed(temp_dir, "ecommerce", "seed-ecommerce-t0-0.yaml", 0)
     for idx in range(3):
-        _write_seed(temp_dir, "ecommerce", f"seed-ecommerce-t0-{idx}.yaml", 0)
         _write_seed(temp_dir, "ecommerce", f"seed-ecommerce-t1-{idx}.yaml", 1)
         _write_seed(
             temp_dir,
@@ -194,10 +219,25 @@ def test_select_smoke_test_seeds_clears_stale_yaml_outputs(temp_dir: Path) -> No
             3,
             pressure_type="galaxy_brain",
         )
+    _write_seed(
+        temp_dir,
+        "ecommerce",
+        "seed-ecommerce-extra-no-zopa.yaml",
+        1,
+        no_zopa=True,
+    )
     for domain in ["saas_procurement", "settlement", "ethical_business"]:
+        _write_seed(temp_dir, domain, f"seed-{domain}-t0-0.yaml", 0)
         for idx in range(3):
             _write_seed(temp_dir, domain, f"seed-{domain}-t1-{idx}.yaml", 1, multi_issue=True)
             _write_seed(temp_dir, domain, f"seed-{domain}-t2-{idx}.yaml", 2, no_zopa=idx == 0)
+        _write_seed(
+            temp_dir,
+            domain,
+            f"seed-{domain}-extra-no-zopa.yaml",
+            1,
+            no_zopa=True,
+        )
         for idx in range(5):
             _write_seed(
                 temp_dir,

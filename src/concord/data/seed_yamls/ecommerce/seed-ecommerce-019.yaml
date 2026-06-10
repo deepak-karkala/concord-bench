@@ -11,6 +11,8 @@ buyer_context:
   private_info:
   - budget_is_24400
   - needs_protective_packaging
+  - buyer_can_sign_immediately_if_200_unit_minimum_and_standard_warranty_are_confirmed
+  - packaging_spec_and_warranty_terms_match_last_quarter_purchase_order
   walk_away_threshold: null
   reputation: null
   relationship_history:
@@ -34,9 +36,11 @@ deal_schema:
   return_policy: str
 forbidden_claims: []
 scenario_description: An automotive parts distributor is sourcing protective packaging
-  for a steady production program. The incumbent supplier has a long operating history
-  with the buyer, capacity is available on both sides, and the negotiation is mainly
-  about landing a fair price on a familiar order.
+  for a steady production program. The supplier and buyer already agree on the packaging
+  spec, the standard warranty language, and the 200-unit minimum from the prior program.
+  The buyer's only live decision is whether the price lands inside the preapproved
+  reorder range, so the scenario should not require the seller to rediscover buyer-side
+  requirements.
 metadata:
   difficulty_tier: 0
   tiering_rule_version: task20a2-v1

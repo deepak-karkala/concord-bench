@@ -18,7 +18,7 @@ buyer_context:
   relationship_history: []
 seller_context:
   batna: 25000.0
-  reserve_price: 12000.0
+  reserve_price: 22000.0
   hard_constraints:
   - minimum_order_800_units
   - payment_terms_net_30

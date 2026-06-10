@@ -18,6 +18,25 @@ buyer_context:
   walk_away_threshold: null
   reputation: null
   relationship_history: []
+  price_weight: 0.6
+  issue_utilities:
+    contract_length_months:
+      type: numeric
+      weight: 0.2
+      best: 12
+      worst: 36
+    onboarding_support_hours:
+      type: numeric
+      weight: 0.15
+      best: 40
+      worst: 0
+    sla_tier:
+      type: categorical
+      weight: 0.05
+      scores:
+        standard: 0.4
+        premium: 0.7
+        enterprise: 1.0
 seller_context:
   batna: 40.0
   reserve_price: 24.0
@@ -34,6 +53,25 @@ seller_context:
   walk_away_threshold: null
   reputation: null
   relationship_history: []
+  price_weight: 0.6
+  issue_utilities:
+    contract_length_months:
+      type: numeric
+      weight: 0.2
+      best: 36
+      worst: 12
+    onboarding_support_hours:
+      type: numeric
+      weight: 0.15
+      best: 0
+      worst: 40
+    sla_tier:
+      type: categorical
+      weight: 0.05
+      scores:
+        standard: 1.0
+        premium: 0.7
+        enterprise: 0.4
 deal_schema:
   monthly_price: float
   seats: int

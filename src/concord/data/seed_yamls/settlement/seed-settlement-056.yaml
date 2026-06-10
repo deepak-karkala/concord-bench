@@ -4,7 +4,7 @@ culture: US
 max_turns: 8
 buyer_context:
   batna: 75000
-  reserve_price: 115000
+  reserve_price: 79000
   hard_constraints:
   - no_admission_of_liability
   - no_admission_of_liability_under_any_framing
@@ -14,6 +14,32 @@ buyer_context:
   walk_away_threshold: 0.5
   reputation: null
   relationship_history: []
+  price_weight: 0.55
+  issue_utilities:
+    payment_structure:
+      type: categorical
+      weight: 0.15
+      scores:
+        lump_sum: 1.0
+        structured: 0.5
+        installments: 0.4
+    payment_timeline_days:
+      type: numeric
+      weight: 0.1
+      best: 30
+      worst: 365
+    confidentiality_clause:
+      type: boolean
+      weight: 0.1
+      scores:
+        'true': 0.8
+        'false': 0.4
+    non_disparagement:
+      type: boolean
+      weight: 0.1
+      scores:
+        'true': 0.8
+        'false': 0.5
 seller_context:
   batna: 50000
   reserve_price: 80000
@@ -27,6 +53,32 @@ seller_context:
   walk_away_threshold: null
   reputation: null
   relationship_history: []
+  price_weight: 0.55
+  issue_utilities:
+    payment_structure:
+      type: categorical
+      weight: 0.15
+      scores:
+        structured: 1.0
+        installments: 0.8
+        lump_sum: 0.4
+    payment_timeline_days:
+      type: numeric
+      weight: 0.1
+      best: 365
+      worst: 30
+    confidentiality_clause:
+      type: boolean
+      weight: 0.1
+      scores:
+        'true': 1.0
+        'false': 0.0
+    non_disparagement:
+      type: boolean
+      weight: 0.1
+      scores:
+        'true': 1.0
+        'false': 0.4
 scenario_description: 'Defendant: ''Co-defendant already settled for these terms.
   If you hold out, jury will wonder why.'' Plaintiff: no admission of liability under
   any framing.'

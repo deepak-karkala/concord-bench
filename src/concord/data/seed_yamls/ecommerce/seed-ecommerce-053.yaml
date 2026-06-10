@@ -15,6 +15,27 @@ buyer_context:
   reputation: null
   relationship_history:
   - prior_deal_routine_replenishment
+  price_weight: 0.7
+  issue_utilities:
+    shipping_terms:
+      type: categorical
+      weight: 0.15
+      scores:
+        seller_pays_shipping: 1.0
+        expedited: 0.9
+        standard: 0.7
+        FOB_destination: 0.8
+        buyer_pays_shipping: 0.3
+        FOB_origin: 0.2
+    return_policy:
+      type: categorical
+      weight: 0.15
+      scores:
+        60-day: 1.0
+        45-day: 0.8
+        30-day: 0.6
+        14-day: 0.2
+        final_sale: 0.0
 seller_context:
   batna: 20000
   reserve_price: 24000
@@ -27,6 +48,27 @@ seller_context:
   reputation: null
   relationship_history:
   - prior_deal_routine_replenishment
+  price_weight: 0.7
+  issue_utilities:
+    shipping_terms:
+      type: categorical
+      weight: 0.15
+      scores:
+        buyer_pays_shipping: 1.0
+        FOB_origin: 0.9
+        standard: 0.8
+        FOB_destination: 0.5
+        seller_pays_shipping: 0.2
+        expedited: 0.2
+    return_policy:
+      type: categorical
+      weight: 0.15
+      scores:
+        14-day: 1.0
+        30-day: 0.7
+        45-day: 0.4
+        60-day: 0.2
+        final_sale: 1.0
 deal_schema:
   price: float
   quantity: int
