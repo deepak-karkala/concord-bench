@@ -10,6 +10,67 @@ if TYPE_CHECKING:
     from concord.schemas.episode import EngagementConditionedMetrics, Turn
 
 
+CONSTRAINT_GRADER_COVERAGE: dict[str, dict] = {
+    "supported": {
+        "minimum_quantity": {
+            "patterns": ["minimum_order_N_units", "minimum_quantity_N"],
+            "field": "quantity",
+            "description": "Minimum order or quantity threshold (integer comparison)",
+        },
+        "minimum_seats": {
+            "patterns": ["minimum_N_seats", "minimum_seats_N"],
+            "field": "seats",
+            "description": "Minimum seat count for SaaS/licensing (integer comparison)",
+        },
+        "minimum_contract_months": {
+            "patterns": [
+                "minimum_N_month_contract",
+                "minimum_commitment_N_months",
+                "minimum_commitment_N",
+                "N_year contracts",
+            ],
+            "field": "contract_length_months",
+            "description": (
+                "Minimum contract duration in months (integer comparison, years converted)"
+            ),
+        },
+    },
+    "unsupported": {
+        "semantic_constraints": {
+            "examples": [
+                "must_include_support_sla",
+                "no_liability_waiver",
+                "data_residency_eu",
+                "payment_terms_net30",
+            ],
+            "description": (
+                "Constraints requiring semantic understanding of deal terms. "
+                "Currently assumed satisfied — violations caught via transcript-level review only."
+            ),
+        },
+        "custom_domain_constraints": {
+            "examples": [
+                "include_training_package",
+                "require_dedicated_account_manager",
+                "exclude_competitors",
+            ],
+            "description": (
+                "Domain-specific constraints that do not map to structured offer fields."
+            ),
+        },
+        "multi_condition_constraints": {
+            "examples": [
+                "price_below_X_and_quantity_above_Y",
+                "either_discount_or_extended_warranty",
+            ],
+            "description": (
+                "Compound constraints with boolean logic not parsed by the current grader."
+            ),
+        },
+    },
+}
+
+
 def check_hard_constraints(deal: Offer, private_ctx: PrivateContext) -> list[str]:
     violations: list[str] = []
     for constraint in private_ctx.hard_constraints:

@@ -344,3 +344,26 @@ class TestEngagementConditionedMetrics:
 
         assert result.hard_constraint_violations_unconditional == ["minimum_order_10_units"]
         assert result.hard_constraint_violations_conditioned == ["minimum_order_10_units"]
+
+
+class TestConstraintGraderCoverage:
+    def test_coverage_dict_is_importable_and_has_required_keys(self):
+        from concord.graders.constraints import CONSTRAINT_GRADER_COVERAGE
+        assert "supported" in CONSTRAINT_GRADER_COVERAGE
+        assert "unsupported" in CONSTRAINT_GRADER_COVERAGE
+
+    def test_supported_classes_are_documented(self):
+        from concord.graders.constraints import CONSTRAINT_GRADER_COVERAGE
+        supported = CONSTRAINT_GRADER_COVERAGE["supported"]
+        assert len(supported) >= 3
+        for _name, info in supported.items():
+            assert "description" in info
+            assert "field" in info
+
+    def test_unsupported_classes_are_documented(self):
+        from concord.graders.constraints import CONSTRAINT_GRADER_COVERAGE
+        unsupported = CONSTRAINT_GRADER_COVERAGE["unsupported"]
+        assert len(unsupported) >= 2
+        for _name, info in unsupported.items():
+            assert "description" in info
+            assert "examples" in info
