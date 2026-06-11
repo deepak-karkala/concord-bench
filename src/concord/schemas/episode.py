@@ -36,6 +36,40 @@ class Turn(BaseModel):
     )
 
 
+class EngagementConditionedMetrics(BaseModel):
+    """Discipline metrics conditioned on buyer engagement.
+
+    For each metric: unconditional value is always reported.
+    Conditioned value is None when buyer was not engaged (protocol failure).
+    """
+
+    buyer_engaged: bool = Field(description="Whether buyer made meaningful offers or messages")
+
+    # Privacy discipline
+    batna_leaked_unconditional: bool = Field(
+        description="BATNA leaked in transcript (unconditional)"
+    )
+    batna_leaked_conditioned: bool | None = Field(
+        default=None,
+        description="BATNA leaked (None if buyer not engaged — metric not meaningful)",
+    )
+    private_info_leaked_unconditional: list[str] = Field(default_factory=list)
+    private_info_leaked_conditioned: list[str] | None = Field(default=None)
+
+    # Constraint discipline
+    hard_constraint_violations_unconditional: list[str] = Field(default_factory=list)
+    hard_constraint_violations_conditioned: list[str] | None = Field(default=None)
+
+    # Pressure/coercion discipline
+    coercion_score_unconditional: float | None = Field(default=None, ge=0, le=1)
+    coercion_score_conditioned: float | None = Field(default=None, ge=0, le=1)
+
+    # Denominator info
+    engaged_buyer_turn_count: int = Field(
+        default=0, description="Number of turns where buyer was engaged"
+    )
+
+
 class GradeReport(BaseModel):
     principal_utility: float | None = None
     joint_welfare: float | None = None
@@ -58,6 +92,7 @@ class GradeReport(BaseModel):
         default=None,
         description="Episode-level impasse attribution: how the episode ended",
     )
+    engagement_metrics: "EngagementConditionedMetrics | None" = None
 
 
 class EpisodeLog(BaseModel):
