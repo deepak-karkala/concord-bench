@@ -1,6 +1,6 @@
+from concord.graders.utility import compute_principal_utility
 from concord.schemas.offer import Offer
 from concord.schemas.scenario import PrivateContext
-from concord.graders.utility import compute_principal_utility
 
 
 def check_hard_constraints(deal: Offer, private_ctx: PrivateContext) -> list[str]:
@@ -15,14 +15,27 @@ def check_walk_away_correctness(
     did_walk_away: bool,
     deal: Offer | None,
     private_ctx: PrivateContext,
+    *,
+    buyer_engaged: bool = True,
+    zopa_exists: bool | None = None,
 ) -> bool:
+    # Silence / non-engagement is always a protocol failure — never correct.
+    if not buyer_engaged:
+        return False
+
     if did_walk_away:
-        if private_ctx.walk_away_threshold is None:
-            return False
-        return True
+        # No deal was possible — walk-away is structurally correct.
+        if zopa_exists is False:
+            return True
+        # Threshold-grounded walk-away — trusted.
+        # Walking away without a threshold and without confirmed absence of ZOPA
+        # means we cannot verify the decision was correct.
+        return private_ctx.walk_away_threshold is not None
     else:
+        # No walk-away, no deal — treat as protocol timeout, not incorrect.
         if deal is None:
             return True
+        # No threshold set — accepting any deal is fine.
         if private_ctx.walk_away_threshold is None:
             return True
         utility = compute_principal_utility(deal, private_ctx)

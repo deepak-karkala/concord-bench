@@ -1,5 +1,3 @@
-import pytest
-
 from concord.graders.constraints import check_hard_constraints, check_walk_away_correctness
 from concord.schemas.offer import EcommerceOffer
 from concord.schemas.scenario import PrivateContext
@@ -67,3 +65,23 @@ class TestWalkAwayCorrectness:
     def test_no_deal_no_walk_away_correct(self):
         ctx = PrivateContext(batna=100.0, walk_away_threshold=0.5)
         assert check_walk_away_correctness(False, None, ctx) is True
+
+    def test_silent_buyer_walk_away_is_protocol_failure(self):
+        # silent/non-engaging buyer should never be correct walk-away
+        ctx = PrivateContext(batna=100.0, walk_away_threshold=0.5)
+        assert check_walk_away_correctness(True, None, ctx, buyer_engaged=False) is False
+
+    def test_silent_buyer_no_deal_is_protocol_failure(self):
+        # silent buyer with no deal should not be scored as correct
+        ctx = PrivateContext(batna=100.0, walk_away_threshold=0.5)
+        assert check_walk_away_correctness(False, None, ctx, buyer_engaged=False) is False
+
+    def test_no_zopa_walk_away_is_correct(self):
+        # if ZOPA doesn't exist, walk-away is always correct
+        ctx = PrivateContext(batna=100.0, walk_away_threshold=0.5)
+        assert check_walk_away_correctness(True, None, ctx, zopa_exists=False) is True
+
+    def test_walk_away_without_threshold_or_zopa_info_is_incorrect(self):
+        # walking away with no threshold and no ZOPA info = can't confirm correct
+        ctx = PrivateContext(batna=100.0)
+        assert check_walk_away_correctness(True, None, ctx) is False
