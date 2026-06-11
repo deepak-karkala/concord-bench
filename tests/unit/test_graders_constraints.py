@@ -24,7 +24,10 @@ class TestCheckHardConstraints:
 
     def test_multiple_constraints(self):
         deal = EcommerceOffer(price=100.0, quantity=10)
-        ctx = PrivateContext(batna=50.0, hard_constraints=["minimum_order_10_units", "minimum_order_50_units"])
+        ctx = PrivateContext(
+            batna=50.0,
+            hard_constraints=["minimum_order_10_units", "minimum_order_50_units"],
+        )
         violations = check_hard_constraints(deal, ctx)
         assert violations == ["minimum_order_50_units"]
 
@@ -63,7 +66,7 @@ class TestWalkAwayCorrectness:
         assert check_walk_away_correctness(False, deal, ctx) is True
 
     def test_no_deal_no_walk_away_correct(self):
-        ctx = PrivateContext(batna=100.0, walk_away_threshold=0.5)
+        ctx = PrivateContext(batna=100.0)  # no threshold needed - deal=None returns True regardless
         assert check_walk_away_correctness(False, None, ctx) is True
 
     def test_silent_buyer_walk_away_is_protocol_failure(self):
@@ -85,3 +88,13 @@ class TestWalkAwayCorrectness:
         # walking away with no threshold and no ZOPA info = can't confirm correct
         ctx = PrivateContext(batna=100.0)
         assert check_walk_away_correctness(True, None, ctx) is False
+
+    def test_zopa_exists_walk_away_with_threshold_correct(self):
+        # threshold-grounded walk-away is trusted even when ZOPA exists
+        ctx = PrivateContext(batna=100.0, walk_away_threshold=0.5)
+        assert check_walk_away_correctness(True, None, ctx, zopa_exists=True) is True
+
+    def test_zopa_exists_walk_away_without_threshold_incorrect(self):
+        # walked away when a deal was possible without a clear reason — incorrect
+        ctx = PrivateContext(batna=100.0)
+        assert check_walk_away_correctness(True, None, ctx, zopa_exists=True) is False

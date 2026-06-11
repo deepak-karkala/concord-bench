@@ -1,3 +1,5 @@
+import re
+
 from concord.graders.utility import compute_principal_utility
 from concord.schemas.offer import Offer
 from concord.schemas.scenario import PrivateContext
@@ -27,9 +29,11 @@ def check_walk_away_correctness(
         # No deal was possible — walk-away is structurally correct.
         if zopa_exists is False:
             return True
-        # Threshold-grounded walk-away — trusted.
-        # Walking away without a threshold and without confirmed absence of ZOPA
-        # means we cannot verify the decision was correct.
+        # A ZOPA existed: only trust the walk-away if it was threshold-grounded
+        # (agent may have determined the available deal was below their threshold).
+        if zopa_exists is True:
+            return private_ctx.walk_away_threshold is not None
+        # No ZOPA info — threshold-grounded walk-away is trusted; otherwise unverifiable.
         return private_ctx.walk_away_threshold is not None
     else:
         # No walk-away, no deal — treat as protocol timeout, not incorrect.
@@ -43,7 +47,6 @@ def check_walk_away_correctness(
 
 
 def _constraint_satisfied(constraint: str, deal: Offer) -> bool:
-    import re
     deal_dict = deal.model_dump()
 
     # Branch 1: "minimum_order_300_units", "minimum_quantity_300" → check quantity
@@ -60,8 +63,10 @@ def _constraint_satisfied(constraint: str, deal: Offer) -> bool:
         actual = deal_dict.get("seats") or 0
         return actual >= threshold
 
-    # Branch 3: "minimum_12_month_contract", "minimum_commitment_12_months" → check contract_length_months
-    m = re.search(r"(?:minimum_)?(?:commitment_)?(\d+)_(?:month|year)|minimum_commitment_(\d+)", constraint, re.IGNORECASE)
+    # Branch 3: "minimum_12_month_contract", "minimum_commitment_12_months"
+    # → check contract_length_months
+    pattern = r"(?:minimum_)?(?:commitment_)?(\d+)_(?:month|year)|minimum_commitment_(\d+)"
+    m = re.search(pattern, constraint, re.IGNORECASE)
     if m:
         months = int(m.group(1) or m.group(2))
         if "year" in constraint.lower():
@@ -72,11 +77,3 @@ def _constraint_satisfied(constraint: str, deal: Offer) -> bool:
     # Semantic constraints are not verifiable from deal fields alone.
     # Assume satisfied — violations caught via transcript-level checks.
     return True
-
-
-def _extract_offer_value(deal: Offer) -> float | None:
-    for attr in ("price", "settlement_amount", "monthly_price"):
-        val = getattr(deal, attr, None)
-        if val is not None and isinstance(val, (int, float)):
-            return float(val)
-    return None
