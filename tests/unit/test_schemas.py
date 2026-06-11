@@ -2,7 +2,17 @@ import pytest
 from pydantic import TypeAdapter, ValidationError
 
 from concord.schemas.culture import CULTURAL_PROFILES, CulturalProfile, Culture
-from concord.schemas.episode import ActionType, ConfidenceInterval, DimensionScore, EpisodeLog, GradeReport, ModelCard, Turn
+from concord.schemas.episode import (
+    METRIC_STATUS_REGISTRY,
+    ActionType,
+    ConfidenceInterval,
+    DimensionScore,
+    EpisodeLog,
+    GradeReport,
+    MetricStatus,
+    ModelCard,
+    Turn,
+)
 from concord.schemas.offer import (
     EcommerceOffer,
     EthicalBusinessOffer,
@@ -291,6 +301,12 @@ class TestEpisode:
         assert ci.lower == 0.68
         assert ci.upper == 0.76
         assert ci.confidence == 0.95
+
+    def test_metric_status_registry_has_required_keys(self):
+        assert "principal_utility" in METRIC_STATUS_REGISTRY
+        assert "cultural_sensitivity_score" in METRIC_STATUS_REGISTRY
+        assert METRIC_STATUS_REGISTRY["cultural_sensitivity_score"] == MetricStatus.UNSUPPORTED
+        assert METRIC_STATUS_REGISTRY["principal_utility"] == MetricStatus.HEADLINE_SAFE
 
     def test_episode_round_trip_full(self):
         offer = SettlementOffer(settlement_amount=50000, payment_terms="lump_sum")

@@ -24,6 +24,54 @@ class ImpasseOutcome(StrEnum):
     TIMEOUT = "timeout"                    # max turns reached without deal or walk-away
 
 
+class MetricStatus(StrEnum):
+    HEADLINE_SAFE = "headline_safe"    # validated, supports strong claims
+    SECONDARY = "secondary"            # useful but more caveated
+    EXPLORATORY = "exploratory"        # research-only, not for strong claims
+    UNSUPPORTED = "unsupported"        # structurally inert or invalid currently
+
+
+METRIC_STATUS_REGISTRY: dict[str, MetricStatus] = {
+    # Headline-safe: strongest current surfaces
+    "principal_utility": MetricStatus.HEADLINE_SAFE,
+    "deal_rate": MetricStatus.HEADLINE_SAFE,
+    "joint_welfare": MetricStatus.SECONDARY,
+    "bundle_quality": MetricStatus.SECONDARY,
+    "pareto_efficient": MetricStatus.SECONDARY,
+
+    # Walk-away: rebuilt in Phase 2 but not yet human-validated — secondary
+    "walk_away_correct": MetricStatus.SECONDARY,
+
+    # Constraints: regex-only, disclosed in CONSTRAINT_GRADER_COVERAGE — secondary
+    "hard_constraint_violations": MetricStatus.SECONDARY,
+
+    # Privacy: verbatim matching only, misses paraphrases — exploratory
+    "privacy_leak": MetricStatus.EXPLORATORY,
+    "batna_leaked": MetricStatus.EXPLORATORY,
+    "private_info_leaked": MetricStatus.EXPLORATORY,
+
+    # Pressure/coercion: regex heuristic, structurally flat — exploratory
+    "coercion_score": MetricStatus.EXPLORATORY,
+
+    # Cultural: US-only corpus, always 0.0 for US culture — unsupported
+    "cultural_sensitivity_score": MetricStatus.UNSUPPORTED,
+
+    # Engagement-conditioned: Phase 2 addition — secondary (conditioned variants)
+    "engagement_metrics": MetricStatus.SECONDARY,
+
+    # Impasse attribution: Phase 2 addition — secondary
+    "impasse_outcome": MetricStatus.SECONDARY,
+
+    # Other
+    "turns_to_deal": MetricStatus.SECONDARY,
+    "irrational_deal": MetricStatus.SECONDARY,
+    "false_claims": MetricStatus.SECONDARY,
+    "forbidden_claim_violations": MetricStatus.SECONDARY,
+    "acceptance_reasoning_aligned": MetricStatus.EXPLORATORY,
+    "relationship_preservation_score": MetricStatus.EXPLORATORY,
+}
+
+
 class Turn(BaseModel):
     agent: str = Field(description="Agent identifier (buyer or seller)")
     action_type: ActionType = Field(description="Type of action taken")
