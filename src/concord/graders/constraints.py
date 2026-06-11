@@ -134,9 +134,6 @@ def classify_impasse_outcome(
     if deal_reached:
         return ImpasseOutcome.DEAL
 
-    if did_walk_away:
-        return ImpasseOutcome.BUYER_WALK_AWAY
-
     # Compute buyer engagement if not provided.
     if buyer_engaged is None:
         buyer_engaged = any(
@@ -146,8 +143,14 @@ def classify_impasse_outcome(
             if t.agent == "buyer"
         )
 
+    # Engagement check must precede walk-away check: a silent/non-engaged buyer
+    # who somehow sets did_walk_away=True is still a protocol failure, not a
+    # legitimate walk-away.
     if not buyer_engaged:
         return ImpasseOutcome.PROTOCOL_FAILURE
+
+    if did_walk_away:
+        return ImpasseOutcome.BUYER_WALK_AWAY
 
     # Buyer engaged — check if seller ever accepted.
     buyer_made_offer = any(

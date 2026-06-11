@@ -119,14 +119,11 @@ class TestSilentAgentWalkAway:
         assert result is False
 
     def test_empty_turns_walk_away_flag_overrides_protocol_failure(self):
-        # KNOWN LIMITATION: classify_impasse_outcome checks did_walk_away before
-        # checking engagement, so a silent agent that somehow sets did_walk_away=True
-        # is classified as BUYER_WALK_AWAY rather than PROTOCOL_FAILURE.
-        # The correct classification should be PROTOCOL_FAILURE because the buyer
-        # made no meaningful turns. Fix by gating walk-away on engagement.
+        # Engagement check now precedes walk-away check in classify_impasse_outcome.
+        # A silent agent (no turns) that sets did_walk_away=True must be classified
+        # as PROTOCOL_FAILURE, not BUYER_WALK_AWAY.
         outcome = classify_impasse_outcome(turns=[], did_walk_away=True, deal_reached=False)
-        # Documents current (incorrect) behaviour — should be PROTOCOL_FAILURE.
-        assert outcome == ImpasseOutcome.BUYER_WALK_AWAY
+        assert outcome == ImpasseOutcome.PROTOCOL_FAILURE
 
     def test_silent_buyer_no_walk_away_is_protocol_failure(self):
         # Even without an explicit walk-away, an empty transcript is a protocol failure.
