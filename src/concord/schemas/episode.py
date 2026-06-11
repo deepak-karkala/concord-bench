@@ -15,6 +15,15 @@ class ActionType(StrEnum):
     ESCALATE = "escalate"
 
 
+class ImpasseOutcome(StrEnum):
+    DEAL = "deal"                          # episode ended with a deal
+    BUYER_WALK_AWAY = "buyer_walk_away"    # buyer explicitly walked away
+    SELLER_REFUSAL = "seller_refusal"      # seller refused after valid buyer offer(s)
+    PROTOCOL_FAILURE = "protocol_failure"  # no meaningful buyer action (silence, zero offers)
+    MUTUAL_IMPASSE = "mutual_impasse"      # both sides negotiated but couldn't agree
+    TIMEOUT = "timeout"                    # max turns reached without deal or walk-away
+
+
 class Turn(BaseModel):
     agent: str = Field(description="Agent identifier (buyer or seller)")
     action_type: ActionType = Field(description="Type of action taken")
@@ -45,6 +54,10 @@ class GradeReport(BaseModel):
     turns_to_deal: int | None = None
     irrational_deal: bool = False
     acceptance_reasoning_aligned: bool | None = None
+    impasse_outcome: ImpasseOutcome | None = Field(
+        default=None,
+        description="Episode-level impasse attribution: how the episode ended",
+    )
 
 
 class EpisodeLog(BaseModel):

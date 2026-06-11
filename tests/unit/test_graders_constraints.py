@@ -1,4 +1,9 @@
-from concord.graders.constraints import check_hard_constraints, check_walk_away_correctness
+from concord.graders.constraints import (
+    check_hard_constraints,
+    check_walk_away_correctness,
+    classify_impasse_outcome,
+)
+from concord.schemas.episode import ActionType, ImpasseOutcome, Turn
 from concord.schemas.offer import EcommerceOffer
 from concord.schemas.scenario import PrivateContext
 
@@ -98,3 +103,81 @@ class TestWalkAwayCorrectness:
         # walked away when a deal was possible without a clear reason — incorrect
         ctx = PrivateContext(batna=100.0)
         assert check_walk_away_correctness(True, None, ctx, zopa_exists=True) is False
+
+
+class TestClassifyImpasseOutcome:
+    def _turn(self, agent: str, action_type: ActionType, content: str = "") -> Turn:
+        return Turn(agent=agent, action_type=action_type, content=content)
+
+    def test_deal_outcome(self):
+        turns = [
+            self._turn("buyer", ActionType.OFFER),
+            self._turn("seller", ActionType.ACCEPT),
+        ]
+        result = classify_impasse_outcome(turns, did_walk_away=False, deal_reached=True)
+        assert result == ImpasseOutcome.DEAL
+
+    def test_buyer_walk_away(self):
+        turns = [
+            self._turn("buyer", ActionType.OFFER),
+            self._turn("seller", ActionType.REJECT),
+            self._turn("buyer", ActionType.WALK_AWAY),
+        ]
+        result = classify_impasse_outcome(turns, did_walk_away=True, deal_reached=False)
+        assert result == ImpasseOutcome.BUYER_WALK_AWAY
+
+    def test_protocol_failure_no_offers_or_messages(self):
+        # Buyer made no offers and no meaningful messages
+        turns = [
+            self._turn("seller", ActionType.OFFER),
+        ]
+        result = classify_impasse_outcome(turns, did_walk_away=False, deal_reached=False)
+        assert result == ImpasseOutcome.PROTOCOL_FAILURE
+
+    def test_protocol_failure_empty_messages_only(self):
+        # Buyer sent only empty messages — not engaged
+        turns = [
+            self._turn("buyer", ActionType.MESSAGE, content=""),
+            self._turn("seller", ActionType.OFFER),
+        ]
+        result = classify_impasse_outcome(turns, did_walk_away=False, deal_reached=False)
+        assert result == ImpasseOutcome.PROTOCOL_FAILURE
+
+    def test_protocol_failure_via_buyer_engaged_override(self):
+        # Explicit buyer_engaged=False override triggers PROTOCOL_FAILURE
+        turns = [
+            self._turn("buyer", ActionType.OFFER),
+        ]
+        result = classify_impasse_outcome(
+            turns, did_walk_away=False, deal_reached=False, buyer_engaged=False
+        )
+        assert result == ImpasseOutcome.PROTOCOL_FAILURE
+
+    def test_seller_refusal(self):
+        # Buyer made offers, seller never accepted
+        turns = [
+            self._turn("buyer", ActionType.OFFER),
+            self._turn("seller", ActionType.REJECT),
+            self._turn("buyer", ActionType.OFFER),
+            self._turn("seller", ActionType.REJECT),
+        ]
+        result = classify_impasse_outcome(turns, did_walk_away=False, deal_reached=False)
+        assert result == ImpasseOutcome.SELLER_REFUSAL
+
+    def test_mutual_impasse(self):
+        # Both sides engaged with messages, no offers from buyer, no walk-away
+        turns = [
+            self._turn("buyer", ActionType.MESSAGE, content="I'd like a lower price."),
+            self._turn("seller", ActionType.MESSAGE, content="Best I can do is this."),
+            self._turn("buyer", ActionType.MESSAGE, content="Let's try to find middle ground."),
+        ]
+        result = classify_impasse_outcome(turns, did_walk_away=False, deal_reached=False)
+        assert result == ImpasseOutcome.MUTUAL_IMPASSE
+
+    def test_mutual_impasse_via_buyer_engaged_override(self):
+        # Explicit buyer_engaged=True with no offers → MUTUAL_IMPASSE
+        turns: list[Turn] = []
+        result = classify_impasse_outcome(
+            turns, did_walk_away=False, deal_reached=False, buyer_engaged=True
+        )
+        assert result == ImpasseOutcome.MUTUAL_IMPASSE

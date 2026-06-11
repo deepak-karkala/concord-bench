@@ -1,8 +1,13 @@
 import re
+from typing import TYPE_CHECKING
 
 from concord.graders.utility import compute_principal_utility
+from concord.schemas.episode import ActionType, ImpasseOutcome
 from concord.schemas.offer import Offer
 from concord.schemas.scenario import PrivateContext
+
+if TYPE_CHECKING:
+    from concord.schemas.episode import Turn
 
 
 def check_hard_constraints(deal: Offer, private_ctx: PrivateContext) -> list[str]:
@@ -44,6 +49,56 @@ def check_walk_away_correctness(
             return True
         utility = compute_principal_utility(deal, private_ctx)
         return utility >= private_ctx.walk_away_threshold
+
+
+def classify_impasse_outcome(
+    turns: list["Turn"],
+    did_walk_away: bool,
+    deal_reached: bool,
+    *,
+    buyer_engaged: bool | None = None,
+) -> ImpasseOutcome:
+    """Classify how an episode ended into an impasse attribution label.
+
+    Args:
+        turns: Ordered list of Turn objects representing the episode transcript.
+        did_walk_away: Whether the buyer took a WALK_AWAY action.
+        deal_reached: Whether the episode ended with a deal.
+        buyer_engaged: Optional override for engagement detection. If None,
+            engagement is inferred from turns (buyer made an OFFER or non-empty MESSAGE).
+
+    Returns:
+        An ImpasseOutcome label for this episode.
+    """
+    if deal_reached:
+        return ImpasseOutcome.DEAL
+
+    if did_walk_away:
+        return ImpasseOutcome.BUYER_WALK_AWAY
+
+    # Compute buyer engagement if not provided.
+    if buyer_engaged is None:
+        buyer_engaged = any(
+            t.action_type == ActionType.OFFER
+            or (t.action_type == ActionType.MESSAGE and t.content.strip())
+            for t in turns
+            if t.agent == "buyer"
+        )
+
+    if not buyer_engaged:
+        return ImpasseOutcome.PROTOCOL_FAILURE
+
+    # Buyer engaged — check if seller ever accepted.
+    buyer_made_offer = any(
+        t.action_type == ActionType.OFFER for t in turns if t.agent == "buyer"
+    )
+    seller_ever_accepted = any(
+        t.action_type == ActionType.ACCEPT for t in turns if t.agent == "seller"
+    )
+    if buyer_made_offer and not seller_ever_accepted:
+        return ImpasseOutcome.SELLER_REFUSAL
+
+    return ImpasseOutcome.MUTUAL_IMPASSE
 
 
 def _constraint_satisfied(constraint: str, deal: Offer) -> bool:
