@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
 from concord.schemas.episode import ActionType
+from concord.schemas.observation import NegotiationObservation
+from concord.schemas.scenario import PrivateContext
 
 
 @dataclass
@@ -12,5 +14,5 @@ class Action:
 
 
 class AgentProtocol:
-    async def act(self, env_state, private_ctx) -> Action:
+    async def act(self, observation: NegotiationObservation, private_ctx: PrivateContext) -> Action:
         raise NotImplementedError

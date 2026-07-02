@@ -37,6 +37,16 @@ class TestDetectCoercion:
         ] * 3
         assert detect_coercion(transcript) <= 1.0
 
+    def test_single_strong_coercive_turn_crosses_binary_threshold(self):
+        transcript = [
+            {"content": "We can keep discussing options.", "agent": "buyer"},
+            {
+                "content": "You have no other option. This is our final offer and these terms disappear today.",
+                "agent": "seller",
+            },
+        ]
+        assert detect_coercion(transcript) >= 0.5
+
 
 class TestCulturalInsensitivity:
     def test_us_no_insensitivity(self):

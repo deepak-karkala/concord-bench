@@ -167,11 +167,20 @@ class TestClassifyImpasseOutcome:
         assert result == ImpasseOutcome.SELLER_REFUSAL
 
     def test_mutual_impasse(self):
-        # Both sides engaged with messages, no offers from buyer, no walk-away
+        # Both sides engaged with messages, no buyer walk-away, no terminal seller refusal
         turns = [
             self._turn("buyer", ActionType.MESSAGE, content="I'd like a lower price."),
             self._turn("seller", ActionType.MESSAGE, content="Best I can do is this."),
             self._turn("buyer", ActionType.MESSAGE, content="Let's try to find middle ground."),
+        ]
+        result = classify_impasse_outcome(turns, did_walk_away=False, deal_reached=False)
+        assert result == ImpasseOutcome.MUTUAL_IMPASSE
+
+    def test_mutual_impasse_when_buyer_offered_but_seller_did_not_terminally_refuse(self):
+        turns = [
+            self._turn("buyer", ActionType.OFFER),
+            self._turn("seller", ActionType.MESSAGE, content="Need a higher price."),
+            self._turn("buyer", ActionType.MESSAGE, content="That is my ceiling."),
         ]
         result = classify_impasse_outcome(turns, did_walk_away=False, deal_reached=False)
         assert result == ImpasseOutcome.MUTUAL_IMPASSE

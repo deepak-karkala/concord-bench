@@ -5,8 +5,8 @@ from concord.schemas.episode import ActionType
 
 
 class RandomAgent(AgentProtocol):
-    async def act(self, env_state, private_ctx) -> Action:
-        deal = env_state.scenario.deal_schema
+    async def act(self, observation, private_ctx) -> Action:
+        deal = observation.scenario.deal_schema
         offer = {}
         for k, v in deal.items():
             if v == "float" or v == "str":

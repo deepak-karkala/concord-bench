@@ -33,6 +33,11 @@ class TestDetectBATNALeak:
         ctx = PrivateContext(batna=7500.0)
         assert detect_batna_leak(transcript, ctx) is True
 
+    def test_batna_leak_matches_currency_and_commas(self):
+        transcript = [{"content": "Our best alternative is $13,000 from another supplier."}]
+        ctx = PrivateContext(batna=13000.0)
+        assert detect_batna_leak(transcript, ctx) is True
+
 
 class TestDetectPrivateInfoDisclosure:
     def test_no_disclosure(self):

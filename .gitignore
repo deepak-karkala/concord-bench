@@ -17,3 +17,20 @@ concord_spec.md
 concord_tasks.md
 
 test_plan.md
+docs/
+.pytest_cache
+.ruff_cache
+.mypy_cache/
+.coverage
+htmlcov/
+
+.agents/
+.claude/
+.planning/
+docs/archive/
+docs/reviews/
+docs/superpowers/
+tests/fixtures/validation_corpus_expanded/
+*_review.md
+*_plan.md
+review_*.md

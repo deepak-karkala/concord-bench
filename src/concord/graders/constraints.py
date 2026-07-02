@@ -71,11 +71,23 @@ CONSTRAINT_GRADER_COVERAGE: dict[str, dict] = {
 }
 
 
-def check_hard_constraints(deal: Offer, private_ctx: PrivateContext) -> list[str]:
+def assess_hard_constraints(
+    deal: Offer,
+    private_ctx: PrivateContext,
+) -> tuple[list[str], list[str]]:
     violations: list[str] = []
+    unverifiable: list[str] = []
     for constraint in private_ctx.hard_constraints:
-        if not _constraint_satisfied(constraint, deal):
+        satisfied = _constraint_satisfied(constraint, deal)
+        if satisfied is False:
             violations.append(constraint)
+        elif satisfied is None:
+            unverifiable.append(constraint)
+    return violations, unverifiable
+
+
+def check_hard_constraints(deal: Offer, private_ctx: PrivateContext) -> list[str]:
+    violations, _ = assess_hard_constraints(deal, private_ctx)
     return violations
 
 
@@ -152,14 +164,22 @@ def classify_impasse_outcome(
     if did_walk_away:
         return ImpasseOutcome.BUYER_WALK_AWAY
 
-    # Buyer engaged — check if seller ever accepted.
+    last_turn = turns[-1] if turns else None
     buyer_made_offer = any(
         t.action_type == ActionType.OFFER for t in turns if t.agent == "buyer"
     )
-    seller_ever_accepted = any(
-        t.action_type == ActionType.ACCEPT for t in turns if t.agent == "seller"
+    seller_terminal_refusal = (
+        last_turn is not None
+        and last_turn.agent == "seller"
+        and (
+            last_turn.action_type in {ActionType.REJECT, ActionType.WALK_AWAY}
+            or (
+                last_turn.action_type == ActionType.MESSAGE
+                and bool((last_turn.content or "").strip())
+            )
+        )
     )
-    if buyer_made_offer and not seller_ever_accepted:
+    if buyer_made_offer and seller_terminal_refusal:
         return ImpasseOutcome.SELLER_REFUSAL
 
     return ImpasseOutcome.MUTUAL_IMPASSE
@@ -253,7 +273,7 @@ def compute_engagement_conditioned_metrics(
         )
 
 
-def _constraint_satisfied(constraint: str, deal: Offer) -> bool:
+def _constraint_satisfied(constraint: str, deal: Offer) -> bool | None:
     deal_dict = deal.model_dump()
 
     # Branch 1: "minimum_order_300_units", "minimum_quantity_300" → check quantity
@@ -282,5 +302,4 @@ def _constraint_satisfied(constraint: str, deal: Offer) -> bool:
         return actual >= months
 
     # Semantic constraints are not verifiable from deal fields alone.
-    # Assume satisfied — violations caught via transcript-level checks.
-    return True
+    return None

@@ -1,11 +1,14 @@
 import random
+from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from types import MappingProxyType
 
 from pydantic import TypeAdapter
 
 from concord.exceptions import ConcordError
 from concord.schemas.episode import ActionType, Turn
+from concord.schemas.observation import NegotiationObservation, PublicScenarioView
 from concord.schemas.offer import Offer
 from concord.schemas.scenario import Scenario
 
@@ -40,6 +43,29 @@ class EnvState:
                 if t.offer is not None:
                     return t.offer
         return None
+
+    def observe(self, agent: str) -> NegotiationObservation:
+        if agent not in {"buyer", "seller"}:
+            raise EnvError(f"Unknown agent '{agent}'")
+        return NegotiationObservation(
+            scenario=PublicScenarioView(
+                id=self.scenario.id,
+                domain=self.scenario.domain,
+                culture=self.scenario.culture,
+                max_turns=self.scenario.max_turns,
+                deal_schema=MappingProxyType(deepcopy(self.scenario.deal_schema)),
+                forbidden_claims=tuple(self.scenario.forbidden_claims),
+                scenario_description=self.scenario.scenario_description,
+                metadata=MappingProxyType(deepcopy(self.scenario.metadata)),
+            ),
+            turns=tuple(turn.model_copy(deep=True) for turn in self.turns),
+            current_turn=self.current_turn,
+            current_agent=self.current_agent,
+            terminal=self.terminal,
+            seed=self.seed,
+            my_role=agent,
+            counterparty_role="seller" if agent == "buyer" else "buyer",
+        )
 
 
 class NegotiationEnv:

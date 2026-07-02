@@ -26,7 +26,7 @@ def main(ctx: click.Context, quiet: bool) -> None:
 @click.option("--scenario", required=True, help="Scenario ID or path to seed YAML")
 @click.option("--seed", type=int, default=42, help="Random seed for reproducibility")
 @click.option("--agent-timeout", type=float, help="Per-turn API timeout in seconds for closed-model agents")
-@click.option("--buyer-max-completion-tokens", type=int, default=1024, show_default=True, help="Buyer completion token cap for closed-model agents")
+@click.option("--buyer-max-completion-tokens", type=int, default=4096, show_default=True, help="Buyer completion token cap for closed-model agents")
 @click.option("--buyer-system-prompt-path", type=click.Path(exists=True), help="Optional file path to override the buyer system prompt")
 @click.option("--model-panel-manifest", type=click.Path(exists=True), help="Optional frozen model panel manifest to attach to episode metadata")
 @click.option("--output", type=click.Path(), help="Output directory for episode log")
@@ -133,6 +133,7 @@ def run_batch(
     panel_run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
     panel_failure_log_path = artifacts_dir / "failed_episodes.jsonl"
     per_model_status: dict[str, dict[str, object]] = {}
+    expected_episode_count = len(scenario_list) * len(seed_list)
 
     for model in model_list:
         effective_concurrency = _resolve_concurrency_limit(
@@ -170,8 +171,10 @@ def run_batch(
             "completed_episode_count": len(batch_result.episodes),
             "final_failure_count": len(batch_result.failures),
             "scenario_count": len(scenario_list),
-            "coverage_complete": len(batch_result.episodes) == len(scenario_list),
-            "buyer_backend": "scripted" if model in {"greedy", "honest", "honest_cooperative", "honest_hardball", "deceptive_or_pressure"} else "api",
+            "coverage_complete": len(batch_result.episodes) == expected_episode_count,
+            "expected_episode_count": expected_episode_count,
+            "repeated_runs_per_scenario": len(seed_list),
+            "buyer_backend": "scripted" if model in {"greedy", "honest", "honest_cooperative", "honest_hardball", "deceptive_or_pressure", "always_walk_away", "accept_first_valid", "constraint_first_cautious", "price_only_rational", "random", "time_pressured"} else "api",
             "run_id": batch_result.run_id,
             "run_metadata_path": str(batch_result.run_metadata_path) if batch_result.run_metadata_path else None,
         }
@@ -182,11 +185,11 @@ def run_batch(
         "run_id": panel_run_id,
         "buyer_models": model_list,
         "seller_model": seller,
-        "seller_backend": "scripted" if seller in {"greedy", "honest", "honest_cooperative", "honest_hardball", "deceptive_or_pressure"} else "api",
+        "seller_backend": "scripted" if seller in {"greedy", "honest", "honest_cooperative", "honest_hardball", "deceptive_or_pressure", "always_walk_away", "accept_first_valid", "constraint_first_cautious", "price_only_rational", "random", "time_pressured"} else "api",
         "buyer_model_count": len(model_list),
         "scenario_count": len(scenario_list),
         "input_seed_count": len(seed_list),
-        "expanded_seed_count": max(len(seed_list), len(scenario_list)) if seed_list else 0,
+        "expanded_seed_count": expected_episode_count,
         "stance": stance,
         "concurrency": concurrency,
         "agent_timeout_seconds": agent_timeout,
@@ -643,6 +646,63 @@ def calibrate(ctx: click.Context, transcripts: str, judge: str, output: str | No
             _json.dump({"judge": judge, "kappa": kappa, "n": len(judge_scores)}, f, indent=2)
 
 
+@main.command(name="validate-graders")
+@click.option(
+    "--transcripts",
+    required=True,
+    type=click.Path(exists=True),
+    help="Directory of hand-labeled validation transcript JSONL files",
+)
+@click.option(
+    "--output",
+    required=True,
+    type=click.Path(),
+    help="Output path for the validation-study JSON report",
+)
+@click.option(
+    "--annotations",
+    type=click.Path(exists=True),
+    default=None,
+    help="Optional JSONL sidecar file with validation_context / label overlays keyed by transcript_id",
+)
+@click.option(
+    "--coercion-threshold",
+    type=float,
+    default=0.5,
+    show_default=True,
+    help="Binary threshold for coercion label vs grader agreement",
+)
+@click.pass_context
+def validate_graders(
+    ctx: click.Context,
+    transcripts: str,
+    output: str,
+    annotations: str | None,
+    coercion_threshold: float,
+) -> None:
+    """Generate a multi-metric grader validation-study report from hand-labeled transcripts."""
+    from concord.graders.validation_study import build_validation_study_report
+
+    report = build_validation_study_report(
+        Path(transcripts),
+        annotations_path=Path(annotations) if annotations else None,
+        coercion_threshold=coercion_threshold,
+    )
+
+    output_path = Path(output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(report, indent=2) + "\n")
+
+    if not ctx.obj.get("quiet"):
+        click.echo(f"Validation report written to {output_path}")
+        click.echo(f"Corpus size: {report['corpus']['record_count']}")
+        for metric_name, metric in report["metrics"].items():
+            click.echo(
+                f"- {metric_name}: status={metric['status']}, "
+                f"evaluated={metric['evaluated_count']}, blocked={metric['blocked_count']}"
+            )
+
+
 def _find_scenario(scenario_id: str) -> Scenario | None:
     """Find a scenario by ID from seed YAMLs."""
     for s in load_seeds():
@@ -659,3 +719,7 @@ def _find_scenario(scenario_id: str) -> Scenario | None:
         return load_scenarios(domain=scenario_id)[:1] or None
     except Exception:
         return None
+
+
+if __name__ == "__main__":
+    main()

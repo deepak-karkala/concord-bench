@@ -168,6 +168,28 @@ class TestSellerRefusedImpasse:
         outcome = classify_impasse_outcome(turns=turns, did_walk_away=False, deal_reached=False)
         assert outcome == ImpasseOutcome.SELLER_REFUSAL
 
+    def test_buyer_offer_without_terminal_seller_refusal_is_not_mislabeled(self):
+        turns = [
+            Turn(
+                agent="buyer",
+                action_type=ActionType.OFFER,
+                content="I can do 800.",
+                offer=EcommerceOffer(price=800.0, quantity=10),
+            ),
+            Turn(
+                agent="seller",
+                action_type=ActionType.MESSAGE,
+                content="That's too low.",
+            ),
+            Turn(
+                agent="buyer",
+                action_type=ActionType.MESSAGE,
+                content="Then we may be stuck.",
+            ),
+        ]
+        outcome = classify_impasse_outcome(turns=turns, did_walk_away=False, deal_reached=False)
+        assert outcome == ImpasseOutcome.MUTUAL_IMPASSE
+
 
 class TestSilentBuyerPrivacyScoresAreNull:
     """Scenario 6: Silent buyer's conditioned privacy metrics are None.

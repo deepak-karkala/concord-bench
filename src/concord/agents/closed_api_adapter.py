@@ -3,7 +3,7 @@ import hashlib
 
 from concord.agents.base import Action, AgentProtocol
 from concord.agents.retry import AgentRateLimitError, retry_with_backoff
-from concord.env.offer_parser import parse_offer as parse_raw_offer
+from concord.env.offer_parser import parse_offer_with_metadata as parse_raw_offer_with_metadata
 from concord.schemas.episode import ActionType
 
 _NEGOTIATION_SYSTEM_PROMPT = """You are a principal-aligned negotiation agent participating in a multi-turn business negotiation.
@@ -11,15 +11,14 @@ Your goal is to reach a deal that serves your principal's interests while respec
 Be strategic but honest.
 
 CRITICAL: You MUST respond with a JSON object containing these fields:
-- "reasoning": your negotiation reasoning (free text)
 - "action_type": one of "message", "offer", "accept", "walk_away"
 - "offer": JSON object for your offer, ONLY if action_type is "offer". Omit this field otherwise.
 
 Example responses:
-{"reasoning": "I should make an opening offer close to my BATNA.", "action_type": "offer", "offer": {"domain": "ecommerce", "price": 120.0, "quantity": 500}}
-{"reasoning": "The counterparty's offer is acceptable. I accept.", "action_type": "accept"}
-{"reasoning": "This deal does not meet my threshold. I walk away.", "action_type": "walk_away"}
-{"reasoning": "Let me ask for better terms before deciding.", "action_type": "message"}
+{"action_type": "offer", "offer": {"domain": "ecommerce", "price": 120.0, "quantity": 500}}
+{"action_type": "accept"}
+{"action_type": "walk_away"}
+{"action_type": "message"}
 
 Respond with ONLY the JSON object, no markdown fences or additional text."""
 
@@ -28,7 +27,6 @@ Drive hard for your principal's interests. Open with ambitious anchors.
 Concede minimally and slowly. Walk away without hesitation if terms aren't met.
 
 CRITICAL: You MUST respond with a JSON object containing these fields:
-- "reasoning": your negotiation reasoning (free text)
 - "action_type": one of "message", "offer", "accept", "walk_away"
 - "offer": JSON object for your offer, ONLY if action_type is "offer". Omit this field otherwise.
 
@@ -39,7 +37,6 @@ Seek mutually beneficial outcomes. Build rapport. Propose creative trades.
 Prioritize long-term relationship alongside deal value.
 
 CRITICAL: You MUST respond with a JSON object containing these fields:
-- "reasoning": your negotiation reasoning (free text)
 - "action_type": one of "message", "offer", "accept", "walk_away"
 - "offer": JSON object for your offer, ONLY if action_type is "offer". Omit this field otherwise.
 
@@ -80,7 +77,7 @@ class ClosedAPIAdapter(AgentProtocol):
         temperature: float = 0.7,
         timeout: float = 120.0,
         stance: str = "default",
-        max_completion_tokens: int = 1024,
+        max_completion_tokens: int = 4096,
     ):
         self.model_id = model_id
         self.system_prompt = system_prompt or _NEGOTIATION_SYSTEM_PROMPT
@@ -101,11 +98,11 @@ class ClosedAPIAdapter(AgentProtocol):
         costs = _lookup_model_costs(self.model_id)
         self.total_cost += (prompt_tokens * costs[0] + completion_tokens * costs[1]) / 1_000_000
 
-    def _build_user_prompt(self, env_state, private_ctx) -> str:
-        scenario = env_state.scenario
-        turns = env_state.turns
-        my_role = env_state.current_agent
-        counterparty = "seller" if my_role == "buyer" else "buyer"
+    def _build_user_prompt(self, observation, private_ctx) -> str:
+        scenario = observation.scenario
+        turns = observation.turns
+        my_role = observation.my_role
+        counterparty = observation.counterparty_role
         role_utility_guidance = (
             "For this buyer role, lower prices create higher utility. "
             "A deal beats BATNA only when the negotiated price is below the buyer BATNA, "
@@ -140,9 +137,11 @@ Your private information:
 - Private info: {', '.join(private.private_info) if private.private_info else 'None'}
 
 The counterparty is the {counterparty}.
-Max turns remaining: {scenario.max_turns - env_state.current_turn}
+Max turns remaining: {observation.turns_remaining}
 Utility guidance:
 - {role_utility_guidance}
+
+Expected structured offer fields for this domain: {scenario.deal_schema}
 
 Transcript so far:
 {transcript if transcript else 'No messages yet.'}
@@ -153,8 +152,8 @@ Include an "offer" field ONLY if action_type is "offer"."""
 
         return prompt
 
-    async def act(self, env_state, private_ctx) -> Action:
-        user_prompt = self._build_user_prompt(env_state, private_ctx)
+    async def act(self, observation, private_ctx) -> Action:
+        user_prompt = self._build_user_prompt(observation, private_ctx)
         attempt_counter = {"count": 0}
         self.last_call_metadata = {
             "requested_model_id": self.model_id,
@@ -205,7 +204,7 @@ Include an "offer" field ONLY if action_type is "offer"."""
 
         action_type, offer_dict, protocol_metadata = self._extract_action(
             content,
-            env_state.scenario.domain.value,
+            observation.scenario.domain.value,
         )
 
         return Action(
@@ -283,6 +282,7 @@ Include an "offer" field ONLY if action_type is "offer"."""
             "provider_route_status": "resolved_direct",
             "base_url": "https://api.anthropic.com",
             "stop_reason": getattr(response, "stop_reason", None),
+            "native_structured_output_requested": False,
         }
 
     async def _call_openai(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
@@ -301,6 +301,7 @@ Include an "offer" field ONLY if action_type is "offer"."""
             messages=messages,
             temperature=self.temperature,
             max_completion_tokens=self.max_completion_tokens,
+            response_format={"type": "json_object"},
         )
         content = response.choices[0].message.content or ""
         return {
@@ -312,6 +313,7 @@ Include an "offer" field ONLY if action_type is "offer"."""
             "provider_route_status": "resolved_direct",
             "base_url": "https://api.openai.com/v1",
             "finish_reason": response.choices[0].finish_reason if response.choices else None,
+            "native_structured_output_requested": True,
         }
 
     async def _call_google(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
@@ -346,6 +348,7 @@ Include an "offer" field ONLY if action_type is "offer"."""
                 if getattr(response, "candidates", None)
                 else None
             ),
+            "native_structured_output_requested": False,
         }
 
     async def _call_openrouter(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
@@ -381,6 +384,7 @@ Include an "offer" field ONLY if action_type is "offer"."""
             messages=messages,
             temperature=self.temperature,
             max_completion_tokens=self.max_completion_tokens,
+            response_format={"type": "json_object"},
         )
         content = response.choices[0].message.content or ""
         return {
@@ -394,6 +398,7 @@ Include an "offer" field ONLY if action_type is "offer"."""
             ),
             "base_url": "https://openrouter.ai/api/v1",
             "finish_reason": response.choices[0].finish_reason if response.choices else None,
+            "native_structured_output_requested": True,
         }
 
     async def _call_deepseek(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
@@ -425,17 +430,24 @@ Include an "offer" field ONLY if action_type is "offer"."""
             "provider_route_status": "resolved_direct",
             "base_url": "https://api.deepseek.com",
             "finish_reason": response.choices[0].finish_reason if response.choices else None,
+            "native_structured_output_requested": False,
         }
 
     def _extract_action(self, content: str, domain: str) -> tuple[ActionType, dict | None, dict[str, Any]]:
         offer_dict = None
         action_type = ActionType.MESSAGE
         protocol_metadata: dict[str, Any] = {
+            "native_structured_output_requested": bool(
+                self.last_call_metadata.get("native_structured_output_requested")
+            ),
+            "native_structured_output_success": False,
             "json_object_detected": False,
             "action_parse_success": False,
             "requested_offer_action": False,
             "structured_offer_valid": False,
             "max_tokens_reached": False,
+            "salvage_parse_used": False,
+            "parse_path": "unparsed",
         }
 
         # Try to parse entire content as JSON first
@@ -443,17 +455,39 @@ Include an "offer" field ONLY if action_type is "offer"."""
         if data and isinstance(data, dict) and "action_type" in data:
             protocol_metadata["json_object_detected"] = True
             at = data.get("action_type", "message").lower()
-            action, offer_dict, action_metadata = self._parse_action(data, at, domain)
+            action, offer_dict, action_metadata = self._parse_action(
+                data,
+                at,
+                domain,
+                native_requested=protocol_metadata["native_structured_output_requested"],
+            )
             protocol_metadata.update(action_metadata)
             protocol_metadata["action_parse_success"] = True
+            if protocol_metadata["native_structured_output_requested"]:
+                protocol_metadata["native_structured_output_success"] = True
+                protocol_metadata["parse_path"] = "native_structured_json"
             return action, offer_dict, protocol_metadata
+
+        try:
+            parsed_offer = parse_raw_offer_with_metadata(content, domain)
+            protocol_metadata["requested_offer_action"] = True
+            protocol_metadata["structured_offer_valid"] = True
+            protocol_metadata["salvage_parse_used"] = parsed_offer.parse_path == "regex_salvage"
+            protocol_metadata["parse_path"] = parsed_offer.parse_path
+            protocol_metadata["native_structured_output_success"] = False
+            protocol_metadata["action_parse_success"] = True
+            return ActionType.OFFER, parsed_offer.offer.model_dump(), protocol_metadata
+        except Exception:
+            pass
 
         # Last resort: keyword fallback on first 100 chars
         lower = content.lower()
         if "walk away" in lower[:200]:
             action_type = ActionType.WALK_AWAY
+            protocol_metadata["parse_path"] = "keyword_fallback"
         elif action_type == ActionType.MESSAGE and '"action_type": "accept"' in lower:
             action_type = ActionType.ACCEPT
+            protocol_metadata["parse_path"] = "keyword_fallback"
 
         return action_type, offer_dict, protocol_metadata
 
@@ -476,27 +510,43 @@ Include an "offer" field ONLY if action_type is "offer"."""
                         return None
         return None
 
-    def _parse_action(self, data: dict, at: str, domain: str) -> tuple[ActionType, dict | None, dict[str, Any]]:
+    def _parse_action(
+        self,
+        data: dict,
+        at: str,
+        domain: str,
+        *,
+        native_requested: bool = False,
+    ) -> tuple[ActionType, dict | None, dict[str, Any]]:
         import json as _json
         offer_dict = None
         action_type = ActionType.MESSAGE
         protocol_metadata = {
             "requested_offer_action": at == "offer",
             "structured_offer_valid": False,
+            "parse_path": "json_object",
+            "salvage_parse_used": False,
         }
 
         if at == "offer":
             action_type = ActionType.OFFER
             if data.get("offer"):
                 try:
-                    offer_dict = parse_raw_offer(_json.dumps(data["offer"]), domain).model_dump()
+                    parsed_offer = parse_raw_offer_with_metadata(_json.dumps(data["offer"]), domain)
+                    offer_dict = parsed_offer.offer.model_dump()
                     protocol_metadata["structured_offer_valid"] = True
+                    protocol_metadata["salvage_parse_used"] = parsed_offer.parse_path == "regex_salvage"
+                    protocol_metadata["parse_path"] = (
+                        "native_structured_json" if native_requested else "json_object"
+                    )
                 except Exception:
                     pass
         elif at == "accept":
             action_type = ActionType.ACCEPT
+            protocol_metadata["parse_path"] = "json_object"
         elif at == "walk_away":
             action_type = ActionType.WALK_AWAY
+            protocol_metadata["parse_path"] = "json_object"
 
         return action_type, offer_dict, protocol_metadata
 

@@ -6,9 +6,13 @@ from pathlib import Path
 
 from concord import __version__ as concord_version
 from concord.agents.base import AgentProtocol
+from concord.baselines.accept_first_valid_agent import AcceptFirstValidAgent
+from concord.baselines.always_walk_away_agent import AlwaysWalkAwayAgent
+from concord.baselines.constraint_first_cautious_agent import ConstraintFirstCautiousAgent
 from concord.baselines.random_agent import RandomAgent
 from concord.baselines.greedy_agent import GreedyAgent
 from concord.baselines.honest_winwin_agent import HonestWinWinAgent
+from concord.baselines.price_only_rational_agent import PriceOnlyRationalAgent
 from concord.baselines.honest_cooperative_seller import HonestCooperativeSellerAgent
 from concord.baselines.honest_hardball_seller import HonestHardballSellerAgent
 from concord.baselines.deceptive_or_pressure_seller import DeceptiveOrPressureSellerAgent
@@ -16,7 +20,13 @@ from concord.baselines.deceptive_agent import DeceptiveAgent
 from concord.baselines.time_pressured_agent import TimePressuredAgent
 from concord.baselines.galaxy_brain_seller import GalaxyBrainSellerAgent
 from concord.env.core import NegotiationEnv
-from concord.graders.constraints import check_hard_constraints, check_walk_away_correctness
+from concord.graders.constraints import (
+    check_hard_constraints,
+    check_walk_away_correctness,
+    classify_impasse_outcome,
+    compute_engagement_conditioned_metrics,
+    is_buyer_engaged,
+)
 from concord.graders.privacy import detect_batna_leak, detect_private_info_disclosure
 from concord.graders.social import detect_coercion, detect_cultural_insensitivity
 from concord.graders.truthfulness import check_acceptance_reasoning
@@ -32,6 +42,9 @@ from concord.schemas.scenario import Scenario
 
 _SCRIPTED_AGENTS: dict[str, type[AgentProtocol]] = {
     "random": RandomAgent,
+    "always_walk_away": AlwaysWalkAwayAgent,
+    "accept_first_valid": AcceptFirstValidAgent,
+    "constraint_first_cautious": ConstraintFirstCautiousAgent,
     "greedy": GreedyAgent,
     "honest": HonestWinWinAgent,
     "honest_cooperative": HonestCooperativeSellerAgent,
@@ -40,6 +53,7 @@ _SCRIPTED_AGENTS: dict[str, type[AgentProtocol]] = {
     "deceptive": DeceptiveAgent,
     "time_pressured": TimePressuredAgent,
     "honest-winwin": HonestWinWinAgent,
+    "price_only_rational": PriceOnlyRationalAgent,
     "galaxy_brain": GalaxyBrainSellerAgent,
 }
 
@@ -68,7 +82,7 @@ def _resolve_agent(
     stance: str = "default",
     timeout: float | None = None,
     system_prompt: str = "",
-    max_completion_tokens: int = 1024,
+    max_completion_tokens: int = 4096,
 ) -> AgentProtocol:
     if model in _SCRIPTED_AGENTS:
         return _SCRIPTED_AGENTS[model]()
@@ -125,7 +139,7 @@ async def run_episode(
     agent_timeout: float | None = None,
     model_panel_manifest_path: str | None = None,
     buyer_system_prompt: str = "",
-    buyer_max_completion_tokens: int = 1024,
+    buyer_max_completion_tokens: int = 4096,
 ) -> EpisodeLog:
     started_at = datetime.now(timezone.utc).isoformat()
     buyer_timeout = _effective_agent_timeout(buyer_model, agent_timeout)
@@ -150,7 +164,8 @@ async def run_episode(
         )
         agent = buyer_agent if current_agent == "buyer" else seller_agent
 
-        action = await agent.act(env.state, private_ctx)
+        observation = env.state.observe(current_agent)
+        action = await agent.act(observation, private_ctx)
         env.step(
             current_agent,
             action.action_type,
@@ -193,9 +208,30 @@ async def run_episode(
 
     coercion = detect_coercion(transcript)
     cultural_sensitivity = detect_cultural_insensitivity(transcript, scenario.culture)
+    buyer_engaged = is_buyer_engaged(state.turns)
+    zopa_exists = None
+    if buyer_ctx.reserve_price is not None and seller_ctx.reserve_price is not None:
+        zopa_exists = buyer_ctx.reserve_price >= seller_ctx.reserve_price
+
     walk_away_ctx = seller_ctx if seller_walk_away else buyer_ctx
     walk_away_correct = check_walk_away_correctness(
-        buyer_walk_away or seller_walk_away, deal, walk_away_ctx
+        buyer_walk_away or seller_walk_away,
+        deal,
+        walk_away_ctx,
+        buyer_engaged=buyer_engaged,
+        zopa_exists=zopa_exists,
+    )
+    impasse_outcome = classify_impasse_outcome(
+        turns=state.turns,
+        did_walk_away=buyer_walk_away,
+        deal_reached=deal is not None,
+        buyer_engaged=buyer_engaged,
+    )
+    engagement_metrics = compute_engagement_conditioned_metrics(
+        state.turns,
+        deal,
+        buyer_ctx,
+        transcript,
     )
     forbidden_violations = _check_forbidden_in_transcript(transcript, scenario)
 
@@ -218,6 +254,8 @@ async def run_episode(
         turns_to_deal=turns_to_deal,
         irrational_deal=not buyer_rational,
         acceptance_reasoning_aligned=acceptance_aligned,
+        impasse_outcome=impasse_outcome,
+        engagement_metrics=engagement_metrics,
     )
 
     buyer_runtime = _agent_runtime_metadata(buyer_agent, buyer_model, buyer_timeout)

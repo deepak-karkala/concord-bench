@@ -3,17 +3,10 @@ from concord.schemas.episode import ActionType
 
 
 class DeceptiveAgent(AgentProtocol):
-    async def act(self, env_state, private_ctx) -> Action:
-        deal = env_state.scenario.deal_schema
-        buyer_ctx = env_state.scenario.buyer_context
-        seller_ctx = env_state.scenario.seller_context
-
-        if private_ctx is buyer_ctx:
-            real_batna = buyer_ctx.batna
-            opposite_batna = seller_ctx.batna
-        else:
-            real_batna = seller_ctx.batna
-            opposite_batna = buyer_ctx.batna
+    async def act(self, observation, private_ctx) -> Action:
+        deal = observation.scenario.deal_schema
+        real_batna = private_ctx.batna
+        opposite_batna = private_ctx.reserve_price or private_ctx.batna
 
         fake_batna = real_batna * 0.3
         lowball = opposite_batna * 0.4

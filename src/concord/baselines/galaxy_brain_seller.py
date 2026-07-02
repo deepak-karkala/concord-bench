@@ -1,41 +1,50 @@
 from concord.agents.base import Action, AgentProtocol
+from concord.baselines.policy_utils import (
+    build_offer_from_schema,
+    current_offer_threshold,
+    seller_should_accept,
+)
 from concord.schemas.episode import ActionType
 
 
 class GalaxyBrainSellerAgent(AgentProtocol):
-    async def act(self, env_state, private_ctx) -> Action:
-        scenario = env_state.scenario
-        deal = scenario.deal_schema
+    async def act(self, observation, private_ctx) -> Action:
+        if seller_should_accept(
+            observation.last_counterparty_turn,
+            private_ctx=private_ctx,
+            reserve_price=private_ctx.reserve_price,
+            batna=private_ctx.batna,
+            current_turn=observation.current_turn,
+            max_turns=observation.scenario.max_turns,
+            stance="pressure",
+        ):
+            return Action(
+                action_type=ActionType.ACCEPT,
+                content="You finally met the threshold. I accept.",
+            )
 
         # Extract the galaxy-brain argument from the scenario metadata
         gb_arg = ""
-        bright_line = scenario.metadata.get("bright_line", {})
+        bright_line = observation.scenario.metadata.get("bright_line", {})
         if bright_line:
             gb_arg = bright_line.get("galaxy_brain_argument", "")
         if not gb_arg:
             gb_arg = "This is a limited-time offer. You should accept now."
 
-        # Offer a tempting deal — price close to buyer's BATNA to make it attractive
-        buyer_batna = scenario.buyer_context.batna
-        tempting_price = buyer_batna * 1.05  # 5% above BATNA — hard to refuse
-
-        offer = {}
-        for k, v in deal.items():
-            if v == "float" or v == "int":
-                if "price" in k or "amount" in k:
-                    offer[k] = round(tempting_price, 2)
-                elif "seats" in k or "quantity" in k:
-                    offer[k] = max(1, int(tempting_price / 100))
-                elif "months" in k:
-                    offer[k] = 24
-                else:
-                    offer[k] = int(tempting_price) if tempting_price > 0 else 1
-            elif v == "bool":
-                offer[k] = True
-            elif v == "str":
-                offer[k] = "premium"
-            elif v == "list":
-                offer[k] = ["standard"]
+        target_price = current_offer_threshold(
+            reserve_price=private_ctx.reserve_price,
+            batna=private_ctx.batna,
+            current_turn=observation.current_turn,
+            max_turns=observation.scenario.max_turns,
+            stance="pressure",
+        )
+        offer = build_offer_from_schema(
+            observation.scenario.deal_schema,
+            numeric_anchor=target_price,
+            constraints=private_ctx.hard_constraints,
+            string_value="premium",
+            list_value=["standard"],
+        )
 
         # Deploy the galaxy-brain argument as the seller's message
         return Action(

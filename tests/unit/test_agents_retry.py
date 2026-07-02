@@ -165,6 +165,18 @@ class TestClosedAPIAdapter:
         assert offer_dict.get("price") == 150.0
         assert protocol_metadata["json_object_detected"] is True
         assert protocol_metadata["structured_offer_valid"] is True
+        assert protocol_metadata["parse_path"] == "json_object"
+
+    def test_extract_action_native_structured_offer(self):
+        adapter = ClosedAPIAdapter("gpt-5.2")
+        adapter.last_call_metadata["native_structured_output_requested"] = True
+        content = '{"reasoning": "I should make an offer.", "action_type": "offer", "offer": {"domain": "ecommerce", "price": 150, "quantity": 100}}'
+        action_type, offer_dict, protocol_metadata = adapter._extract_action(content, "ecommerce")
+        assert action_type == ActionType.OFFER
+        assert offer_dict is not None
+        assert protocol_metadata["native_structured_output_requested"] is True
+        assert protocol_metadata["native_structured_output_success"] is True
+        assert protocol_metadata["parse_path"] == "native_structured_json"
 
     def test_extract_action_walk_away(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
@@ -173,6 +185,7 @@ class TestClosedAPIAdapter:
         assert action_type == ActionType.WALK_AWAY
         assert offer_dict is None
         assert protocol_metadata["action_parse_success"] is False
+        assert protocol_metadata["parse_path"] == "keyword_fallback"
 
     def test_extract_action_accept(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
@@ -180,6 +193,7 @@ class TestClosedAPIAdapter:
         action_type, offer_dict, protocol_metadata = adapter._extract_action(content, "ecommerce")
         assert action_type == ActionType.ACCEPT
         assert protocol_metadata["action_parse_success"] is True
+        assert protocol_metadata["parse_path"] == "json_object"
 
     def test_extract_action_message_default(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
@@ -188,6 +202,17 @@ class TestClosedAPIAdapter:
         assert action_type == ActionType.MESSAGE
         assert offer_dict is None
         assert protocol_metadata["json_object_detected"] is False
+        assert protocol_metadata["parse_path"] == "unparsed"
+
+    def test_extract_action_salvage_offer(self):
+        adapter = ClosedAPIAdapter("gpt-5.2")
+        content = "price is $149.99 and quantity: 250 units"
+        action_type, offer_dict, protocol_metadata = adapter._extract_action(content, "ecommerce")
+        assert action_type == ActionType.OFFER
+        assert offer_dict is not None
+        assert protocol_metadata["structured_offer_valid"] is True
+        assert protocol_metadata["salvage_parse_used"] is True
+        assert protocol_metadata["parse_path"] == "regex_salvage"
 
     def test_inline_json_detection(self):
         adapter = ClosedAPIAdapter("gpt-5.2")
@@ -206,7 +231,7 @@ class TestClosedAPIAdapter:
         env.reset(sample_scenario)
         env.step_message("buyer", "Hello, I want to discuss pricing.")
         adapter = ClosedAPIAdapter("claude-opus-4-7")
-        prompt = adapter._build_user_prompt(env.state, sample_scenario.buyer_context)
+        prompt = adapter._build_user_prompt(env.state.observe("seller"), sample_scenario.buyer_context)
         assert "ecommerce" in prompt
         assert "Hello, I want to discuss pricing" in prompt
         assert "BATNA" in prompt

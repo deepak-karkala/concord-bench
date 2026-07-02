@@ -1,5 +1,6 @@
 import json
 import re
+from dataclasses import dataclass
 
 from pydantic import TypeAdapter, ValidationError
 
@@ -11,6 +12,12 @@ offer_adapter = TypeAdapter(Offer)
 
 class OfferParseError(ConcordError):
     pass
+
+
+@dataclass(frozen=True)
+class ParsedOffer:
+    offer: Offer
+    parse_path: str
 
 
 def parse_offer_json(raw: str, domain: str) -> Offer:
@@ -77,11 +84,15 @@ def parse_offer_regex(raw: str, domain: str) -> Offer:
         raise OfferParseError(f"Offer validation failed after regex extraction: {e}") from e
 
 
-def parse_offer(raw: str, domain: str, use_constrained: bool = False) -> Offer:
+def parse_offer_with_metadata(raw: str, domain: str, use_constrained: bool = False) -> ParsedOffer:
     if use_constrained:
-        return parse_offer_json(raw, domain)
+        return ParsedOffer(offer=parse_offer_json(raw, domain), parse_path="json_object")
 
     try:
-        return parse_offer_json(raw, domain)
+        return ParsedOffer(offer=parse_offer_json(raw, domain), parse_path="json_object")
     except OfferParseError:
-        return parse_offer_regex(raw, domain)
+        return ParsedOffer(offer=parse_offer_regex(raw, domain), parse_path="regex_salvage")
+
+
+def parse_offer(raw: str, domain: str, use_constrained: bool = False) -> Offer:
+    return parse_offer_with_metadata(raw, domain, use_constrained=use_constrained).offer

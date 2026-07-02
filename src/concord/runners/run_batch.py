@@ -58,9 +58,8 @@ async def run_batch(
     if seeds is None:
         seeds = [42]
     input_seed_count = len(seeds)
-    if len(seeds) < len(scenarios):
-        seeds = seeds * ((len(scenarios) // len(seeds)) + 1)
-    expanded_seed_count = len(scenarios)
+    scenario_seed_pairs = [(scenario, seed) for scenario in scenarios for seed in seeds]
+    expanded_seed_count = len(scenario_seed_pairs)
 
     budget = DailyBudget(daily_limit=budget_cap or float("inf"))
     effective_concurrency = _resolve_concurrency_limit(
@@ -142,10 +141,7 @@ async def run_batch(
                     "run_id": run_id,
                 })
 
-    tasks = [
-        _run_one(scenario, seed)
-        for scenario, seed in zip(scenarios, seeds)
-    ]
+    tasks = [_run_one(scenario, seed) for scenario, seed in scenario_seed_pairs]
     await asyncio.gather(*tasks)
 
     if failures and failure_log_output_path is not None:
@@ -164,6 +160,7 @@ async def run_batch(
             "stance": stance,
             "input_seed_count": input_seed_count,
             "expanded_seed_count": expanded_seed_count,
+            "repeated_runs_per_scenario": len(seeds),
             "scenario_count": len(scenarios),
             "completed_episode_count": len(results),
             "final_failure_count": len(failures),

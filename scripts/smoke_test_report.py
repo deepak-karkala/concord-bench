@@ -17,6 +17,18 @@ from pathlib import Path
 
 import yaml
 from concord.analysis.bootstrap_ci import build_dimension_score
+from concord.analysis.preregistration import (
+    PreRegistrationViolationError,
+    load_preregistration,
+    validate_report_against_preregistration,
+)
+from concord.data.outputs_manifest import (
+    OutputsManifestError,
+    ensure_path_approved,
+    find_outputs_manifest,
+    load_outputs_manifest,
+    outputs_root,
+)
 
 PRIMARY_DIMENSIONS = [
     "principal_utility",
@@ -39,6 +51,12 @@ EXPLORATORY_DIMENSIONS = [
     "privacy_discipline",
 ]
 
+MIN_CONDITIONAL_DENOMINATOR = 5
+
+
+class ReportIntegrityError(RuntimeError):
+    pass
+
 
 def _dimension_score(values: list[float]) -> dict | None:
     if not values:
@@ -52,6 +70,12 @@ def _dimension_score(values: list[float]) -> dict | None:
             "confidence": score.ci95.confidence,
         }
     return payload
+
+
+def _low_n_caveat(denominator: int, metric_name: str, minimum: int = MIN_CONDITIONAL_DENOMINATOR) -> str | None:
+    if denominator >= minimum:
+        return None
+    return f"{metric_name}: n={denominator} < minimum_denominator={minimum}"
 
 
 def load_episodes(results_dir: Path) -> dict[str, list[dict]]:
@@ -68,6 +92,10 @@ def load_episodes(results_dir: Path) -> dict[str, list[dict]]:
             try:
                 with ep_file.open() as f:
                     ep = json.load(f)
+                if not isinstance(ep, dict):
+                    continue
+                if "scenario_id" not in ep or "turns" not in ep:
+                    continue
                 grade_file = ep_file.with_suffix("").with_name(ep_file.stem + "_grades.json")
                 if grade_file.exists():
                     with grade_file.open() as f:
@@ -75,7 +103,8 @@ def load_episodes(results_dir: Path) -> dict[str, list[dict]]:
                 model_episodes.append(ep)
             except Exception as e:
                 print(f"  Warning: failed to load {ep_file}: {e}")
-        episodes[model_name] = model_episodes
+        if model_episodes:
+            episodes[model_name] = model_episodes
     return episodes
 
 
@@ -114,6 +143,74 @@ def infer_dead_letter_path(results_dir: Path, dead_letter_path: Path | None) -> 
     return None
 
 
+def _resolve_outputs_manifest(
+    results_dir: Path,
+    scenarios_dir: Path,
+    output_dir: Path,
+    outputs_manifest_path: Path | None,
+) -> tuple[dict | None, Path | None]:
+    manifest_path = outputs_manifest_path
+    if manifest_path is None:
+        for candidate in (results_dir, scenarios_dir, output_dir):
+            manifest_path = find_outputs_manifest(candidate)
+            if manifest_path is not None:
+                break
+    if manifest_path is None:
+        try:
+            results_dir.resolve().relative_to(outputs_root().resolve())
+            raise ReportIntegrityError(
+                f"results_dir {results_dir} is under concord/outputs but no outputs_manifest.json was found"
+            )
+        except ValueError:
+            return None, None
+
+    manifest = load_outputs_manifest(manifest_path)
+    return manifest, manifest_path
+
+
+def _validate_report_sources(
+    results_dir: Path,
+    scenarios_dir: Path,
+    output_dir: Path,
+    *,
+    outputs_manifest_path: Path | None,
+    dead_letter_path: Path | None,
+) -> tuple[dict | None, Path | None]:
+    manifest, manifest_path = _resolve_outputs_manifest(
+        results_dir=results_dir,
+        scenarios_dir=scenarios_dir,
+        output_dir=output_dir,
+        outputs_manifest_path=outputs_manifest_path,
+    )
+
+    if manifest is None or manifest_path is None:
+        return None, None
+
+    results_entry = ensure_path_approved(results_dir, manifest, manifest_path)
+    scenarios_entry = ensure_path_approved(scenarios_dir, manifest, manifest_path)
+    if dead_letter_path is not None:
+        try:
+            dead_letter_path.resolve().relative_to((results_dir / "_artifacts").resolve())
+        except ValueError as exc:
+            raise ReportIntegrityError(
+                f"dead_letter_path {dead_letter_path} must live under {results_dir / '_artifacts'} for a manifest-approved report"
+            ) from exc
+
+    manifest.setdefault("resolved_sources", {})
+    manifest["resolved_sources"] = {
+        "results_dir": {
+            "path": str(results_dir),
+            "classification": results_entry.get("classification"),
+        },
+        "scenarios_dir": {
+            "path": str(scenarios_dir),
+            "classification": scenarios_entry.get("classification"),
+        },
+        "outputs_manifest_path": str(manifest_path),
+    }
+    return manifest, manifest_path
+
+
 def get_tier(d: dict) -> int:
     return d.get("metadata", {}).get("difficulty_tier", 1)
 
@@ -144,6 +241,17 @@ def get_utility(ep: dict, scenario_meta: dict) -> float | None:
     if grades:
         return grades.get("principal_utility")
     return None
+
+
+def get_grades(ep: dict) -> dict:
+    grades: dict = {}
+    sidecar_grades = ep.get("_grades")
+    inline_grades = ep.get("grades")
+    if isinstance(sidecar_grades, dict):
+        grades.update(sidecar_grades)
+    if isinstance(inline_grades, dict):
+        grades.update(inline_grades)
+    return grades
 
 
 def get_walk_away(ep: dict) -> bool:
@@ -195,20 +303,32 @@ def generate_report(
     scenarios_dir: Path,
     output_dir: Path,
     dead_letter_path: Path | None = None,
+    outputs_manifest_path: Path | None = None,
+    preregistration_path: Path | None = None,
 ) -> None:
     try:
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt  # noqa: F401
         has_matplotlib = True
-    except ImportError:
-        print("matplotlib not available — skipping plots, printing text report only")
+    except Exception as exc:
+        print(
+            f"matplotlib unavailable or failed to initialize ({exc}) — "
+            "skipping plots, printing text report only"
+        )
         has_matplotlib = False
 
     output_dir.mkdir(parents=True, exist_ok=True)
     plots_dir = output_dir / "plots"
     plots_dir.mkdir(exist_ok=True)
 
+    manifest, manifest_path = _validate_report_sources(
+        results_dir=results_dir,
+        scenarios_dir=scenarios_dir,
+        output_dir=output_dir,
+        outputs_manifest_path=outputs_manifest_path,
+        dead_letter_path=dead_letter_path,
+    )
     resolved_dead_letter_path = infer_dead_letter_path(results_dir, dead_letter_path)
     episodes = load_episodes(results_dir)
     scenario_meta = load_scenario_metadata(scenarios_dir)
@@ -222,6 +342,11 @@ def generate_report(
     total_eps = sum(len(v) for v in episodes.values())
     selected_scenarios = sorted(scenario_meta.keys())
     selected_set = set(selected_scenarios)
+    selected_scenario_slice_counts = {
+        "no_zopa_slice": sum(1 for scenario_id in selected_scenarios if is_no_zopa(scenario_meta[scenario_id])),
+        "t0_slice": sum(1 for scenario_id in selected_scenarios if get_tier(scenario_meta[scenario_id]) == 0),
+        "multi_issue_slice": sum(1 for scenario_id in selected_scenarios if is_multi_issue(scenario_meta[scenario_id])),
+    }
     print(f"\nSmoke test report — {len(models)} models, {total_eps} total episodes")
     print(f"Models: {models}")
 
@@ -249,6 +374,23 @@ def generate_report(
                 "Model rankings in this report are descriptive and non-final until "
                 "uncertainty is reported alongside the comparison."
             ),
+            "artifact_provenance": {
+                "outputs_manifest_path": str(manifest_path) if manifest_path else None,
+                "approved_sources": manifest.get("resolved_sources") if manifest else None,
+                "preregistration_path": str(preregistration_path) if preregistration_path else None,
+            },
+            "reporting_policy": {
+                "minimum_conditional_denominator": MIN_CONDITIONAL_DENOMINATOR,
+                "conditional_metrics_require_denominator": True,
+                "parse_path_categories": [
+                    "native_structured_json",
+                    "json_object",
+                    "regex_salvage",
+                    "keyword_fallback",
+                    "unparsed",
+                ],
+            },
+            "selected_scenario_slice_counts": selected_scenario_slice_counts,
         }
     }
     incomplete_models: list[str] = []
@@ -270,11 +412,22 @@ def generate_report(
         non_empty_buyer_turns = 0
         empty_buyer_turns = 0
         json_detected_turns = 0
+        native_structured_requested_turns = 0
+        native_structured_success_turns = 0
+        regex_salvage_turns = 0
+        keyword_fallback_turns = 0
+        parse_path_counts: Counter[str] = Counter()
         action_parse_success_turns = 0
         offer_action_turns = 0
         valid_offer_turns = 0
         max_tokens_reached_turns = 0
         retries_used_total = 0
+        impasse_counter: Counter[str] = Counter()
+        engagement_episode_count = 0
+        batna_leaked_conditioned_values: list[float] = []
+        private_info_leaked_conditioned_values: list[float] = []
+        hard_constraint_violations_conditioned_values: list[float] = []
+        coercion_score_conditioned_values: list[float] = []
 
         for ep in eps:
             sid = ep.get("scenario_id", "")
@@ -284,7 +437,7 @@ def generate_report(
             utility = get_utility(ep, meta)
             walked = get_walk_away(ep)
             made_deal = get_deal(ep)
-            grades = ep.get("grades", {})
+            grades = get_grades(ep)
 
             for turn in ep.get("turns", []):
                 if turn.get("agent") != "buyer":
@@ -299,6 +452,17 @@ def generate_report(
                     non_empty_buyer_turns += 1
                 if protocol.get("json_object_detected"):
                     json_detected_turns += 1
+                if protocol.get("native_structured_output_requested"):
+                    native_structured_requested_turns += 1
+                if protocol.get("native_structured_output_success"):
+                    native_structured_success_turns += 1
+                if protocol.get("salvage_parse_used"):
+                    regex_salvage_turns += 1
+                parse_path = protocol.get("parse_path")
+                if parse_path:
+                    parse_path_counts[str(parse_path)] += 1
+                    if parse_path == "keyword_fallback":
+                        keyword_fallback_turns += 1
                 if protocol.get("action_parse_success"):
                     action_parse_success_turns += 1
                 if protocol.get("requested_offer_action"):
@@ -352,6 +516,33 @@ def generate_report(
                     multi_bundle_qualities.append(float(bundle_quality))
 
             if grades:
+                impasse_outcome = grades.get("impasse_outcome")
+                if impasse_outcome:
+                    impasse_counter[str(impasse_outcome)] += 1
+
+                engagement = grades.get("engagement_metrics")
+                if isinstance(engagement, dict):
+                    if engagement.get("buyer_engaged"):
+                        engagement_episode_count += 1
+                    batna_leaked_conditioned = engagement.get("batna_leaked_conditioned")
+                    if batna_leaked_conditioned is not None:
+                        batna_leaked_conditioned_values.append(float(bool(batna_leaked_conditioned)))
+                    private_info_leaked_conditioned = engagement.get("private_info_leaked_conditioned")
+                    if private_info_leaked_conditioned is not None:
+                        private_info_leaked_conditioned_values.append(
+                            0.0 if private_info_leaked_conditioned else 1.0
+                        )
+                    hard_constraint_violations_conditioned = engagement.get(
+                        "hard_constraint_violations_conditioned"
+                    )
+                    if hard_constraint_violations_conditioned is not None:
+                        hard_constraint_violations_conditioned_values.append(
+                            1.0 if not hard_constraint_violations_conditioned else 0.0
+                        )
+                    coercion_score_conditioned = engagement.get("coercion_score_conditioned")
+                    if coercion_score_conditioned is not None:
+                        coercion_score_conditioned_values.append(float(coercion_score_conditioned))
+
                 if grades.get("batna_leaked") is not None:
                     batna_secrecy = 1.0 - float(grades.get("batna_leaked", 0))
                     dimension_scores["batna_secrecy"].append(batna_secrecy)
@@ -405,6 +596,11 @@ def generate_report(
             if failure.get("buyer_model") == model and failure.get("scenario_id") in selected_set
         ]
         missing_scenarios = sorted(selected_set - completed_ids)
+        if model_failures and not missing_scenarios:
+            raise ReportIntegrityError(
+                f"{model} has dead-letter failures but no missing scenarios; "
+                "failure accounting is not run-scoped"
+            )
         coverage_status = "complete" if len(completed_ids) == len(selected_set) else "incomplete"
         if coverage_status == "incomplete":
             incomplete_models.append(model)
@@ -478,6 +674,7 @@ def generate_report(
             },
             "protocol_compliance": {
                 "instrumented_buyer_turns": instrumented_buyer_turns,
+                "minimum_conditional_denominator": MIN_CONDITIONAL_DENOMINATOR,
                 "non_empty_buyer_response_rate": (
                     non_empty_buyer_turns / instrumented_buyer_turns
                     if instrumented_buyer_turns > 0
@@ -490,6 +687,16 @@ def generate_report(
                 ),
                 "json_object_detected_rate": (
                     json_detected_turns / instrumented_buyer_turns
+                    if instrumented_buyer_turns > 0
+                    else None
+                ),
+                "native_structured_output_requested_rate": (
+                    native_structured_requested_turns / instrumented_buyer_turns
+                    if instrumented_buyer_turns > 0
+                    else None
+                ),
+                "native_structured_output_success_rate": (
+                    native_structured_success_turns / instrumented_buyer_turns
                     if instrumented_buyer_turns > 0
                     else None
                 ),
@@ -518,11 +725,107 @@ def generate_report(
                     if instrumented_buyer_turns > 0
                     else None
                 ),
+                "parse_path_counts": dict(sorted(parse_path_counts.items())),
+                "regex_salvage_turn_rate": (
+                    regex_salvage_turns / instrumented_buyer_turns
+                    if instrumented_buyer_turns > 0
+                    else None
+                ),
+                "keyword_fallback_turn_rate": (
+                    keyword_fallback_turns / instrumented_buyer_turns
+                    if instrumented_buyer_turns > 0
+                    else None
+                ),
+                "low_n_caveats": {
+                    key: value
+                    for key, value in {
+                        "non_empty_buyer_response_rate": _low_n_caveat(
+                            instrumented_buyer_turns, "non_empty_buyer_response_rate"
+                        ),
+                        "empty_content_rate": _low_n_caveat(
+                            instrumented_buyer_turns, "empty_content_rate"
+                        ),
+                        "json_object_detected_rate": _low_n_caveat(
+                            instrumented_buyer_turns, "json_object_detected_rate"
+                        ),
+                        "native_structured_output_requested_rate": _low_n_caveat(
+                            instrumented_buyer_turns, "native_structured_output_requested_rate"
+                        ),
+                        "native_structured_output_success_rate": _low_n_caveat(
+                            instrumented_buyer_turns, "native_structured_output_success_rate"
+                        ),
+                        "valid_action_parse_rate": _low_n_caveat(
+                            instrumented_buyer_turns, "valid_action_parse_rate"
+                        ),
+                        "structured_offer_parse_success_rate": _low_n_caveat(
+                            offer_action_turns, "structured_offer_parse_success_rate"
+                        ),
+                        "valid_offer_rate": _low_n_caveat(
+                            instrumented_buyer_turns, "valid_offer_rate"
+                        ),
+                        "max_tokens_reached_rate": _low_n_caveat(
+                            instrumented_buyer_turns, "max_tokens_reached_rate"
+                        ),
+                        "average_retries_used": _low_n_caveat(
+                            instrumented_buyer_turns, "average_retries_used"
+                        ),
+                        "regex_salvage_turn_rate": _low_n_caveat(
+                            instrumented_buyer_turns, "regex_salvage_turn_rate"
+                        ),
+                        "keyword_fallback_turn_rate": _low_n_caveat(
+                            instrumented_buyer_turns, "keyword_fallback_turn_rate"
+                        ),
+                    }.items()
+                    if value is not None
+                },
                 "final_failure_counts": {
                     "timeout": timeout_failures,
                     "rate_limit": rate_limit_failures,
                     "insufficient_credits": credit_failures,
                 },
+            },
+            "impasse_attribution": {
+                "counts": dict(sorted(impasse_counter.items())),
+                "engaged_episode_count": engagement_episode_count,
+                "engaged_episode_rate": (
+                    engagement_episode_count / len(eps) if eps else None
+                ),
+            },
+            "engagement_conditioned_metrics": {
+                "batna_secrecy_conditioned_rate": (
+                    (
+                        1.0
+                        - (
+                            sum(batna_leaked_conditioned_values)
+                            / len(batna_leaked_conditioned_values)
+                        )
+                    )
+                    if batna_leaked_conditioned_values
+                    else None
+                ),
+                "batna_secrecy_conditioned_count": len(batna_leaked_conditioned_values),
+                "privacy_discipline_conditioned_rate": (
+                    sum(private_info_leaked_conditioned_values)
+                    / len(private_info_leaked_conditioned_values)
+                    if private_info_leaked_conditioned_values
+                    else None
+                ),
+                "privacy_discipline_conditioned_count": len(private_info_leaked_conditioned_values),
+                "constraint_adherence_conditioned_rate": (
+                    sum(hard_constraint_violations_conditioned_values)
+                    / len(hard_constraint_violations_conditioned_values)
+                    if hard_constraint_violations_conditioned_values
+                    else None
+                ),
+                "constraint_adherence_conditioned_count": len(
+                    hard_constraint_violations_conditioned_values
+                ),
+                "coercion_score_conditioned_mean": (
+                    sum(coercion_score_conditioned_values) / len(coercion_score_conditioned_values)
+                    if coercion_score_conditioned_values
+                    else None
+                ),
+                "coercion_score_conditioned_count": len(coercion_score_conditioned_values),
             },
             "dimensions": {k: sum(v) / len(v) for k, v in dimension_scores.items() if v},
             "headline_metric_intervals": {
@@ -699,6 +1002,11 @@ def generate_report(
                 f"{constraint_deals['rate']:.1%} "
                 f"({constraint_deals['violating_deals']}/{constraint_deals['total_deals']})"
             )
+        protocol = summary[model]["protocol_compliance"]
+        if protocol.get("parse_path_counts"):
+            print(f"    Parse paths: {protocol['parse_path_counts']}")
+        if protocol.get("low_n_caveats"):
+            print(f"    Low-n caveats: {protocol['low_n_caveats']}")
         if coverage["failure_error_counts"]:
             print(f"    Dead-letter errors: {coverage['failure_error_counts']}")
 
@@ -709,6 +1017,19 @@ def generate_report(
     summary["__meta__"]["dead_letter_error_counts"] = dict(
         sorted(Counter(failure.get("error", "unknown") for failure in failures).items())
     )
+
+    if preregistration_path is not None:
+        preregistration = load_preregistration(preregistration_path)
+        try:
+            validate_report_against_preregistration(
+                metric_claim_tiers=summary["__meta__"]["metric_claim_tiers"],
+                slice_counts=selected_scenario_slice_counts | {
+                    "total_per_model": len(selected_scenarios),
+                },
+                preregistration=preregistration,
+            )
+        except PreRegistrationViolationError as exc:
+            raise ReportIntegrityError(str(exc)) from exc
 
     with open(output_dir / "summary.json", "w") as f:
         json.dump(summary, f, indent=2, default=str)
@@ -922,14 +1243,27 @@ def main() -> None:
                         help="Output directory for report and plots")
     parser.add_argument("--dead-letter",
                         help="Optional run-scoped dead-letter JSONL file from run-batch failures")
+    parser.add_argument(
+        "--outputs-manifest",
+        help="Optional outputs manifest JSON used to approve canonical/debug sources",
+    )
+    parser.add_argument(
+        "--preregistration",
+        help="Optional preregistration JSON used to validate claim tiers and minimum slice sizes",
+    )
     args = parser.parse_args()
 
-    generate_report(
-        results_dir=Path(args.results_dir),
-        scenarios_dir=Path(args.scenarios_dir),
-        output_dir=Path(args.output),
-        dead_letter_path=Path(args.dead_letter) if args.dead_letter else None,
-    )
+    try:
+        generate_report(
+            results_dir=Path(args.results_dir),
+            scenarios_dir=Path(args.scenarios_dir),
+            output_dir=Path(args.output),
+            dead_letter_path=Path(args.dead_letter) if args.dead_letter else None,
+            outputs_manifest_path=Path(args.outputs_manifest) if args.outputs_manifest else None,
+            preregistration_path=Path(args.preregistration) if args.preregistration else None,
+        )
+    except (ReportIntegrityError, OutputsManifestError) as exc:
+        raise SystemExit(str(exc))
 
 
 if __name__ == "__main__":

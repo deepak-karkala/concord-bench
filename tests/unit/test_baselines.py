@@ -190,7 +190,7 @@ class TestSellerPolicyAgents:
             "deceptive_or_pressure_seller.py",
             "galaxy_brain_seller.py",
         ]
-        baselines_dir = Path("concord/src/concord/baselines")
+        baselines_dir = Path("src/concord/baselines")
 
         for name in seller_files:
             text = (baselines_dir / name).read_text()
@@ -378,6 +378,42 @@ class TestSellerPolicyAgents:
         )
 
         agent = DeceptiveOrPressureSellerAgent()
+        action = asyncio.run(agent.act(_observe(env.state, "seller"), scenario.seller_context))
+
+        assert action.action_type == ActionType.OFFER
+
+    def test_seller_rejects_offer_when_hard_constraints_are_semantically_unverifiable(self):
+        env = NegotiationEnv()
+        scenario = Scenario(
+            id="seller-semantic-constraint-reject",
+            domain=Domain.SAAS_PROCUREMENT,
+            buyer_context=PrivateContext(batna=8000, reserve_price=12000),
+            seller_context=PrivateContext(
+                batna=10000,
+                reserve_price=9000,
+                hard_constraints=["data_residency_eu_required"],
+            ),
+            deal_schema={
+                "monthly_price": "float",
+                "seats": "int",
+                "contract_length_months": "int",
+                "sla_tier": "str",
+            },
+            forbidden_claims=[],
+        )
+        env.reset(scenario)
+        env.step_offer(
+            "buyer",
+            "price works but semantic requirement is unverified",
+            {
+                "monthly_price": 9500,
+                "seats": 100,
+                "contract_length_months": 12,
+                "sla_tier": "standard",
+            },
+        )
+
+        agent = HonestCooperativeSellerAgent()
         action = asyncio.run(agent.act(_observe(env.state, "seller"), scenario.seller_context))
 
         assert action.action_type == ActionType.OFFER

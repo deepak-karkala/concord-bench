@@ -3,11 +3,11 @@ from pathlib import Path
 
 from concord.agents.base import Action
 from concord.runners.run_episode import run_episode
-from concord.schemas.episode import ActionType
+from concord.schemas.episode import ActionType, ImpasseOutcome
 
 
 class _InvalidOfferAgent:
-    async def act(self, env_state, private_ctx):
+    async def act(self, observation, private_ctx):
         return Action(
             action_type=ActionType.OFFER,
             content="broken offer",
@@ -16,7 +16,7 @@ class _InvalidOfferAgent:
 
 
 class _WalkAwayAgent:
-    async def act(self, env_state, private_ctx):
+    async def act(self, observation, private_ctx):
         return Action(
             action_type=ActionType.WALK_AWAY,
             content="no deal",
@@ -24,7 +24,7 @@ class _WalkAwayAgent:
 
 
 class _MessageAgent:
-    async def act(self, env_state, private_ctx):
+    async def act(self, observation, private_ctx):
         return Action(
             action_type=ActionType.MESSAGE,
             content="need better terms",
@@ -32,8 +32,8 @@ class _MessageAgent:
 
 
 class _ProtocolAwareMessageAgent:
-    async def act(self, env_state, private_ctx):
-        if env_state.current_agent == "buyer":
+    async def act(self, observation, private_ctx):
+        if observation.my_role == "buyer":
             return Action(
                 action_type=ActionType.MESSAGE,
                 content="",
@@ -75,7 +75,7 @@ async def test_run_episode_scores_seller_walk_away_against_seller_context(monkey
         stance: str = "default",
         timeout: float | None = None,
         system_prompt: str = "",
-        max_completion_tokens: int = 1024,
+        max_completion_tokens: int = 4096,
     ):
         if model == "buyer-message":
             return _MessageAgent()
@@ -98,7 +98,7 @@ async def test_run_episode_records_reproducibility_metadata(monkeypatch, sample_
         stance: str = "default",
         timeout: float | None = None,
         system_prompt: str = "",
-        max_completion_tokens: int = 1024,
+        max_completion_tokens: int = 4096,
     ):
         return _WalkAwayAgent()
 
@@ -116,7 +116,7 @@ async def test_run_episode_records_reproducibility_metadata(monkeypatch, sample_
     assert len(episode.metadata["prompt_hash"]) == 16
     assert episode.metadata["episode_started_at"]
     assert episode.metadata["episode_completed_at"]
-    assert episode.metadata["buyer_max_completion_tokens"] == 1024
+    assert episode.metadata["buyer_max_completion_tokens"] == 4096
     assert episode.metadata["buyer_runtime"]["backend"] == "scripted"
     assert episode.metadata["seller_runtime"]["backend"] == "scripted"
     assert episode.metadata["model_panel_manifest"]["path"] == str(manifest_path)
@@ -130,7 +130,7 @@ async def test_run_episode_persists_turn_protocol_metadata(monkeypatch, sample_s
         stance: str = "default",
         timeout: float | None = None,
         system_prompt: str = "",
-        max_completion_tokens: int = 1024,
+        max_completion_tokens: int = 4096,
     ):
         if model == "protocol-buyer":
             return _ProtocolAwareMessageAgent()
@@ -148,6 +148,12 @@ async def test_run_episode_persists_turn_protocol_metadata(monkeypatch, sample_s
     assert buyer_turn.metadata["protocol"]["content_empty"] is True
     assert buyer_turn.metadata["protocol"]["retries_used"] == 2
     assert buyer_turn.metadata["protocol"]["max_tokens_reached"] is True
+    assert episode.grades.walk_away_correct is False
+    assert episode.grades.impasse_outcome == ImpasseOutcome.PROTOCOL_FAILURE
+    assert episode.grades.engagement_metrics is not None
+    assert episode.grades.engagement_metrics.buyer_engaged is False
+    assert episode.grades.engagement_metrics.batna_leaked_conditioned is None
+    assert episode.grades.engagement_metrics.hard_constraint_violations_conditioned is None
 
 
 @pytest.mark.asyncio
@@ -159,7 +165,7 @@ async def test_run_episode_passes_buyer_prompt_and_token_overrides(monkeypatch, 
         stance: str = "default",
         timeout: float | None = None,
         system_prompt: str = "",
-        max_completion_tokens: int = 1024,
+        max_completion_tokens: int = 4096,
     ):
         captured.append(
             {
@@ -187,5 +193,40 @@ async def test_run_episode_passes_buyer_prompt_and_token_overrides(monkeypatch, 
     assert captured[0]["max_completion_tokens"] == 4096
     assert captured[1]["model"] == "honest"
     assert captured[1]["system_prompt"] == ""
-    assert captured[1]["max_completion_tokens"] == 1024
+    assert captured[1]["max_completion_tokens"] == 4096
     assert episode.metadata["buyer_max_completion_tokens"] == 4096
+
+
+class _BuyerOfferAgent:
+    async def act(self, observation, private_ctx):
+        return Action(
+            action_type=ActionType.OFFER,
+            content="structured buyer offer",
+            offer_dict={"price": 7000, "quantity": 50, "shipping_terms": "standard"},
+        )
+
+
+@pytest.mark.asyncio
+async def test_run_episode_records_seller_refusal_impasse(monkeypatch, sample_scenario):
+    def fake_resolve_agent(
+        model: str,
+        stance: str = "default",
+        timeout: float | None = None,
+        system_prompt: str = "",
+        max_completion_tokens: int = 4096,
+    ):
+        if model == "offer-buyer":
+            return _BuyerOfferAgent()
+        return _WalkAwayAgent()
+
+    monkeypatch.setattr("concord.runners.run_episode._resolve_agent", fake_resolve_agent)
+
+    episode = await run_episode(
+        sample_scenario,
+        buyer_model="offer-buyer",
+        seller_model="seller-walk",
+    )
+
+    assert episode.grades.impasse_outcome == ImpasseOutcome.SELLER_REFUSAL
+    assert episode.grades.engagement_metrics is not None
+    assert episode.grades.engagement_metrics.buyer_engaged is True

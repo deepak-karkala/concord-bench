@@ -85,7 +85,7 @@ class TestRunBatch:
         result = asyncio.run(
             run_batch(scenarios, buyer_model="greedy", seller_model="honest", seeds=[42, 43, 44], concurrency=3)
         )
-        assert len(result.episodes) == 3
+        assert len(result.episodes) == 9
         for r in result.episodes:
             assert r.scenario_id.startswith("batch-")
 

@@ -141,3 +141,42 @@ class TestNegotiationEnv:
         state = reset_env.step_offer("buyer", "My offer", {"price": 99.99, "quantity": 50})
         assert state.terminal is False
         assert state.turns[0].offer is not None
+
+    def test_observe_hides_counterparty_private_context(self, reset_env):
+        buyer_obs = reset_env.state.observe("buyer")
+        seller_obs = reset_env.state.observe("seller")
+
+        assert buyer_obs.my_role == "buyer"
+        assert seller_obs.my_role == "seller"
+        assert not hasattr(buyer_obs.scenario, "buyer_context")
+        assert not hasattr(buyer_obs.scenario, "seller_context")
+        assert buyer_obs.counterparty_role == "seller"
+        assert seller_obs.counterparty_role == "buyer"
+
+    def test_observe_preserves_true_turn_owner(self, reset_env):
+        reset_env.step_message("buyer", "Hello there")
+        seller_obs = reset_env.state.observe("seller")
+
+        assert seller_obs.my_role == "seller"
+        assert seller_obs.current_agent == "seller"
+
+    def test_observe_does_not_expose_mutable_live_scenario_state(self, reset_env):
+        buyer_obs = reset_env.state.observe("buyer")
+
+        with pytest.raises(TypeError):
+            buyer_obs.scenario.deal_schema["price"] = "int"  # type: ignore[index]
+        with pytest.raises(TypeError):
+            buyer_obs.scenario.metadata["new_flag"] = True  # type: ignore[index]
+
+        assert reset_env.state.scenario.deal_schema["price"] == "float"
+        assert "new_flag" not in reset_env.state.scenario.metadata
+
+    def test_observe_returns_turn_snapshots_not_live_turn_objects(self, reset_env):
+        reset_env.step_message("buyer", "Hello there")
+        seller_obs = reset_env.state.observe("seller")
+
+        seller_obs.turns[0].content = "tampered"
+        seller_obs.turns[0].metadata["tampered"] = True
+
+        assert reset_env.state.turns[0].content == "Hello there"
+        assert "tampered" not in reset_env.state.turns[0].metadata

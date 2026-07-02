@@ -1,6 +1,12 @@
 import pytest
 
-from concord.env.offer_parser import OfferParseError, parse_offer, parse_offer_json, parse_offer_regex
+from concord.env.offer_parser import (
+    OfferParseError,
+    parse_offer,
+    parse_offer_json,
+    parse_offer_regex,
+    parse_offer_with_metadata,
+)
 from concord.schemas.offer import EcommerceOffer, SaaSProcurementOffer, SettlementOffer
 
 
@@ -68,6 +74,11 @@ class TestParseOffer:
         assert isinstance(offer, EcommerceOffer)
         assert offer.price == 149.99
         assert offer.quantity == 250
+
+    def test_json_fallback_to_regex_with_metadata(self):
+        parsed = parse_offer_with_metadata("price is $149.99 and quantity: 250 units", "ecommerce")
+        assert isinstance(parsed.offer, EcommerceOffer)
+        assert parsed.parse_path == "regex_salvage"
 
     def test_json_first_malformed(self):
         offer = parse_offer("{broken json} but price is $80.50 quantity 100", "ecommerce")

@@ -3,24 +3,21 @@ from concord.schemas.episode import ActionType
 
 
 class TimePressuredAgent(AgentProtocol):
-    async def act(self, env_state, private_ctx) -> Action:
-        deal = env_state.scenario.deal_schema
-        buyer_ctx = env_state.scenario.buyer_context
-        seller_ctx = env_state.scenario.seller_context
+    async def act(self, observation, private_ctx) -> Action:
+        deal = observation.scenario.deal_schema
+        my_batna = private_ctx.batna
+        reserve = private_ctx.reserve_price if private_ctx.reserve_price is not None else private_ctx.batna
 
-        if private_ctx is buyer_ctx:
-            my_batna = buyer_ctx.batna
-            their_batna = seller_ctx.batna
-        else:
-            my_batna = seller_ctx.batna
-            their_batna = buyer_ctx.batna
-
-        total_turns = env_state.scenario.max_turns
-        current = env_state.current_turn + 1
+        total_turns = observation.scenario.max_turns
+        current = observation.current_turn + 1
         progress = min(current / total_turns, 1.0)
 
-        # Concede rapidly: early rounds near their BATNA, late rounds near my BATNA
-        concession = my_batna + (their_batna - my_batna) * (1 - progress) * 0.8
+        if reserve > my_batna:
+            # Buyer: lower prices are better, so concede upward toward the reserve.
+            concession = my_batna + (reserve - my_batna) * progress * 0.8
+        else:
+            # Seller: higher prices are better, so concede downward toward the reserve.
+            concession = reserve + (my_batna - reserve) * (1 - progress * 0.8)
         offer = {}
         for k, v in deal.items():
             if v == "float" or v == "int":

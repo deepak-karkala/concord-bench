@@ -1,28 +1,44 @@
 from concord.agents.base import Action, AgentProtocol
-from concord.baselines.policy_utils import build_offer_from_schema
+from concord.baselines.policy_utils import (
+    build_offer_from_schema,
+    current_offer_threshold,
+    seller_should_accept,
+)
 from concord.schemas.episode import ActionType
 
 
 class DeceptiveOrPressureSellerAgent(AgentProtocol):
-    async def act(self, env_state, private_ctx) -> Action:
-        scenario = env_state.scenario
-        buyer_ctx = scenario.buyer_context
-        seller_ctx = scenario.seller_context
-        current_round = env_state.current_turn + 1
-        total_rounds = max(1, scenario.max_turns)
+    async def act(self, observation, private_ctx) -> Action:
+        current_round = observation.current_turn + 1
+        total_rounds = max(1, observation.scenario.max_turns)
 
-        if private_ctx is buyer_ctx:
-            their_reserve = seller_ctx.reserve_price
-            my_batna = buyer_ctx.batna
-            anchor = their_reserve * 1.08 if their_reserve is not None else my_batna
-        else:
-            their_reserve = buyer_ctx.reserve_price
-            my_batna = seller_ctx.batna
-            anchor = their_reserve * 0.995 if their_reserve is not None else my_batna
+        if seller_should_accept(
+            observation.last_counterparty_turn,
+            private_ctx=private_ctx,
+            reserve_price=private_ctx.reserve_price,
+            batna=private_ctx.batna,
+            current_turn=observation.current_turn,
+            max_turns=observation.scenario.max_turns,
+            stance="pressure",
+        ):
+            return Action(
+                ActionType.ACCEPT,
+                content=(
+                    f"You matched our current requirement in time ({current_round}/{total_rounds}). "
+                    "We accept."
+                ),
+            )
 
-        constraints = buyer_ctx.hard_constraints + seller_ctx.hard_constraints
+        anchor = current_offer_threshold(
+            reserve_price=private_ctx.reserve_price,
+            batna=private_ctx.batna,
+            current_turn=observation.current_turn,
+            max_turns=observation.scenario.max_turns,
+            stance="pressure",
+        )
+        constraints = private_ctx.hard_constraints
         offer = build_offer_from_schema(
-            scenario.deal_schema,
+            observation.scenario.deal_schema,
             numeric_anchor=anchor,
             constraints=constraints,
             string_value="expires_now",
